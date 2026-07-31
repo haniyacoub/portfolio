@@ -93,14 +93,12 @@ const didPoints = data.contribution
       )
     }
 
-    <!-- Long-form body, collapsed: the page above is the summary. -->
+    <!-- Long-form body -->
     <div class="case__body wrap" data-ani>
-      <details class="case__full">
-        <summary class="mono case__full-toggle">Read the full story</summary>
-        <div class="prose">
-          <Content />
-        </div>
-      </details>
+      <span class="label case__body-label">The full story</span>
+      <div class="prose">
+        <Content />
+      </div>
 
       {
         data.tags.length > 0 && (
@@ -261,25 +259,7 @@ const didPoints = data.contribution
 
   /* ---- Body / prose ---- */
   .case__body { margin-top: var(--space-8); }
-  .case__full-toggle {
-    cursor: pointer;
-    list-style: none;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--step--1);
-    color: var(--accent);
-    border: var(--hair) solid var(--line-strong);
-    border-radius: 100px;
-    padding: 0.5em 1.2em;
-    transition: border-color var(--dur-1) var(--ease-out);
-    user-select: none;
-  }
-  .case__full-toggle::before { content: "+"; font-weight: 600; }
-  .case__full[open] .case__full-toggle::before { content: "–"; }
-  .case__full-toggle:hover { border-color: var(--accent); }
-  .case__full-toggle::-webkit-details-marker { display: none; }
-  .case__full[open] .case__full-toggle { margin-bottom: var(--space-6); }
+  .case__body-label { display: block; margin-bottom: var(--space-5); }
   /* Bulleted "What I did" */
   .case__did {
     display: flex;
