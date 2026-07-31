@@ -6,12 +6,14 @@
  */
 import Lenis from "lenis";
 
-// Motion intentionally disabled site-wide: content carries the site, not effects.
-const reduce = true;
+// Charts draw in and figures count up on first view. Content is never hidden
+// behind the animation system (CSS keeps everything visible without JS).
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* -------------------------------------------------------------- Lenis ---- */
 let lenis: Lenis | null = null;
 function initLenis() {
+  return; // smooth-scroll hijack permanently off
   if (reduce || lenis) return;
   lenis = new Lenis({
     duration: 1.05,
@@ -147,6 +149,7 @@ function prepCountups() {
 
 /* --------------------------------------------------------- Magnetic ---- */
 function initMagnetic() {
+  return; // magnetic hover permanently off
   if (reduce || !window.matchMedia("(pointer:fine)").matches) return;
   document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
     if (el.dataset.magBound) return;
