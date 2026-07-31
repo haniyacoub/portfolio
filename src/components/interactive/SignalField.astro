@@ -58,7 +58,7 @@
 
 <script>
   function boot() {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = true; // always the static frame — no animation
     const canvases = document.querySelectorAll<HTMLCanvasElement>(
       "[data-signal-field]:not([data-init])",
     );

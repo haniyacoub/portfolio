@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../components/layout/BaseLayout.astro";
 import WorkItem from "../components/work/WorkItem.astro";
 import ThresholdDial from "../components/interactive/ThresholdDial.astro";
+import SignalField from "../components/interactive/SignalField.astro";
 import { site } from "../data/site";
 import { facts } from "../data/profile";
 import { parseFigure } from "../utils/num";
@@ -29,6 +30,10 @@ const total = works.length;
           <span class="reveal-line"><span>break the legitimate</span></span>
           <span class="reveal-line"><span>customers doing it.</span></span>
         </h1>
+
+        <div class="hero__viz">
+          <SignalField />
+        </div>
 
       </div>
 

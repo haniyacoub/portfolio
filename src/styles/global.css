@@ -188,17 +188,8 @@ a:focus-visible {
 /* ---- Motion: entrance utility (used by charts + sections) ------------- */
 /* Elements opt in with [data-reveal]; an IntersectionObserver island flips
    [data-revealed] once on first view. CSS does the rest. */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity var(--dur-3) var(--ease-out),
-              transform var(--dur-3) var(--ease-out);
-  will-change: opacity, transform;
-}
-[data-reveal][data-revealed] {
-  opacity: 1;
-  transform: none;
-}
+/* Entrance animations removed: content is simply visible. */
+[data-reveal] { opacity: 1; transform: none; }
 
 /* ---- Line reveal: headline lines clip + rise into view ---------------- */
 /* Markup: each line wrapped in .reveal-line > span. The mask is the line box;
@@ -209,13 +200,7 @@ a:focus-visible {
   overflow: hidden;
   padding-block: 0.02em;        /* guard descenders from the clip */
 }
-.reveal-line > span {
-  display: block;
-  transform: translateY(115%);
-  transition: transform var(--dur-5) var(--ease-expo);
-  transition-delay: calc(var(--rl-i, 0) * var(--rl-stagger));
-  will-change: transform;
-}
+.reveal-line > span { display: block; }
 .reveal-lines[data-shown] .reveal-line > span { transform: translateY(0); }
 
 /* ---- Count-up figures: hold a stable width while ticking -------------- */
