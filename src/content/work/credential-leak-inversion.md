@@ -30,6 +30,7 @@ metrics:
     context: "Five adversarial verification passes; v1 corrected in place, on record."
     emphasis: false
 tags: ["Credential leak", "Escalation response", "Adversarial verification", "Attribution"]
+draft: true
 ---
 
 Escalations arrive with a story attached. This one said: leaked credentials,

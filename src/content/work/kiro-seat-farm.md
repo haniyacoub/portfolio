@@ -28,6 +28,7 @@ metrics:
     context: "Confirmed instances were already enforced — proven as an empty set, not assumed."
     emphasis: true
 tags: ["Abuse chain", "Usage forensics", "Empty-set proof", "Enforcement latency"]
+draft: true
 ---
 
 The flag looked like a big, live, coordinated abuse. The temptation was to treat

@@ -39,6 +39,7 @@ metrics:
     context: "Timestamps re-observing a pre-existing value, not evidence of change."
     emphasis: false
 tags: ["Verification", "Precision", "Methodology", "Data quality"]
+draft: true
 ---
 
 The most dangerous number in fraud work is a confident one. Confidence is what

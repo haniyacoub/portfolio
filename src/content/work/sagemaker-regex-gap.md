@@ -38,6 +38,7 @@ metrics:
     betterWhen: "lower"
     context: "The finding became an hourly, deduped Slack alert on the bypass signature."
 tags: ["Root cause", "Java / config", "SageMaker", "Enforcement", "Alerting"]
+draft: true
 ---
 
 The enforcement layer had quietly worked for years, which is exactly what makes

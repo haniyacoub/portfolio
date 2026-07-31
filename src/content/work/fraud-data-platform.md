@@ -34,6 +34,7 @@ metrics:
     context: "SAML SSO + password auth, behind one API and one result shape."
     emphasis: false
 tags: ["Python", "Redshift", "SAML / JDBC", "Daemon / IPC", "Developer tooling"]
+draft: true
 ---
 
 None of the fraud work in this portfolio happens without this layer, which is why
