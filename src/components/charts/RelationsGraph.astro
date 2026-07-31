@@ -108,7 +108,7 @@ const text = `${label}: ${rings} coordinated rings surface as dense clusters wit
     border: var(--hair) solid var(--line);
     border-radius: var(--radius-sm);
     background:
-      radial-gradient(circle at 50% 40%, rgba(210, 75, 57, 0.05), transparent 60%),
+      radial-gradient(circle at 50% 40%, rgba(44, 79, 191, 0.05), transparent 60%),
       var(--paper-raised);
     overflow: hidden;
   }
@@ -363,7 +363,7 @@ const text = `${label}: ${rings} coordinated rings surface as dense clusters wit
             if (ty < 0) ty = n.y + 14;
             ctx.fillStyle = hexA(INK, 0.96);
             ctx.fillRect(tx, ty, tw, 30);
-            ctx.fillStyle = "#100d0c";
+            ctx.fillStyle = "#faf8f4";
             ctx.textBaseline = "top";
             lines.forEach((l, k) => ctx.fillText(l, tx + 8, ty + 5 + k * 13));
           }

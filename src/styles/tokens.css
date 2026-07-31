@@ -12,32 +12,31 @@
      the surface and doubles as the single "this is the number that matters"
      color in every chart.
      ---------------------------------------------------------------------- */
-  /* DARK — a fraud-investigation console. Deep warm near-black, warm
-     off-white ink, one vivid oxblood "flag" accent, plus a cool steel tone
-     for inert/secondary data. Built to read like an analyst's terminal, not
-     a hacker cliché: editorial restraint, hairlines, one alert color. */
-  --paper:        #100d0c;  /* deep warm near-black base                    */
-  --paper-raised: #181412;  /* raised panels / chart fields                 */
-  --paper-sunk:   #251f1b;  /* inert troughs (bar remainders, inputs)       */
+  /* LIGHT — warm paper, warm near-black ink, one deep-indigo accent.
+     Reads professional and calm: editorial restraint, hairlines, one
+     highlight color that signals trust rather than alarm. */
+  --paper:        #faf8f4;  /* warm paper base                              */
+  --paper-raised: #ffffff;  /* raised panels / chart fields                 */
+  --paper-sunk:   #efeae1;  /* inert troughs (bar remainders, inputs)       */
 
-  --ink:          #ece4d7;  /* warm off-white — primary text                */
-  --ink-soft:     #b7ab9b;  /* secondary headings, strong body              */
-  --muted:        #8a7e6e;  /* secondary text, captions                     */
-  --faint:        #64594c;  /* metadata, axis labels, disabled              */
+  --ink:          #211d19;  /* warm near-black — primary text               */
+  --ink-soft:     #4c453d;  /* secondary headings, strong body              */
+  --muted:        #746b5e;  /* secondary text, captions                     */
+  --faint:        #9c9384;  /* metadata, axis labels, disabled              */
 
-  --line:         #2a2421;  /* 1px structural hairlines                      */
-  --line-strong:  #3d342d;  /* emphasized rule                              */
+  --line:         #e6dfd2;  /* 1px structural hairlines                      */
+  --line-strong:  #d2c8b6;  /* emphasized rule                              */
 
-  --accent:       #d24b39;  /* vivid oxblood — the single "flagged" highlight*/
-  --accent-deep:  #e56a57;  /* hover / pressed (brighter on dark)           */
-  --accent-tint:  #3a201b;  /* dark oxblood wash for chart context/fills    */
+  --accent:       #2c4fbf;  /* deep indigo — the single highlight            */
+  --accent-deep:  #1e3a99;  /* hover / pressed (darker on light)            */
+  --accent-tint:  #e5eafa;  /* pale indigo wash for chart context/fills     */
 
-  --steel:        #6f8794;  /* cool secondary data tone (legit/contrast)    */
-  --steel-soft:   #2a3338;  /* faint steel wash                             */
+  --steel:        #5f7684;  /* cool secondary data tone (legit/contrast)    */
+  --steel-soft:   #dfe7ec;  /* faint steel wash                             */
 
-  --selection:    #4a2a23;  /* selection bg, drawn from the accent family   */
+  --selection:    #d8e0f8;  /* selection bg, drawn from the accent family   */
 
-  --good:         #88a877;  /* sage — used ONLY where caught/positive        */
+  --good:         #4f7a45;  /* sage — used ONLY where caught/positive        */
                             /* must read in grayscale too (it's also bold)  */
 
   /* ----------------------------------------------------------------------
@@ -57,13 +56,13 @@
   --step-1:  clamp(1.13rem, 1.05rem + 0.36vw, 1.35rem);   /* lead / large body        */
   --step-2:  clamp(1.35rem, 1.20rem + 0.70vw, 1.85rem);   /* small headings           */
   --step-3:  clamp(1.65rem, 1.36rem + 1.30vw, 2.6rem);    /* section headings         */
-  --step-4:  clamp(2.10rem, 1.55rem + 2.50vw, 3.85rem);   /* page titles              */
-  --step-5:  clamp(2.70rem, 1.65rem + 4.60vw, 5.6rem);    /* large display            */
-  --step-6:  clamp(3.20rem, 1.40rem + 8.00vw, 8.0rem);    /* hero statement           */
+  --step-4:  clamp(1.85rem, 1.45rem + 1.80vw, 2.9rem);    /* page titles              */
+  --step-5:  clamp(2.20rem, 1.55rem + 2.90vw, 4.0rem);    /* large display            */
+  --step-6:  clamp(2.50rem, 1.45rem + 4.60vw, 5.2rem);    /* hero statement           */
 
   /* Figures inside charts get their own fluid sizes (tabular, mono/display) */
-  --figure-lg: clamp(2.4rem, 1.7rem + 3.2vw, 4.2rem);
-  --figure-md: clamp(1.8rem, 1.4rem + 1.8vw, 2.8rem);
+  --figure-lg: clamp(2.1rem, 1.6rem + 2.4vw, 3.4rem);
+  --figure-md: clamp(1.6rem, 1.3rem + 1.5vw, 2.4rem);
 
   --leading-tight:  1.04;
   --leading-snug:   1.18;

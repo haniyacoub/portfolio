@@ -23,4 +23,5 @@ export const nav = [
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
+  { label: "Résumé", href: "/Hani_Yacoub_CV.pdf" },
 ] as const;
