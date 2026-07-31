@@ -95,11 +95,13 @@ const text = `${label}. ${before.label}: ${fmt(before)}; ${after.label}: ${fmt(a
     display: flex;
     align-items: center;
     gap: var(--space-3);
+    min-width: 0;
   }
   .ba__bar {
     height: 1.15rem;
     width: var(--w);
-    flex: none;
+    flex: 0 1 auto;
+    min-width: 0.5rem;
     border-radius: 1px;
     transform: scaleX(0);
     transform-origin: left;
@@ -122,6 +124,7 @@ const text = `${label}. ${before.label}: ${fmt(before)}; ${after.label}: ${fmt(a
     font-weight: 500;
     color: var(--ink);
     white-space: nowrap;
+    flex: none;
   }
   .ba__row--win .ba__val { color: var(--accent); font-weight: 600; }
 

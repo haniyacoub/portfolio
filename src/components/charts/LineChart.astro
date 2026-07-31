@@ -28,7 +28,7 @@ const {
   context,
 } = Astro.props;
 
-const W = 640, H = 280, PAD = 28, PADR = 56, PADB = 26;
+const W = 640, H = 280, PAD = 28, PADR = 108, PADB = 26;
 const all = [...points, ...(baseline ?? [])];
 const min = Math.min(...all);
 const max = Math.max(...all);
@@ -93,7 +93,7 @@ const text = `${label}. ${seriesLabel ?? "Series"} from ${points[0]} to ${points
     gap: var(--space-4);
   }
   .lc__axis-y { font-size: var(--step--2); color: var(--faint); }
-  .lc__svg { width: 100%; height: auto; overflow: visible; }
+  .lc__svg { width: 100%; height: auto; overflow: hidden; }
 
   .lc__line {
     stroke-dasharray: var(--len, 1000);
