@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../components/layout/BaseLayout.astro";
 import WorkItem from "../components/work/WorkItem.astro";
-import SignalField from "../components/interactive/SignalField.astro";
 import ThresholdDial from "../components/interactive/ThresholdDial.astro";
 import { site } from "../data/site";
 import { facts } from "../data/profile";
@@ -31,9 +30,6 @@ const total = works.length;
           <span class="reveal-line"><span>customers doing it.</span></span>
         </h1>
 
-        <div class="hero__viz" data-reveal data-reveal-delay="220">
-          <SignalField />
-        </div>
       </div>
 
       <div class="hero__lower">

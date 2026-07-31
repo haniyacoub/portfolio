@@ -6,7 +6,8 @@
  */
 import Lenis from "lenis";
 
-const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Motion intentionally disabled site-wide: content carries the site, not effects.
+const reduce = true;
 
 /* -------------------------------------------------------------- Lenis ---- */
 let lenis: Lenis | null = null;

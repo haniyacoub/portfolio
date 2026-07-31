@@ -10,7 +10,6 @@ import "@fontsource-variable/geist/index.css";
 import "@fontsource-variable/geist/wght-italic.css";
 import "@fontsource-variable/geist-mono/index.css";
 
-import { ClientRouter } from "astro:transitions";
 import Nav from "./Nav.astro";
 import Footer from "./Footer.astro";
 import { site } from "../../data/site";
@@ -65,7 +64,6 @@ const ogImage = new URL("/og.png", site.url).href;
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <ClientRouter />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
