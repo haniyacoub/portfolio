@@ -28,8 +28,8 @@ const {
 } = Astro.props;
 
 const fullTitle = title
-  ? `${title} — ${site.name}`
-  : `${site.name} — ${site.role}`;
+  ? `${title} · ${site.name}`
+  : `${site.name} · ${site.role}`;
 
 const canonical = new URL(Astro.url.pathname, site.url).href;
 const ogImage = new URL("/og.png", site.url).href;
