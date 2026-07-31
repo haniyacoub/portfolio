@@ -1,0 +1,103 @@
+---
+import { site, nav } from "../../data/site";
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
+---
+
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a class="nav__id" href="/" aria-label={`${site.name} — home`}>
+      <span class="nav__name">{site.name}</span>
+      <span class="label nav__role">{site.shortRole}</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul class="nav__links" role="list">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                class="mono nav__link"
+                href={item.href}
+                aria-current={isActive(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+  <hr class="rule" />
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    backdrop-filter: saturate(1.1) blur(8px);
+    -webkit-backdrop-filter: saturate(1.1) blur(8px);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding-block: var(--space-4);
+  }
+  .nav__id {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    text-decoration: none;
+    min-width: 0;
+  }
+  .nav__name {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .nav__role {
+    color: var(--faint);
+    /* Hide the role tag once the bar gets tight. */
+  }
+  @media (max-width: 33rem) {
+    .nav__role { display: none; }
+  }
+  .nav__links {
+    display: flex;
+    gap: clamp(var(--space-4), 3vw, var(--space-7));
+  }
+  .nav__link {
+    font-size: var(--step--1);
+    text-decoration: none;
+    color: var(--muted);
+    position: relative;
+    padding-block: var(--space-1);
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  /* Custom underline that grows from the left on hover — not the default. */
+  .nav__link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .nav__link:hover { color: var(--ink); }
+  .nav__link:hover::after { transform: scaleX(1); }
+  .nav__link:focus-visible { color: var(--ink); }
+  .nav__link[aria-current="page"] { color: var(--ink); }
+  .nav__link[aria-current="page"]::after { transform: scaleX(1); }
+</style>

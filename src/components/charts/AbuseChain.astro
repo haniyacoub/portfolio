@@ -1,0 +1,125 @@
+---
+/**
+ * AbuseChain — a staged flow reconstructing an abuse chain end to end. Each
+ * step shows the scale at that stage; tapering connectors carry the eye to the
+ * punchline (typically "$0 paid"), which lands in accent. Draws in on view.
+ */
+interface Step {
+  label: string;
+  value: string;
+  note?: string;
+  punch?: boolean; // accent the payoff step
+}
+interface Props {
+  label: string;
+  steps: Step[];
+  context?: string;
+}
+const { label, steps, context } = Astro.props;
+const text = `${label}: ${steps.map((s) => `${s.label} ${s.value}`).join(" → ")}.`;
+---
+
+<figure class="ac" data-reveal aria-label={text}>
+  <span class="label">{label}</span>
+  <ol class="ac__flow" role="list">
+    {
+      steps.map((s, i) => (
+        <li class:list={["ac__step", { "ac__step--punch": s.punch }]} style={`--i:${i}`}>
+          <span class="ac__node" aria-hidden="true" />
+          <span class="mono ac__val">{s.value}</span>
+          <span class="ac__label">{s.label}</span>
+          {s.note && <span class="mono ac__note">{s.note}</span>}
+          {i < steps.length - 1 && <span class="ac__link" aria-hidden="true" />}
+        </li>
+      ))
+    }
+  </ol>
+  {context && <figcaption class="ac__context">{context}</figcaption>}
+</figure>
+
+<style>
+  .ac {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    container-type: inline-size; /* stack by available width, not viewport */
+  }
+  .ac__flow {
+    display: grid;
+    gap: var(--space-5);
+    counter-reset: step;
+  }
+  /* Horizontal only when the component itself has room. */
+  @container (min-width: 44rem) {
+    .ac__flow {
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+  .ac__step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-top: var(--space-5);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out);
+    transition-delay: calc(var(--i) * 110ms);
+  }
+  :global([data-revealed]) .ac__step { opacity: 1; transform: none; }
+
+  .ac__node {
+    position: absolute;
+    top: 0; left: 0;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: inset 0 0 0 2px var(--steel);
+  }
+  .ac__step--punch .ac__node {
+    background: var(--accent);
+    box-shadow: inset 0 0 0 2px var(--accent), 0 0 0 4px var(--accent-tint);
+  }
+  /* Connector line from this node toward the next. */
+  .ac__link {
+    position: absolute;
+    top: 5px; left: 12px; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--line-strong), var(--line));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-4) var(--ease-draw);
+    transition-delay: calc(var(--i) * 110ms + 120ms);
+  }
+  :global([data-revealed]) .ac__link { transform: scaleX(1); }
+  /* Connector only shows in the horizontal (wide-container) layout. */
+  .ac__link { display: none; }
+  @container (min-width: 44rem) {
+    .ac__link { display: block; }
+  }
+
+  .ac__val {
+    font-size: var(--step-2);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .ac__step--punch .ac__val { color: var(--accent); }
+  .ac__label {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    line-height: var(--leading-snug);
+    max-width: 22ch;
+  }
+  .ac__note { font-size: var(--step--2); color: var(--faint); }
+  .ac__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 56ch;
+    line-height: var(--leading-snug);
+  }
+</style>

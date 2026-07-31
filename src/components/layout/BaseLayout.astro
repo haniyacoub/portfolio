@@ -1,0 +1,84 @@
+---
+/**
+ * BaseLayout — the document shell. Head meta + OG, self-hosted fonts,
+ * skip link, nav, footer, and the single reveal-on-scroll island.
+ * Ships zero render-blocking JS; the reveal script is tiny + deferred.
+ */
+import "../../styles/global.css";
+// Self-hosted variable fonts (font-display: swap baked in by fontsource).
+import "@fontsource-variable/geist/index.css";
+import "@fontsource-variable/geist/wght-italic.css";
+import "@fontsource-variable/geist-mono/index.css";
+
+import { ClientRouter } from "astro:transitions";
+import Nav from "./Nav.astro";
+import Footer from "./Footer.astro";
+import { site } from "../../data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Per-page OG type; case studies pass "article". */
+  ogType?: "website" | "article";
+}
+
+const {
+  title,
+  description = site.description,
+  ogType = "website",
+} = Astro.props;
+
+const fullTitle = title
+  ? `${title} — ${site.name}`
+  : `${site.name} — ${site.role}`;
+
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL("/og.png", site.url).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#100d0c" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.name} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- The site's single client island: smooth scroll, reveals, count-up,
+         magnetic buttons, chart tooltips. Re-init-safe across navigations. -->
+    <script>
+      import "../../scripts/site.ts";
+    </script>
+  </body>
+</html>

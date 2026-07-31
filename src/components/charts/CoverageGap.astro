@@ -1,0 +1,122 @@
+---
+/**
+ * CoverageGap — a coverage strip showing a rule that matched almost everything
+ * except one case, through which the abuse slipped. Covered cells read steel;
+ * the gap is accent and labelled. Makes a "one missing pattern" root cause
+ * legible at a glance. Cells fill in on view; the gap pulses last.
+ */
+interface Cell {
+  name: string;
+  covered: boolean;
+}
+interface Props {
+  label: string;
+  items: Cell[];
+  caption?: string;
+  context?: string;
+}
+const { label, items, caption, context } = Astro.props;
+const gaps = items.filter((i) => !i.covered).length;
+const covered = items.length - gaps;
+const text = `${label}: ${covered} of ${items.length} cases covered; ${gaps} gap let abuse through.${caption ? " " + caption : ""}`;
+---
+
+<figure class="cg" data-reveal aria-label={text}>
+  <div class="cg__head">
+    <span class="label">{label}</span>
+    <span class="mono cg__count">
+      <span class="cg__count-on">{covered}</span>/{items.length} covered
+    </span>
+  </div>
+
+  <ul class="cg__grid" role="list">
+    {
+      items.map((c, i) => (
+        <li
+          class:list={["cg__cell", { "cg__cell--gap": !c.covered }]}
+          style={`--i:${i}`}
+        >
+          <span class="cg__chip" aria-hidden="true" />
+          <span class="mono cg__name">{c.name}</span>
+          {!c.covered && <span class="mono cg__flag">gap</span>}
+        </li>
+      ))
+    }
+  </ul>
+
+  {caption && <figcaption class="cg__caption">{caption}</figcaption>}
+  {context && <p class="cg__context">{context}</p>}
+</figure>
+
+<style>
+  .cg { display: flex; flex-direction: column; gap: var(--space-4); }
+  .cg__head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--space-4);
+    border-bottom: var(--hair) solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+  .cg__count { font-size: var(--step--1); color: var(--muted); }
+  .cg__count-on { color: var(--steel); font-weight: 600; }
+
+  .cg__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+    gap: var(--space-2) var(--space-3);
+  }
+  .cg__cell {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: var(--hair) solid var(--line);
+    border-radius: var(--radius-xs);
+    background: var(--paper-raised);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+    transition-delay: calc(min(var(--i), 16) * 40ms);
+  }
+  :global([data-revealed]) .cg__cell { opacity: 1; transform: none; }
+  .cg__chip {
+    width: 0.6rem; height: 0.6rem; border-radius: 2px; flex: none;
+    background: var(--steel);
+  }
+  .cg__cell--gap {
+    border-color: var(--accent);
+    border-style: dashed;
+    background: var(--accent-tint);
+  }
+  .cg__cell--gap .cg__chip { background: var(--accent); }
+  /* The gap keeps a soft pulse so the eye lands on it. */
+  :global([data-revealed]) .cg__cell--gap {
+    animation: gapPulse 2.6s var(--ease-in-out) 1s infinite;
+  }
+  @keyframes gapPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(210, 75, 57, 0); }
+    50% { box-shadow: 0 0 0 4px rgba(210, 75, 57, 0.14); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global([data-revealed]) .cg__cell--gap { animation: none; }
+  }
+  .cg__name { font-size: var(--step--2); color: var(--ink-soft); }
+  .cg__cell--gap .cg__name { color: var(--ink); }
+  .cg__flag {
+    margin-left: auto;
+    font-size: var(--step--2);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .cg__caption {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    max-width: 56ch;
+    line-height: var(--leading-snug);
+  }
+  .cg__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 52ch;
+    line-height: var(--leading-snug);
+  }
+</style>

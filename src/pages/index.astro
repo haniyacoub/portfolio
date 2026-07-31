@@ -1,0 +1,222 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../components/layout/BaseLayout.astro";
+import WorkItem from "../components/work/WorkItem.astro";
+import SignalField from "../components/interactive/SignalField.astro";
+import ThresholdDial from "../components/interactive/ThresholdDial.astro";
+import { site } from "../data/site";
+import { facts } from "../data/profile";
+import { parseFigure } from "../utils/num";
+
+const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const featured = works.filter((w) => w.data.featured).slice(0, 4);
+const total = works.length;
+---
+
+<BaseLayout>
+  <!-- ============================ OPENING ============================ -->
+  <section class="hero" aria-label="Introduction">
+    <div class="wrap">
+      <p class="mono hero__kicker" data-reveal>
+        {site.role} <span class="hero__dot">/</span> {site.location}
+      </p>
+
+      <div class="hero__top">
+        <h1 class="hero__statement reveal-lines">
+          <span class="reveal-line"><span>I find the abuse,</span></span>
+          <span class="reveal-line"><span><em>prove</em> it, and don't</span></span>
+          <span class="reveal-line"><span>break the legitimate</span></span>
+          <span class="reveal-line"><span>customers doing it.</span></span>
+        </h1>
+
+        <div class="hero__viz" data-reveal data-reveal-delay="220">
+          <SignalField />
+        </div>
+      </div>
+
+      <div class="hero__lower">
+        <p class="hero__lede" data-reveal>
+          Six years turning messy data into clear, defensible enforcement
+          decisions — across cloud, fashion, automotive, and energy. Now at
+          <strong>AWS Payments &amp; Fraud Prevention</strong>, building
+          LLM-powered investigation agents, detection systems, and the tooling
+          they run on. The hard part was never catching abuse. It's catching it
+          <em>without</em> punishing the people who weren't committing any.
+        </p>
+
+        <dl class="hero__facts" aria-label="At a glance" data-reveal>
+          {
+            facts.map((f) => {
+              const fig = parseFigure(f.value);
+              return (
+                <div class="hero__fact">
+                  <dt class="mono hero__fact-num">
+                    <span data-countup={fig.value} data-prefix={fig.prefix} data-suffix={fig.suffix} data-decimals={fig.decimals}>
+                      {f.value}
+                    </span>
+                    <span class="hero__fact-unit">{f.unit}</span>
+                  </dt>
+                  <dd class="hero__fact-label">{f.label}</dd>
+                </div>
+              );
+            })
+          }
+        </dl>
+      </div>
+    </div>
+
+    <a class="hero__scroll mono" href="/#tradeoff" aria-label="Scroll to interactive demo">
+      <span>Scroll</span>
+      <span class="hero__scroll-line" aria-hidden="true"></span>
+    </a>
+  </section>
+
+  <!-- ===================== INTERACTIVE: THE TRADEOFF ================= -->
+  <ThresholdDial />
+
+  <!-- ====================== FEATURED WORK TEASER ===================== -->
+  <section class="feat section" id="work" aria-labelledby="feat-h">
+    <div class="wrap">
+      <header class="feat__head" data-reveal>
+        <div>
+          <span class="label">Selected work</span>
+          <h2 id="feat-h" class="feat__title">A few that show the shape of it.</h2>
+        </div>
+        <a class="feat__all mono" href="/work">
+          All {total} cases <span aria-hidden="true">→</span>
+        </a>
+      </header>
+
+      <ol class="feat__list" role="list">
+        {featured.map((entry, i) => <WorkItem entry={entry} index={i} />)}
+      </ol>
+
+      <a class="feat__cta" href="/work">
+        <span class="mono feat__cta-label">View every case</span>
+        <span class="feat__cta-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ========================= ABOUT / CTA STRIP ===================== -->
+  <section class="strip section" aria-label="About, in brief">
+    <div class="wrap strip__inner" data-reveal>
+      <p class="strip__line">
+        German-Jordanian, Berlin-based. I build the infrastructure, the
+        methodology, and the deliverables — and hold all three to a standard
+        where a caught assumption is the point, not an embarrassment.
+      </p>
+      <div class="strip__links">
+        <a class="strip__link mono" href="/about">More about me <span aria-hidden="true">→</span></a>
+        <a class="strip__link mono" href="/contact">Get in touch <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ============================ OPENING ============================ */
+  .hero { position: relative; padding-top: clamp(2.5rem, 1.5rem + 5vw, 5rem); padding-bottom: var(--section-y); }
+  .hero__kicker { font-size: var(--step--1); color: var(--muted); letter-spacing: 0.04em; }
+  .hero__dot { color: var(--line-strong); margin-inline: 0.4em; }
+
+  .hero__top { margin-top: var(--space-6); display: grid; gap: var(--space-6); align-items: center; }
+  @media (min-width: 56rem) {
+    .hero__top { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--space-7); }
+  }
+  .hero__statement {
+    font-size: clamp(2.3rem, 1.2rem + 3.3vw, 3.9rem);
+    font-weight: 520;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+  .hero__statement em { font-style: italic; color: var(--accent); }
+
+  .hero__viz {
+    height: clamp(240px, 38vw, 360px);
+    width: 100%;
+    border: var(--hair) solid var(--line);
+    border-radius: var(--radius-sm);
+    background:
+      radial-gradient(circle at 60% 40%, rgba(210, 75, 57, 0.06), transparent 60%),
+      var(--paper-raised);
+    padding: var(--space-4);
+  }
+
+  .hero__lower { display: grid; gap: var(--space-7); margin-top: clamp(2.5rem, 1.5rem + 4vw, 4.5rem); align-items: end; }
+  @media (min-width: 52rem) {
+    .hero__lower { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--space-9); }
+  }
+  .hero__lede { font-size: var(--step-1); line-height: var(--leading-body); color: var(--ink-soft); max-width: 52ch; }
+  .hero__lede strong { color: var(--ink); }
+  .hero__lede em { font-style: italic; color: var(--ink); }
+
+  .hero__facts {
+    display: flex; flex-wrap: wrap; gap: var(--space-6) var(--space-7);
+    border-top: var(--hair) solid var(--line); padding-top: var(--space-5);
+  }
+  @media (min-width: 52rem) { .hero__facts { justify-content: flex-end; text-align: right; } }
+  .hero__fact { display: flex; flex-direction: column; gap: var(--space-1); }
+  .hero__fact-num { font-size: var(--figure-md); font-weight: 540; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
+  .hero__fact-unit { font-size: 0.42em; color: var(--muted); margin-left: 0.25em; font-weight: 500; }
+  .hero__fact-label { font-size: var(--step--2); color: var(--muted); line-height: 1.3; max-width: 18ch; }
+  @media (min-width: 52rem) { .hero__fact { align-items: flex-end; } .hero__fact-label { text-align: right; } }
+
+  .hero__scroll { display: none; }
+  @media (min-width: 64rem) {
+    .hero__scroll {
+      position: absolute; right: var(--gutter); bottom: var(--space-6);
+      display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+      font-size: var(--step--2); color: var(--faint); text-decoration: none;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .hero__scroll-line { width: 1px; height: 40px; background: var(--line-strong); position: relative; overflow: hidden; }
+    .hero__scroll-line::after {
+      content: ""; position: absolute; inset: 0; background: var(--accent);
+      transform: translateY(-100%); animation: scrollcue 2.4s var(--ease-in-out) infinite;
+    }
+    @keyframes scrollcue { 0% { transform: translateY(-100%); } 55%,100% { transform: translateY(100%); } }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero__scroll-line::after { animation: none; } }
+
+  /* ====================== FEATURED WORK ===================== */
+  .feat__head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: var(--space-5); flex-wrap: wrap;
+    border-bottom: var(--hair) solid var(--ink); padding-bottom: var(--space-3);
+  }
+  .feat__title { font-size: var(--step-3); margin-top: var(--space-3); }
+  .feat__all { font-size: var(--step--1); color: var(--accent); text-decoration: none; white-space: nowrap; }
+  .feat__all:hover { color: var(--accent-deep); }
+  .feat__list { display: flex; flex-direction: column; }
+
+  .feat__cta {
+    display: flex; align-items: center; justify-content: center; gap: var(--space-3);
+    margin-top: var(--space-8); padding: var(--space-6);
+    border: var(--hair) dashed var(--line-strong); border-radius: var(--radius-sm);
+    text-decoration: none; color: var(--ink-soft);
+    transition: color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
+  }
+  .feat__cta:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-tint); }
+  .feat__cta-label { font-size: var(--step-0); letter-spacing: 0.04em; }
+  .feat__cta-arrow { transition: transform var(--dur-2) var(--ease-out); }
+  .feat__cta:hover .feat__cta-arrow { transform: translateX(5px); }
+
+  /* ====================== ABOUT / CTA STRIP ===================== */
+  .strip__inner {
+    display: grid; gap: var(--space-6); align-items: end;
+    border-top: var(--hair) solid var(--line); padding-top: var(--space-7);
+  }
+  @media (min-width: 52rem) { .strip__inner { grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-8); } }
+  .strip__line {
+    font-family: var(--font-display); font-size: var(--step-2); font-weight: 460;
+    line-height: var(--leading-snug); color: var(--ink-soft); max-width: 42ch;
+    letter-spacing: -0.02em;
+  }
+  .strip__links { display: flex; flex-direction: column; gap: var(--space-3); }
+  @media (min-width: 52rem) { .strip__links { align-items: flex-end; } }
+  .strip__link { font-size: var(--step-0); color: var(--ink); text-decoration: none; }
+  .strip__link:hover { color: var(--accent); }
+</style>

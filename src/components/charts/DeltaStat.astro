@@ -1,0 +1,119 @@
+---
+/**
+ * DeltaStat — a headline figure carrying a directional change. The arrow is
+ * drawn (SVG), never an icon font. Accent marks a good move; a non-good move
+ * stays ink so accent never lies about direction. Grayscale-safe: the arrow
+ * shape + sign carry the meaning, not color alone.
+ */
+import { parseFigure } from "../../utils/num";
+
+interface Props {
+  label: string;
+  value: string;
+  detail: string;
+  direction?: "up" | "down" | "flat";
+  good?: boolean;
+  baseline?: string;
+  context?: string;
+}
+const {
+  label,
+  value,
+  detail,
+  direction = "up",
+  good = true,
+  baseline,
+  context,
+} = Astro.props;
+
+const text = `${label}: ${value} ${detail}.${baseline ? " " + baseline + "." : ""}`;
+const f = parseFigure(value);
+---
+
+<figure
+  class:list={["delta", { "delta--accent": good }]}
+  data-reveal
+  aria-label={text}
+>
+  <span class="label delta__label">{label}</span>
+  <div class="delta__value">
+    <svg
+      class:list={["delta__arrow", `delta__arrow--${direction}`]}
+      viewBox="0 0 12 14"
+      width="12"
+      height="14"
+      aria-hidden="true"
+    >
+      {direction === "flat"
+        ? <rect x="0" y="6" width="12" height="2" />
+        : <path d="M6 0 L12 8 L7.5 8 L7.5 14 L4.5 14 L4.5 8 L0 8 Z" />}
+    </svg>
+    {
+      f.animatable ? (
+        <span
+          class="delta__num mono"
+          data-countup={f.value}
+          data-prefix={f.prefix}
+          data-suffix={f.suffix}
+          data-decimals={f.decimals}
+          data-group={f.group ? "1" : undefined}
+        >
+          {value}
+        </span>
+      ) : (
+        <span class="delta__num mono">{value}</span>
+      )
+    }
+  </div>
+  <p class="delta__detail">{detail}</p>
+  {baseline && <span class="mono delta__baseline">{baseline}</span>}
+  {context && <figcaption class="delta__context">{context}</figcaption>}
+</figure>
+
+<style>
+  .delta { display: flex; flex-direction: column; gap: var(--space-2); }
+  .delta__label { color: var(--muted); }
+  .delta__value {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-1);
+  }
+  .delta__arrow {
+    flex: none;
+    fill: var(--ink-soft);
+    transform: translateY(0);
+    transition: transform var(--dur-3) var(--ease-out) 160ms,
+      opacity var(--dur-3) var(--ease-out) 160ms;
+  }
+  .delta--accent .delta__arrow { fill: var(--accent); }
+  .delta__arrow--down { transform: rotate(180deg); }
+  /* Subtle entrance nudge in the arrow's own direction. */
+  [data-reveal] .delta__arrow--up { opacity: 0; transform: translateY(6px); }
+  [data-reveal] .delta__arrow--down { opacity: 0; transform: translateY(-6px) rotate(180deg); }
+  [data-revealed] .delta__arrow--up { opacity: 1; transform: translateY(0); }
+  [data-revealed] .delta__arrow--down { opacity: 1; transform: translateY(0) rotate(180deg); }
+
+  .delta__num {
+    font-size: var(--figure-md);
+    font-weight: 560;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .delta--accent .delta__num { color: var(--accent); }
+  .delta__detail {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    max-width: 30ch;
+    line-height: var(--leading-snug);
+  }
+  .delta__baseline { font-size: var(--step--2); color: var(--faint); }
+  .delta__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 34ch;
+    line-height: var(--leading-snug);
+    margin-top: var(--space-1);
+  }
+</style>

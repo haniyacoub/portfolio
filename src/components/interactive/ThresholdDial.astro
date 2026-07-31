@@ -1,0 +1,278 @@
+---
+/**
+ * ThresholdDial — the signature interactive figure. Drag the detection
+ * threshold; "abuse caught" (recall) rises, but so do "false positives"
+ * (legitimate customers wrongly flagged). The whole point of the site made
+ * playable: there's a precision zone where you catch most abuse with almost
+ * no collateral, and you can feel the tradeoff by overshooting it.
+ * Keyboard-accessible (range input); works with motion reduced.
+ */
+---
+
+<section class="dial section" id="tradeoff" aria-labelledby="dial-h">
+  <div class="wrap">
+    <header class="dial__head">
+      <span class="label">Interactive — the tradeoff, live</span>
+      <h2 id="dial-h" class="dial__title">
+        Anyone can catch more abuse. The craft is the cost of catching it.
+      </h2>
+      <p class="dial__intro">
+        Move the detection threshold. Catching more abuse is easy — drag it up
+        and watch recall climb. The hard part is the second bar: every step too
+        far flags real customers. The job is living in the narrow band where one
+        is high and the other is near zero.
+      </p>
+    </header>
+
+    <div class="dial__panel" data-dial>
+      <div class="dial__readouts">
+        <div class="dial__metric">
+          <span class="label">Abuse caught</span>
+          <div class="dial__big mono">
+            <span data-out="caught">86</span><span class="dial__sign">%</span>
+          </div>
+          <div class="dial__bar">
+            <span class="dial__fill dial__fill--caught" data-bar="caught"></span>
+          </div>
+        </div>
+
+        <div class="dial__metric">
+          <span class="label">Legitimate customers flagged</span>
+          <div class="dial__big dial__big--coll mono">
+            <span data-out="coll">2.4</span><span class="dial__sign">%</span>
+          </div>
+          <div class="dial__bar">
+            <span class="dial__fill dial__fill--coll" data-bar="coll"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dial__control">
+        <div class="dial__scale mono">
+          <span>Lenient</span>
+          <span>Aggressive</span>
+        </div>
+        <div class="dial__sliderwrap">
+          <!-- The recommended "precision zone" sits under the track. -->
+          <span class="dial__zone" aria-hidden="true"></span>
+          <input
+            class="dial__slider"
+            type="range"
+            min="0"
+            max="100"
+            value="62"
+            step="1"
+            aria-label="Detection threshold, from lenient to aggressive"
+            data-slider
+          />
+        </div>
+        <p class="dial__verdict" data-verdict aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dial__head { max-width: 60ch; }
+  .dial__title {
+    font-size: var(--step-3);
+    margin-top: var(--space-4);
+    max-width: 24ch;
+  }
+  .dial__intro {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    line-height: var(--leading-body);
+    margin-top: var(--space-5);
+    max-width: 56ch;
+  }
+
+  .dial__panel {
+    margin-top: var(--space-8);
+    border: var(--hair) solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--paper-raised);
+    padding: clamp(1.5rem, 1rem + 3vw, 3rem);
+    display: grid;
+    gap: var(--space-8);
+  }
+  @media (min-width: 60rem) {
+    .dial__panel {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: var(--space-9);
+      align-items: center;
+    }
+  }
+
+  .dial__readouts { display: grid; gap: var(--space-6); }
+  @media (min-width: 34rem) {
+    .dial__readouts { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  }
+  .dial__metric { display: flex; flex-direction: column; gap: var(--space-2); }
+  .dial__big {
+    font-size: var(--figure-lg);
+    font-weight: 560;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--accent);
+    display: flex;
+    align-items: baseline;
+  }
+  .dial__big--coll { color: var(--ink); }
+  .dial__sign { font-size: 0.42em; font-weight: 500; margin-left: 0.1em; opacity: 0.7; }
+
+  .dial__bar {
+    height: 0.7rem;
+    background: var(--paper-sunk);
+    border-radius: 1px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--line);
+    margin-top: var(--space-2);
+  }
+  .dial__fill {
+    display: block;
+    height: 100%;
+    width: 50%;
+    border-radius: 1px;
+    transform-origin: left;
+    transition: width 90ms linear;
+  }
+  .dial__fill--caught { background: var(--accent); }
+  .dial__fill--coll { background: var(--ink); }
+
+  /* ---- Control ---- */
+  .dial__scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--step--2);
+    color: var(--faint);
+    margin-bottom: var(--space-3);
+  }
+  .dial__sliderwrap { position: relative; padding-block: var(--space-3); }
+  .dial__zone {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 0.7rem;
+    /* left/width set in JS from the recommended band */
+    background: var(--accent-tint);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  .dial__slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 0.7rem;
+    background: var(--paper-sunk);
+    border-radius: 1px;
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+    outline-offset: 6px;
+    position: relative;
+    cursor: ew-resize;
+  }
+  .dial__slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: 0 2px 8px rgba(28, 25, 22, 0.18);
+    cursor: ew-resize;
+    transition: transform var(--dur-1) var(--ease-spring),
+      border-color var(--dur-1) var(--ease-out);
+  }
+  .dial__slider::-webkit-slider-thumb:hover { transform: scale(1.08); }
+  .dial__slider:active::-webkit-slider-thumb { border-color: var(--accent); transform: scale(1.12); }
+  .dial__slider::-moz-range-thumb {
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    cursor: ew-resize;
+  }
+
+  .dial__verdict {
+    margin-top: var(--space-5);
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-style: italic;
+    line-height: var(--leading-snug);
+    color: var(--ink);
+    min-height: 3.2em;
+    max-width: 40ch;
+  }
+  .dial__verdict :global(b) {
+    font-style: normal;
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+  .dial__verdict :global(.is-good) { color: var(--accent); }
+</style>
+
+<script>
+  function bootDial() {
+    document
+      .querySelectorAll<HTMLElement>("[data-dial]:not([data-init])")
+      .forEach((panel) => {
+        panel.setAttribute("data-init", "1");
+        const slider = panel.querySelector<HTMLInputElement>("[data-slider]")!;
+        const outCaught = panel.querySelector<HTMLElement>('[data-out="caught"]')!;
+        const outColl = panel.querySelector<HTMLElement>('[data-out="coll"]')!;
+        const barCaught = panel.querySelector<HTMLElement>('[data-bar="caught"]')!;
+        const barColl = panel.querySelector<HTMLElement>('[data-bar="coll"]')!;
+        const verdict = panel.querySelector<HTMLElement>("[data-verdict]")!;
+        const zone = panel.querySelector<HTMLElement>(".dial__zone")!;
+
+        // Model: a = aggressiveness 0..1.
+        //  recall rises fast then plateaus; false-positive rate stays low then
+        //  spikes — so there's a knee (the precision zone).
+        const recall = (a: number) => 100 * (1 - Math.exp(-3.4 * a));
+        const fpRate = (a: number) => 12 * Math.pow(a, 3);
+
+        // Recommended band: high recall, FP still under ~1.5%.
+        const ZONE_LO = 52,
+          ZONE_HI = 72;
+        zone.style.left = ZONE_LO + "%";
+        zone.style.width = ZONE_HI - ZONE_LO + "%";
+
+        function render() {
+          const t = +slider.value;
+          const a = t / 100;
+          const caught = recall(a);
+          const coll = fpRate(a);
+          outCaught.textContent = caught.toFixed(0);
+          outColl.textContent = coll.toFixed(1);
+          // Bars: caught against 100; collateral scaled so its spike is felt
+          // (cap the visual at the same 12% domain → ×8.3).
+          barCaught.style.width = Math.min(100, caught) + "%";
+          barColl.style.width = Math.min(100, coll * 8.3) + "%";
+
+          let msg = "";
+          if (t < ZONE_LO - 6) {
+            msg =
+              "<b>Under-enforcing.</b> Comfortable false-positive rate — but real abuse is walking straight through.";
+          } else if (t > ZONE_HI + 8) {
+            msg =
+              "<b>Over-blocking.</b> You're catching nearly everything, and torching legitimate customers to do it. This is the expensive failure.";
+          } else if (t >= ZONE_LO && t <= ZONE_HI) {
+            msg =
+              '<b class="is-good">Precision zone.</b> Most of the abuse caught, collateral still near zero. This narrow band is the whole job.';
+          } else {
+            msg =
+              "<b>Almost.</b> Nudge into the highlighted band — that's where recall is high and the second bar hasn't bitten yet.";
+          }
+          verdict.innerHTML = msg;
+        }
+
+        slider.addEventListener("input", render);
+        render();
+      });
+  }
+  document.addEventListener("astro:page-load", bootDial);
+  if (document.readyState !== "loading") bootDial();
+</script>

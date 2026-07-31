@@ -1,0 +1,302 @@
+/* =========================================================================
+   global.css — reset, base typography, selection, focus, grid, utilities.
+   Imports the token layer. Every value below resolves to a token.
+   ========================================================================= */
+
+@import "./tokens.css";
+
+/* ---- Reset ------------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: var(--leading-body);
+  font-weight: 400;
+  font-feature-settings: "kern" 1, "liga" 1;
+  /* Tabular figures by default everywhere — this is a numbers site. */
+  font-variant-numeric: tabular-nums;
+  min-height: 100vh;
+  text-underline-offset: 0.18em;
+  /* Console texture: a faint dot-grid + two low oxblood/steel glows, all
+     built from gradients (no image). Reads like an analyst's dark surface. */
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(236, 228, 215, 0.022) 0.5px, transparent 0.5px),
+    radial-gradient(circle at 12% 0%, rgba(210, 75, 57, 0.05), transparent 42%),
+    radial-gradient(circle at 92% 88%, rgba(111, 135, 148, 0.045), transparent 46%);
+  background-size: 22px 22px, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* Themed scrollbar to match the console surface. */
+* { scrollbar-color: var(--line-strong) transparent; }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 8px;
+  border: 3px solid var(--paper);
+}
+::-webkit-scrollbar-track { background: transparent; }
+
+img, svg, video, canvas { display: block; max-width: 100%; }
+
+svg { height: auto; }
+
+input, button, textarea, select { font: inherit; color: inherit; }
+
+ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
+
+/* ---- Headings: Fraunces display, large only --------------------------- */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 560;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+h1 { font-size: var(--step-4); }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-2); font-weight: 560; line-height: var(--leading-snug); letter-spacing: -0.02em; }
+
+/* Smaller structural headings use the body grotesque, not the serif. */
+h4, h5, h6 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-flat);
+}
+h4 { font-size: var(--step-1); }
+h5 { font-size: var(--step-0); }
+h6 { font-size: var(--step--1); }
+
+p { text-wrap: pretty; }
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--line-strong);
+  transition: text-decoration-color var(--dur-1) var(--ease-out),
+              color var(--dur-1) var(--ease-out);
+}
+a:hover { text-decoration-color: var(--accent); }
+
+strong { font-weight: 600; }
+em { font-style: italic; }
+
+/* ---- Mono labels ------------------------------------------------------- */
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* The small uppercase structural label used across sections + charts. */
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Selection & focus ------------------------------------------------- */
+::selection {
+  background: var(--selection);
+  color: var(--ink);
+}
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}
+a:focus-visible {
+  outline-offset: 4px;
+  text-decoration-color: var(--accent);
+}
+
+/* ---- Layout primitives ------------------------------------------------- */
+.wrap {
+  width: 100%;
+  max-width: var(--measure-page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Real 12-column grid; components opt in and break it on purpose. */
+.grid12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  row-gap: var(--grid-gap);
+}
+
+.section { padding-block: var(--section-y); }
+
+/* Hairline rule used as structure throughout. */
+.rule {
+  border: 0;
+  border-top: var(--hair) solid var(--line);
+  width: 100%;
+}
+
+/* ---- Accessibility helpers -------------------------------------------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-4);
+  top: -100%;
+  z-index: 100;
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: top var(--dur-2) var(--ease-out);
+}
+.skip-link:focus-visible { top: var(--space-4); }
+
+/* ---- Motion: entrance utility (used by charts + sections) ------------- */
+/* Elements opt in with [data-reveal]; an IntersectionObserver island flips
+   [data-revealed] once on first view. CSS does the rest. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--dur-3) var(--ease-out),
+              transform var(--dur-3) var(--ease-out);
+  will-change: opacity, transform;
+}
+[data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Line reveal: headline lines clip + rise into view ---------------- */
+/* Markup: each line wrapped in .reveal-line > span. The mask is the line box;
+   the inner span starts pushed down + is lifted on [data-shown]. */
+.reveal-lines { --rl-stagger: 90ms; }
+.reveal-line {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.02em;        /* guard descenders from the clip */
+}
+.reveal-line > span {
+  display: block;
+  transform: translateY(115%);
+  transition: transform var(--dur-5) var(--ease-expo);
+  transition-delay: calc(var(--rl-i, 0) * var(--rl-stagger));
+  will-change: transform;
+}
+.reveal-lines[data-shown] .reveal-line > span { transform: translateY(0); }
+
+/* ---- Count-up figures: hold a stable width while ticking -------------- */
+[data-countup] { font-variant-numeric: tabular-nums; }
+
+/* ---- Magnetic / interactive lift -------------------------------------- */
+[data-magnetic] {
+  transition: transform var(--dur-2) var(--ease-spring);
+  will-change: transform;
+}
+
+/* ---- Tabs ------------------------------------------------------------- */
+.tabs__list { position: relative; display: flex; flex-wrap: wrap; }
+.tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  padding: var(--space-2) 0;
+  position: relative;
+  transition: color var(--dur-1) var(--ease-out);
+}
+.tab[aria-selected="true"] { color: var(--ink); }
+.tab:hover { color: var(--ink); }
+/* The sliding ink indicator is one absolutely-positioned element moved in JS. */
+.tabs__ink {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: transform var(--dur-3) var(--ease-expo),
+    width var(--dur-3) var(--ease-expo);
+  pointer-events: none;
+}
+
+/* ---- Tooltip (charts) ------------------------------------------------- */
+.tip {
+  position: fixed;
+  z-index: 80;
+  pointer-events: none;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  line-height: 1.4;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transform: translate(-50%, -8px) scale(0.96);
+  transition: opacity var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
+  max-width: 22ch;
+  box-shadow: 0 8px 24px rgba(28, 25, 22, 0.18);
+}
+.tip[data-open] { opacity: 1; transform: translate(-50%, -12px) scale(1); }
+.tip strong { color: var(--paper); }
+.tip em { color: var(--accent-tint); font-style: normal; }
+
+/* ---- View-transition tuning ------------------------------------------ */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-3);
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] { opacity: 1; transform: none; }
+  .reveal-line > span { transform: none !important; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}

@@ -1,0 +1,119 @@
+---
+/**
+ * SignalMatrix — a dot-matrix of a multi-signal scoring framework. Each cell
+ * is one signal; the first `activeCount` light up (accent) to show the
+ * overlap that defines a ring. Monochrome + accent. Active cells carry a
+ * filled marker AND bolder label, so coverage reads in grayscale. Cells
+ * light up in sequence on first view.
+ */
+interface Props {
+  label: string;
+  signals: string[];
+  activeCount?: number;
+  caption?: string;
+  context?: string;
+}
+const { label, signals, activeCount, caption, context } = Astro.props;
+const active = activeCount ?? signals.length;
+const total = signals.length;
+const text = `${label}: ${total} signals${
+  activeCount !== undefined ? `, ${active} shared` : ""
+}.${caption ? " " + caption : ""}`;
+---
+
+<figure class="sm" data-reveal aria-label={text}>
+  <div class="sm__head">
+    <span class="label">{label}</span>
+    <span class="mono sm__count">
+      <span class="sm__count-on">{active}</span><span class="sm__count-sep"
+        >/</span
+      >{total} signals
+    </span>
+  </div>
+
+  <ul class="sm__grid" role="list">
+    {
+      signals.map((name, i) => (
+        <li
+          class:list={["sm__cell", { "sm__cell--on": i < active }]}
+          style={`--i:${i}`}
+        >
+          <span class="sm__dot" aria-hidden="true" />
+          <span class="mono sm__name">{name}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  {caption && <figcaption class="sm__caption">{caption}</figcaption>}
+  {context && <p class="sm__context">{context}</p>}
+</figure>
+
+<style>
+  .sm { display: flex; flex-direction: column; gap: var(--space-4); }
+  .sm__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-bottom: var(--hair) solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+  .sm__count { font-size: var(--step--1); color: var(--muted); }
+  .sm__count-on { color: var(--accent); font-weight: 600; }
+  .sm__count-sep { color: var(--faint); margin-inline: 0.1em; }
+
+  .sm__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: var(--space-2) var(--space-4);
+  }
+  .sm__cell {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-block: var(--space-1);
+  }
+  .sm__dot {
+    flex: none;
+    width: 0.62rem;
+    height: 0.62rem;
+    border-radius: 1px;
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+    background: transparent;
+    transition: background var(--dur-2) var(--ease-out),
+      box-shadow var(--dur-2) var(--ease-out),
+      transform var(--dur-2) var(--ease-out);
+    transform: scale(0.6);
+  }
+  .sm__cell--on .sm__dot {
+    background: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  :global([data-revealed]) .sm__dot { transform: scale(1); }
+  /* Sequential light-up, capped so long lists don't drag. */
+  .sm__cell { transition-delay: 0ms; }
+  :global([data-revealed]) .sm__cell--on .sm__dot {
+    transition-delay: calc(min(var(--i), 16) * 45ms);
+  }
+
+  .sm__name {
+    font-size: var(--step--2);
+    color: var(--faint);
+    line-height: 1.3;
+  }
+  .sm__cell--on .sm__name { color: var(--ink); font-weight: 500; }
+
+  .sm__caption {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    max-width: 52ch;
+    line-height: var(--leading-snug);
+  }
+  .sm__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 48ch;
+    line-height: var(--leading-snug);
+  }
+</style>

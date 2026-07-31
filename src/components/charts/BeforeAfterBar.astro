@@ -1,0 +1,134 @@
+---
+/**
+ * BeforeAfterBar — two horizontal bars comparing a before vs. after state.
+ * Direct-labeled, no legend. The winning state is filled accent + marked;
+ * the other is an outlined (hollow) bar so the contrast also survives
+ * grayscale. Bars draw in once on first view.
+ */
+interface Leg {
+  label: string;
+  value: number;
+  unit?: string;
+  display?: string;
+}
+interface Props {
+  label: string;
+  before: Leg;
+  after: Leg;
+  betterWhen?: "lower" | "higher";
+  context?: string;
+}
+const { label, before, after, betterWhen = "lower", context } = Astro.props;
+
+const max = Math.max(before.value, after.value) || 1;
+const pct = (v: number) => Math.max((v / max) * 100, 1.5);
+
+// Which leg is the win?
+const afterWins =
+  betterWhen === "lower" ? after.value <= before.value : after.value >= before.value;
+
+const fmt = (l: Leg) =>
+  l.display ?? `${l.value}${l.unit ? " " + l.unit : ""}`;
+
+// One summarizing figure: percent change from before → after.
+const change = before.value !== 0
+  ? Math.round(((after.value - before.value) / before.value) * 100)
+  : 0;
+const changeText = `${change > 0 ? "+" : ""}${change}%`;
+
+const rows = [
+  { ...before, w: pct(before.value), win: !afterWins, role: "before" },
+  { ...after, w: pct(after.value), win: afterWins, role: "after" },
+];
+
+const text = `${label}. ${before.label}: ${fmt(before)}; ${after.label}: ${fmt(after)} (${changeText}).`;
+---
+
+<figure class="ba" data-reveal aria-label={text}>
+  <div class="ba__head">
+    <span class="label">{label}</span>
+    <span class="mono ba__change">{changeText}</span>
+  </div>
+
+  <div class="ba__rows">
+    {
+      rows.map((r) => (
+        <div class:list={["ba__row", { "ba__row--win": r.win }]}>
+          <span class="mono ba__rowlabel">{r.label}</span>
+          <div class="ba__track">
+            <span class="ba__bar" style={`--w:${r.w}%`} />
+            <span class="mono ba__val">{fmt(r)}</span>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  {context && <figcaption class="ba__context">{context}</figcaption>}
+</figure>
+
+<style>
+  .ba { display: flex; flex-direction: column; gap: var(--space-4); }
+  .ba__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-bottom: var(--hair) solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+  .ba__change {
+    font-size: var(--step-1);
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+  .ba__rows { display: flex; flex-direction: column; gap: var(--space-4); }
+  .ba__row { display: flex; flex-direction: column; gap: var(--space-2); }
+  .ba__rowlabel {
+    font-size: var(--step--2);
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .ba__track {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .ba__bar {
+    height: 1.15rem;
+    width: var(--w);
+    flex: none;
+    border-radius: 1px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-4) var(--ease-draw);
+    /* Losing/before bar: hollow, hairline outline. */
+    background: var(--paper-sunk);
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+  }
+  /* Winning bar: solid accent (also the only filled one → grayscale-safe). */
+  .ba__row--win .ba__bar {
+    background: var(--accent);
+    box-shadow: none;
+  }
+  :global([data-revealed]) .ba__bar { transform: scaleX(1); }
+  /* Slight stagger: after bar draws just behind the before bar. */
+  .ba__rows .ba__row:nth-child(2) .ba__bar { transition-delay: 90ms; }
+
+  .ba__val {
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .ba__row--win .ba__val { color: var(--accent); font-weight: 600; }
+
+  .ba__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 46ch;
+    line-height: var(--leading-snug);
+  }
+</style>

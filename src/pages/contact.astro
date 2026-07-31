@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../components/layout/BaseLayout.astro";
+import { site } from "../data/site";
+---
+
+<BaseLayout
+  title="Contact"
+  description="Reach Hani Yacoub — fraud-prevention & AI-abuse analyst, Berlin."
+>
+  <section class="section ct">
+    <div class="wrap">
+      <span class="label" data-reveal>Contact</span>
+      <h1 class="ct__line reveal-lines">
+        <span class="reveal-line"><span>If you're weighing a hire,</span></span>
+        <span class="reveal-line"><span>a problem, or an argument</span></span>
+        <span class="reveal-line"><span>about a <em>threshold</em> —</span></span>
+        <span class="reveal-line"><span>I'm reachable, and I answer.</span></span>
+      </h1>
+
+      <div class="ct__links" data-reveal data-reveal-delay="120">
+        <a class="ct__link" href={`mailto:${site.email}`} data-magnetic="0.3">
+          <span class="label">Email</span>
+          <span class="mono ct__value">{site.email}</span>
+        </a>
+        <a
+          class="ct__link"
+          href={site.linkedin}
+          rel="me noopener"
+          target="_blank"
+          data-magnetic="0.3"
+        >
+          <span class="label">LinkedIn</span>
+          <span class="mono ct__value">{site.linkedinLabel}</span>
+        </a>
+        <div class="ct__link">
+          <span class="label">Based in</span>
+          <span class="mono ct__value ct__value--static">{site.location}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ct { min-height: 60vh; display: flex; align-items: center; }
+  .ct__line {
+    font-family: var(--font-display);
+    font-size: var(--step-5);
+    font-weight: 520;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    max-width: 18ch;
+    margin-top: var(--space-4);
+  }
+  .ct__line em { font-style: italic; color: var(--accent); }
+  .ct__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    margin-top: var(--space-9);
+  }
+  .ct__link { display: flex; flex-direction: column; gap: var(--space-2); text-decoration: none; color: var(--ink); }
+  .ct__value {
+    font-size: var(--step-1);
+    border-bottom: var(--hair) solid var(--line-strong);
+    padding-bottom: var(--space-1);
+    transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+  }
+  a.ct__link:hover .ct__value { color: var(--accent); border-color: var(--accent); }
+  .ct__value--static { border-color: transparent; color: var(--muted); }
+</style>

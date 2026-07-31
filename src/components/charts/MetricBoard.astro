@@ -1,0 +1,97 @@
+---
+/**
+ * MetricBoard — lays out a project's metrics. Compact figures (stat, delta)
+ * group into a multi-column row so a set of headline numbers reads as one
+ * unit; wide charts each get their own full-width block with breathing room.
+ * Keeps each figure a considered object, never a crammed dashboard.
+ */
+import type { Metric } from "../../content/config";
+import MetricFigure from "./MetricFigure.astro";
+
+interface Props {
+  metrics: Metric[];
+}
+const { metrics } = Astro.props;
+
+const COMPACT = new Set(["stat", "delta"]);
+// These viz need the full content width to breathe.
+const FULL = new Set(["relations-graph", "abuse-chain", "coverage-gap", "line"]);
+
+// Collapse consecutive compact metrics into grouped rows; wide ones stand alone.
+type Block =
+  | { kind: "row"; items: Metric[] }
+  | { kind: "wide"; item: Metric }
+  | { kind: "full"; item: Metric };
+
+const blocks: Block[] = [];
+for (const m of metrics) {
+  if (COMPACT.has(m.chart)) {
+    const last = blocks[blocks.length - 1];
+    if (last && last.kind === "row") last.items.push(m);
+    else blocks.push({ kind: "row", items: [m] });
+  } else if (FULL.has(m.chart)) {
+    blocks.push({ kind: "full", item: m });
+  } else {
+    blocks.push({ kind: "wide", item: m });
+  }
+}
+---
+
+{
+  metrics.length > 0 && (
+    <div class="board">
+      {blocks.map((block) =>
+        block.kind === "row" ? (
+          <div class="board__row" data-count={block.items.length}>
+            {block.items.map((m) => (
+              <MetricFigure metric={m} />
+            ))}
+          </div>
+        ) : block.kind === "full" ? (
+          <div class="board__full">
+            <MetricFigure metric={block.item} />
+          </div>
+        ) : (
+          <div class="board__wide">
+            <MetricFigure metric={block.item} />
+          </div>
+        ),
+      )}
+    </div>
+  )
+}
+
+<style>
+  .board {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .board__row {
+    display: grid;
+    gap: var(--space-6) var(--space-7);
+    grid-template-columns: 1fr;
+  }
+  /* Two-up from sm, three-up only when there are 3+ figures. */
+  @media (min-width: 34rem) {
+    .board__row[data-count="2"],
+    .board__row[data-count="3"],
+    .board__row[data-count="4"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 52rem) {
+    .board__row[data-count="3"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .board__row[data-count="4"] {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .board__wide {
+    max-width: 44rem;
+  }
+  .board__full {
+    width: 100%;
+  }
+</style>

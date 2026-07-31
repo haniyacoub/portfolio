@@ -1,0 +1,114 @@
+---
+/**
+ * ProportionBar — one 100%-width bar showing a single proportion. The
+ * proportion is accent, the remainder a faint inert gray, the percentage
+ * stated as a numeral. Direct-labeled, no legend. Fill draws in on view.
+ */
+interface Props {
+  label: string;
+  value: number; // 0–100
+  of: string; // denominator phrase, e.g. "of ring members"
+  remainderLabel?: string;
+  context?: string;
+}
+const { label, value, of, remainderLabel, context } = Astro.props;
+const v = Math.max(0, Math.min(100, value));
+const text = `${label}: ${v}% ${of}.${context ? " " + context : ""}`;
+---
+
+<figure class="prop" data-reveal aria-label={text}>
+  <div class="prop__head">
+    <span class="label">{label}</span>
+    <span class="mono prop__pct">
+      <span data-countup={v} data-decimals="0">{v}</span><span class="prop__sign"
+        >%</span
+      >
+    </span>
+  </div>
+
+  <div class="prop__track" role="presentation">
+    <span
+      class="prop__fill"
+      style={`--v:${v}%`}
+      data-tip={`<strong>${v}%</strong> <em>${of}</em>`}
+    ></span>
+    <span
+      class="prop__rest"
+      style={`left:${v}%`}
+      data-tip={`<strong>${100 - v}%</strong> ${remainderLabel ?? "remainder"}`}
+    ></span>
+  </div>
+
+  <div class="prop__labels">
+    <span class="mono prop__of">{of}</span>
+    {remainderLabel && <span class="mono prop__rem">{remainderLabel}</span>}
+  </div>
+
+  {context && <figcaption class="prop__context">{context}</figcaption>}
+</figure>
+
+<style>
+  .prop { display: flex; flex-direction: column; gap: var(--space-3); }
+  .prop__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .prop__pct {
+    font-size: var(--figure-md);
+    font-weight: 560;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .prop__sign { font-size: 0.5em; font-weight: 500; margin-left: 0.1em; }
+
+  .prop__track {
+    position: relative;
+    width: 100%;
+    height: 1.35rem;
+    background: var(--paper-sunk);
+    border-radius: 1px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .prop__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--v);
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-4) var(--ease-draw),
+      filter var(--dur-1) var(--ease-out);
+    border-radius: 1px;
+    cursor: pointer;
+  }
+  :global([data-revealed]) .prop__fill { transform: scaleX(1); }
+  .prop__fill:hover { filter: brightness(1.12); }
+  /* Invisible hit-area over the remainder, for its tooltip. */
+  .prop__rest {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
+  }
+
+  .prop__labels {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    font-size: var(--step--2);
+  }
+  .prop__of { color: var(--accent-deep); }
+  .prop__rem { color: var(--faint); }
+  .prop__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 46ch;
+    line-height: var(--leading-snug);
+    margin-top: var(--space-1);
+  }
+</style>

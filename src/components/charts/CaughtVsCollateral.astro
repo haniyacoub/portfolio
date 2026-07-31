@@ -1,0 +1,123 @@
+---
+/**
+ * CaughtVsCollateral — Hani's signature visual. A large "caught" value set
+ * against a near-zero "collateral / false positives" value on a shared
+ * scale, so the precision point is the picture: catch the abuse without
+ * hurting legitimate customers. Caught = accent; collateral = ink. The size
+ * gap carries the meaning (grayscale-safe). A zero collateral still shows a
+ * visible marker so "0" never disappears.
+ */
+interface Leg {
+  label: string;
+  value: number;
+  unit?: string;
+  display?: string;
+}
+interface Props {
+  label: string;
+  caught: Leg;
+  collateral: Leg;
+  context?: string;
+}
+const { label, caught, collateral, context } = Astro.props;
+
+const max = Math.max(caught.value, collateral.value) || 1;
+const wCaught = Math.max((caught.value / max) * 100, 2);
+const wColl = (collateral.value / max) * 100; // can be ~0
+
+const fmt = (l: Leg) => l.display ?? `${l.value}${l.unit ? " " + l.unit : ""}`;
+const text = `${label}. ${caught.label}: ${fmt(caught)}; ${collateral.label}: ${fmt(collateral)}.`;
+---
+
+<figure class="cvc" data-reveal aria-label={text}>
+  <span class="label">{label}</span>
+
+  <div class="cvc__rows">
+    <div class="cvc__row cvc__row--caught">
+      <div class="cvc__meta">
+        <span class="mono cvc__rowlabel">{caught.label}</span>
+        <span class="mono cvc__val cvc__val--caught">{fmt(caught)}</span>
+      </div>
+      <div class="cvc__track">
+        <span class="cvc__bar cvc__bar--caught" style={`--w:${wCaught}%`}></span>
+      </div>
+    </div>
+
+    <div class="cvc__row cvc__row--coll">
+      <div class="cvc__meta">
+        <span class="mono cvc__rowlabel">{collateral.label}</span>
+        <span class="mono cvc__val cvc__val--coll">{fmt(collateral)}</span>
+      </div>
+      <div class="cvc__track">
+        <span class="cvc__bar cvc__bar--coll" style={`--w:${wColl}%`}></span>
+        {wColl < 1 && <span class="cvc__zero" aria-hidden="true"></span>}
+      </div>
+    </div>
+  </div>
+
+  {context && <figcaption class="cvc__context">{context}</figcaption>}
+</figure>
+
+<style>
+  .cvc { display: flex; flex-direction: column; gap: var(--space-4); }
+  .cvc__rows { display: flex; flex-direction: column; gap: var(--space-5); }
+  .cvc__row { display: flex; flex-direction: column; gap: var(--space-2); }
+  .cvc__meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .cvc__rowlabel {
+    font-size: var(--step--2);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  .cvc__val { font-size: var(--step-1); font-weight: 600; }
+  .cvc__val--caught { color: var(--accent); }
+  .cvc__val--coll { color: var(--ink); }
+
+  .cvc__track {
+    position: relative;
+    width: 100%;
+    height: 1.5rem;
+    border-bottom: var(--hair) solid var(--line);
+  }
+  .cvc__bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    width: var(--w);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-4) var(--ease-draw);
+    border-radius: 1px 1px 0 0;
+  }
+  .cvc__bar--caught { background: var(--accent); }
+  .cvc__bar--coll { background: var(--ink); }
+  :global([data-revealed]) .cvc__bar { transform: scaleX(1); }
+  .cvc__row--coll .cvc__bar { transition-delay: 140ms; }
+
+  /* Marker so a zero/near-zero collateral bar still reads as present. */
+  .cvc__zero {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--ink);
+    opacity: 0;
+    transition: opacity var(--dur-2) var(--ease-out) 320ms;
+    border-radius: 1px;
+  }
+  :global([data-revealed]) .cvc__zero { opacity: 1; }
+
+  .cvc__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 48ch;
+    line-height: var(--leading-snug);
+  }
+</style>

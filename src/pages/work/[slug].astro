@@ -1,0 +1,354 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../components/layout/BaseLayout.astro";
+import MetricBoard from "../../components/charts/MetricBoard.astro";
+
+export async function getStaticPaths() {
+  const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
+    (a, b) => a.data.order - b.data.order,
+  );
+  return works.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      prev: works[i - 1] ?? null,
+      next: works[i + 1] ?? null,
+    },
+  }));
+}
+
+const { entry, prev, next } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+---
+
+<BaseLayout title={data.title} description={data.summary} ogType="article">
+  <article class="case">
+    <div class="wrap">
+      <a class="case__back mono" href="/#work">
+        <span class="case__back-arrow" aria-hidden="true">←</span> Selected work
+      </a>
+    </div>
+
+    <!-- Header -->
+    <header class="case__header wrap">
+      <div class="case__meta">
+        <span class="label">{data.theme}</span>
+        <span class="mono case__period">{data.period}</span>
+      </div>
+      <h1 class="case__title">{data.title}</h1>
+      <p class="case__summary">{data.summary}</p>
+      <p class="mono case__role">{data.role}</p>
+    </header>
+
+    <!-- Impact lead — Amazon-style: state the measurable result first. -->
+    {
+      data.impact && (
+        <section class="case__impact wrap" aria-label="Impact">
+          <span class="label case__impact-label">Impact</span>
+          <p class="case__impact-text" set:html={data.impact} />
+        </section>
+      )
+    }
+
+    <!-- Metrics board: the figures carry the visual weight -->
+    {
+      data.metrics.length > 0 && (
+        <section class="case__figures wrap" aria-label="Key results">
+          <MetricBoard metrics={data.metrics} />
+        </section>
+      )
+    }
+
+    <!-- Context / Contribution / Outcome -->
+    <section class="case__cco wrap" aria-label="Case summary">
+      <div class="case__cco-item">
+        <span class="label">Context</span>
+        <p>{data.context}</p>
+      </div>
+      <div class="case__cco-item">
+        <span class="label">What I did</span>
+        <p>{data.contribution}</p>
+      </div>
+      <div class="case__cco-item case__cco-item--out">
+        <span class="label">Outcome</span>
+        <p>{data.outcome}</p>
+      </div>
+    </section>
+
+    <!-- Counterfactual — what would have happened without the work. -->
+    {
+      data.counterfactual && (
+        <section class="case__cf wrap" aria-label="What would have happened">
+          <span class="label case__cf-label">Without this work</span>
+          <p class="case__cf-text" set:html={data.counterfactual} />
+        </section>
+      )
+    }
+
+    <!-- Long-form body -->
+    <div class="case__body wrap">
+      <div class="prose">
+        <Content />
+      </div>
+
+      {
+        data.tags.length > 0 && (
+          <ul class="case__tags" role="list" aria-label="Tags">
+            {data.tags.map((t) => (
+              <li class="mono case__tag">{t}</li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <!-- Prev / next -->
+    {
+      (prev || next) && (
+        <nav class="case__nav wrap" aria-label="More work">
+          <hr class="rule" />
+          <div class="case__nav-row">
+            {prev ? (
+              <a class="case__navlink case__navlink--prev" href={`/work/${prev.id}`}>
+                <span class="label">Previous</span>
+                <span class="case__navlink-title">{prev.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {next ? (
+              <a class="case__navlink case__navlink--next" href={`/work/${next.id}`}>
+                <span class="label">Next</span>
+                <span class="case__navlink-title">{next.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+          </div>
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .case { padding-top: var(--space-7); }
+
+  .case__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--step--1);
+    text-decoration: none;
+    color: var(--muted);
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .case__back:hover { color: var(--accent); }
+  .case__back-arrow {
+    transition: transform var(--dur-2) var(--ease-out);
+    display: inline-block;
+  }
+  .case__back:hover .case__back-arrow { transform: translateX(-3px); }
+
+  /* ---- Header ---- */
+  .case__header { margin-top: var(--space-6); }
+  .case__meta {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .case__period { font-size: var(--step--2); color: var(--faint); }
+  .case__title {
+    font-size: var(--step-5);
+    font-weight: 540;
+    line-height: var(--leading-tight);
+    letter-spacing: -0.035em;
+    max-width: 18ch;
+  }
+  .case__summary {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 420;
+    color: var(--ink-soft);
+    line-height: var(--leading-snug);
+    letter-spacing: -0.02em;
+    max-width: 44ch;
+    margin-top: var(--space-5);
+  }
+  .case__role {
+    font-size: var(--step--1);
+    color: var(--muted);
+    margin-top: var(--space-5);
+  }
+
+  /* ---- Impact lead (Amazon: result first) ---- */
+  .case__impact {
+    margin-top: var(--space-8);
+    padding: var(--space-6) 0 var(--space-6) var(--space-6);
+    border-left: 3px solid var(--accent);
+    max-width: 52rem;
+  }
+  .case__impact-label { color: var(--accent); }
+  .case__impact-text {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 460;
+    line-height: var(--leading-snug);
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-top: var(--space-3);
+    max-width: 44ch;
+  }
+  .case__impact-text :global(strong) { color: var(--accent); font-weight: 560; }
+
+  /* ---- Counterfactual ---- */
+  .case__cf {
+    margin-top: var(--space-8);
+    padding: var(--space-5) var(--space-6);
+    border: var(--hair) dashed var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--paper-raised);
+    max-width: 52rem;
+  }
+  .case__cf-label { color: var(--steel); }
+  .case__cf-text {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    line-height: var(--leading-body);
+    margin-top: var(--space-2);
+    max-width: 52ch;
+  }
+  .case__cf-text :global(strong) { color: var(--ink); font-weight: 600; }
+
+  /* ---- Figures ---- */
+  .case__figures {
+    margin-top: var(--space-8);
+    padding-top: var(--space-7);
+    border-top: var(--hair) solid var(--line);
+  }
+
+  /* ---- Context / Contribution / Outcome ---- */
+  .case__cco {
+    margin-top: var(--space-8);
+    display: grid;
+    gap: var(--space-7);
+  }
+  @media (min-width: 52rem) {
+    .case__cco { grid-template-columns: repeat(3, 1fr); gap: var(--space-7); }
+  }
+  .case__cco-item { display: flex; flex-direction: column; gap: var(--space-3); }
+  .case__cco-item p {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    line-height: var(--leading-body);
+    max-width: 42ch;
+  }
+  .case__cco-item--out p { color: var(--ink); }
+  /* Accent the outcome label — it's the payoff. */
+  .case__cco-item--out .label { color: var(--accent); }
+
+  /* ---- Body / prose ---- */
+  .case__body { margin-top: var(--space-8); }
+  .case__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    margin-top: var(--space-8);
+    max-width: var(--measure);
+  }
+  .case__tag {
+    font-size: var(--step--2);
+    color: var(--muted);
+    border: var(--hair) solid var(--line-strong);
+    border-radius: 100px;
+    padding: 0.25em 0.85em;
+  }
+
+  /* ---- Prev / next ---- */
+  .case__nav { margin-top: var(--space-9); }
+  .case__nav-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+    padding-top: var(--space-6);
+  }
+  .case__navlink {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-decoration: none;
+    color: var(--ink-soft);
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .case__navlink--next { text-align: right; align-items: flex-end; }
+  .case__navlink-title {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 520;
+    letter-spacing: -0.02em;
+    line-height: var(--leading-snug);
+    max-width: 24ch;
+  }
+  .case__navlink:hover { color: var(--accent); }
+</style>
+
+<style is:global>
+  /* Prose: tight measure, baseline rhythm, considered links + hairlines. */
+  .prose {
+    max-width: var(--measure);
+    font-size: var(--step-1);
+    line-height: var(--leading-body);
+    color: var(--ink-soft);
+  }
+  .prose > * + * { margin-top: 1.2em; }
+  .prose p { max-width: 65ch; }
+  /* Editorial drop cap on the opening paragraph — Fraunces, optically set. */
+  .prose > p:first-of-type::first-letter {
+    font-family: var(--font-display);
+    font-weight: 560;
+    float: left;
+    font-size: 3.2em;
+    line-height: 0.8;
+    padding-right: 0.1em;
+    margin-top: 0.04em;
+    color: var(--accent);
+  }
+  .prose strong { color: var(--ink); font-weight: 600; }
+  .prose em { font-style: italic; }
+  .prose a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+  }
+  .prose h2 {
+    font-size: var(--step-2);
+    margin-top: 1.8em;
+    max-width: 28ch;
+  }
+  .prose h3 {
+    font-size: var(--step-1);
+    margin-top: 1.6em;
+  }
+  .prose blockquote {
+    border-left: 2px solid var(--accent);
+    padding-left: var(--space-5);
+    margin-inline: 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-2);
+    color: var(--ink);
+  }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    background: var(--paper-raised);
+    padding: 0.15em 0.4em;
+    border-radius: var(--radius-xs);
+  }
+  .prose ul, .prose ol { padding-left: 1.4em; }
+  .prose li + li { margin-top: 0.5em; }
+  .prose hr { border: 0; border-top: var(--hair) solid var(--line); margin-block: 2em; }
+</style>

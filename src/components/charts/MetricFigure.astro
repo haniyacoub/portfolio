@@ -1,0 +1,38 @@
+---
+/**
+ * MetricFigure — the registry that turns a content `metric` into the right
+ * bespoke chart. This is the seam that lets the data drive the viz: a new
+ * project's frontmatter picks a `chart` key and the matching component
+ * renders automatically. To add a new chart SHAPE, build it in this folder
+ * and register one branch here.
+ */
+import type { Metric } from "../../content/config";
+import StatBlock from "./StatBlock.astro";
+import DeltaStat from "./DeltaStat.astro";
+import BeforeAfterBar from "./BeforeAfterBar.astro";
+import ProportionBar from "./ProportionBar.astro";
+import CaughtVsCollateral from "./CaughtVsCollateral.astro";
+import SignalMatrix from "./SignalMatrix.astro";
+import Timeline from "./Timeline.astro";
+import RelationsGraph from "./RelationsGraph.astro";
+import AbuseChain from "./AbuseChain.astro";
+import CoverageGap from "./CoverageGap.astro";
+import LineChart from "./LineChart.astro";
+
+interface Props {
+  metric: Metric;
+}
+const { metric } = Astro.props;
+---
+
+{metric.chart === "stat" && <StatBlock {...metric} />}
+{metric.chart === "delta" && <DeltaStat {...metric} />}
+{metric.chart === "before-after" && <BeforeAfterBar {...metric} />}
+{metric.chart === "proportion" && <ProportionBar {...metric} />}
+{metric.chart === "caught-vs-collateral" && <CaughtVsCollateral {...metric} />}
+{metric.chart === "signal-matrix" && <SignalMatrix {...metric} />}
+{metric.chart === "timeline" && <Timeline {...metric} />}
+{metric.chart === "relations-graph" && <RelationsGraph {...metric} />}
+{metric.chart === "abuse-chain" && <AbuseChain {...metric} />}
+{metric.chart === "coverage-gap" && <CoverageGap {...metric} />}
+{metric.chart === "line" && <LineChart {...metric} />}

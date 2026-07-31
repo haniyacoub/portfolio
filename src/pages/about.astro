@@ -1,0 +1,131 @@
+---
+import BaseLayout from "../components/layout/BaseLayout.astro";
+import Timeline from "../components/charts/Timeline.astro";
+import { career, markets, stack } from "../data/profile";
+---
+
+<BaseLayout
+  title="About"
+  description="Hani Yacoub — a fraud-prevention and AI-abuse analyst who cares as much about the customers a system wrongly accuses as the ones it rightly catches."
+>
+  <section class="section">
+    <div class="wrap ab__inner">
+      <div class="ab__lead" data-reveal>
+        <span class="label">About</span>
+        <h1 class="ab__statement">
+          I care as much about the customers a system wrongly accuses as the ones
+          it rightly catches.
+        </h1>
+      </div>
+
+      <div class="ab__body" data-reveal data-reveal-delay="120">
+        <p>
+          German-Jordanian, Berlin-based, working in Arabic, German, and English.
+          Six years across four sectors — cloud, fashion, automotive, energy —
+          taught me the same lesson in four dialects: the expensive errors in
+          abuse prevention are rarely the cases you miss. They're the legitimate
+          people you break in the process, and the trust you spend doing it.
+        </p>
+        <p>
+          So I work the precision/recall trade-off as the actual job, not a
+          footnote to it. That means treating a flag as a hypothesis to disprove,
+          building carve-out gates before bulk actions, refusing to ship a recall
+          gain that's quietly paid for in false positives I'm not looking at, and
+          measuring whether a control worked with a holdout rather than a
+          flattering before/after. I have a genuine streak of epistemic
+          skepticism — I'd rather know <em>why</em> a number is true than be
+          reassured that it is — and in this work that's a feature, not a quirk.
+        </p>
+        <p>
+          At AWS I build the infrastructure, the methodology, and the
+          deliverables: a data-access layer the investigations run on, LLM agents
+          that argue their way to defensible answers, a whole-population relations
+          graph that makes rings visible, and root-cause work that reads
+          production code to settle a question rather than guessing at it. At
+          Zalando I owned fraud metrics for business reviews and built the
+          Remaining Fraud Damage measure across six European markets. The toolkit
+          is ordinary; the discipline is the point.
+        </p>
+      </div>
+    </div>
+
+    <div class="wrap ab__arc">
+      <Timeline label="The arc" items={[...career]} />
+    </div>
+
+    <div class="wrap ab__grid">
+      <div class="ab__col" data-reveal>
+        <span class="label">Markets covered</span>
+        <p class="ab__markets mono">{markets.join(" · ")}</p>
+        <p class="ab__note">
+          Zalando Risk &amp; Abuse fraud analytics, top six European markets.
+        </p>
+      </div>
+      <div class="ab__col" data-reveal data-reveal-delay="90">
+        <span class="label">Stack</span>
+        <ul class="ab__stack" role="list">
+          {stack.map((s) => <li class="mono ab__tool">{s}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ab__inner { display: grid; gap: var(--space-7); }
+  @media (min-width: 52rem) {
+    .ab__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: var(--space-9);
+    }
+  }
+  .ab__lead { display: flex; flex-direction: column; gap: var(--space-4); }
+  .ab__statement {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    font-weight: 520;
+    line-height: var(--leading-tight);
+    letter-spacing: -0.035em;
+    max-width: 17ch;
+  }
+  .ab__body { display: flex; flex-direction: column; gap: var(--space-5); }
+  .ab__body p {
+    font-size: var(--step-1);
+    line-height: var(--leading-body);
+    color: var(--ink-soft);
+    max-width: 58ch;
+  }
+  .ab__body em { font-style: italic; color: var(--ink); }
+
+  .ab__arc {
+    margin-top: clamp(3rem, 2rem + 5vw, 5rem);
+    padding-top: var(--space-7);
+    border-top: var(--hair) solid var(--line);
+  }
+
+  .ab__grid {
+    margin-top: var(--space-8);
+    display: grid;
+    gap: var(--space-7);
+  }
+  @media (min-width: 46rem) {
+    .ab__grid { grid-template-columns: 1fr 1.4fr; gap: var(--space-9); }
+  }
+  .ab__col { display: flex; flex-direction: column; gap: var(--space-3); }
+  .ab__markets {
+    font-size: var(--step-2);
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+  .ab__note { font-size: var(--step--1); color: var(--muted); max-width: 30ch; }
+  .ab__stack { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
+  .ab__tool {
+    font-size: var(--step--2);
+    color: var(--muted);
+    border: var(--hair) solid var(--line-strong);
+    border-radius: 100px;
+    padding: 0.3em 0.9em;
+    transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+  }
+  .ab__tool:hover { border-color: var(--accent); color: var(--ink); }
+</style>

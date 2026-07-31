@@ -1,0 +1,137 @@
+---
+/**
+ * LineChart — a minimal SVG line for a decay / survival / trend series. One
+ * accent line (the one that matters), an optional steel baseline for contrast,
+ * direct end-labels instead of a legend, hairline axis. The accent line draws
+ * itself in on first view. Grayscale-safe (accent solid vs steel dashed).
+ */
+interface Props {
+  label: string;
+  points: number[]; // primary series, evenly spaced on x
+  baseline?: number[]; // optional comparison series (steel, dashed)
+  seriesLabel?: string;
+  baselineLabel?: string;
+  xLabel?: string;
+  yLabel?: string;
+  caption?: string;
+  context?: string;
+}
+const {
+  label,
+  points,
+  baseline,
+  seriesLabel,
+  baselineLabel,
+  xLabel,
+  yLabel,
+  caption,
+  context,
+} = Astro.props;
+
+const W = 640, H = 280, PAD = 28, PADR = 56, PADB = 26;
+const all = [...points, ...(baseline ?? [])];
+const min = Math.min(...all);
+const max = Math.max(...all);
+const span = max - min || 1;
+const n = points.length;
+const sx = (i: number, len: number) =>
+  PAD + (i / (len - 1 || 1)) * (W - PAD - PADR);
+const sy = (v: number) => PAD + (1 - (v - min) / span) * (H - PAD - PADB);
+
+const toPath = (arr: number[]) =>
+  arr.map((v, i) => `${i === 0 ? "M" : "L"}${sx(i, arr.length).toFixed(1)},${sy(v).toFixed(1)}`).join(" ");
+
+const primaryPath = toPath(points);
+const basePath = baseline ? toPath(baseline) : "";
+const endY = sy(points[n - 1]);
+const baseEndY = baseline ? sy(baseline[baseline.length - 1]) : 0;
+const text = `${label}. ${seriesLabel ?? "Series"} from ${points[0]} to ${points[n - 1]}${baseline ? `, against ${baselineLabel ?? "baseline"}` : ""}.${caption ? " " + caption : ""}`;
+---
+
+<figure class="lc" data-reveal aria-label={text}>
+  <div class="lc__head">
+    <span class="label">{label}</span>
+    {yLabel && <span class="mono lc__axis-y">{yLabel}</span>}
+  </div>
+
+  <svg class="lc__svg" viewBox={`0 0 ${W} ${H}`} role="img" preserveAspectRatio="xMidYMid meet">
+    <!-- baseline / zero axis -->
+    <line x1={PAD} y1={H - PADB} x2={W - PADR} y2={H - PADB} stroke="var(--line)" stroke-width="1" />
+
+    {baseline && (
+      <>
+        <path d={basePath} fill="none" stroke="var(--steel)" stroke-width="2"
+          stroke-dasharray="3 4" stroke-linecap="round" opacity="0.85" />
+        {baselineLabel && (
+          <text x={W - PADR + 6} y={baseEndY} class="lc__endlabel lc__endlabel--base"
+            dominant-baseline="middle">{baselineLabel}</text>
+        )}
+      </>
+    )}
+
+    <path class="lc__line" d={primaryPath} fill="none" stroke="var(--accent)"
+      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    <circle class="lc__end" cx={sx(n - 1, n)} cy={endY} r="3.5" fill="var(--accent)" />
+    {seriesLabel && (
+      <text x={W - PADR + 6} y={endY} class="lc__endlabel"
+        dominant-baseline="middle">{seriesLabel}</text>
+    )}
+
+    {xLabel && (
+      <text x={PAD} y={H - 6} class="lc__axis-x">{xLabel}</text>
+    )}
+  </svg>
+
+  {caption && <figcaption class="lc__caption">{caption}</figcaption>}
+  {context && <p class="lc__context">{context}</p>}
+</figure>
+
+<style>
+  .lc { display: flex; flex-direction: column; gap: var(--space-3); }
+  .lc__head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .lc__axis-y { font-size: var(--step--2); color: var(--faint); }
+  .lc__svg { width: 100%; height: auto; overflow: visible; }
+
+  .lc__line {
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset var(--dur-5) var(--ease-draw);
+  }
+  /* fallback: draw using a large dash length; refined by JS to exact length */
+  :global([data-revealed]) .lc__line { stroke-dashoffset: 0; }
+  .lc__end { opacity: 0; transition: opacity var(--dur-2) var(--ease-out) var(--dur-4); }
+  :global([data-revealed]) .lc__end { opacity: 1; }
+
+  .lc__endlabel {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    fill: var(--accent);
+  }
+  .lc__endlabel--base { fill: var(--steel); }
+  .lc__axis-x { font-family: var(--font-mono); font-size: 11px; fill: var(--faint); }
+
+  .lc__caption {
+    font-size: var(--step-0); color: var(--ink-soft);
+    max-width: 56ch; line-height: var(--leading-snug);
+  }
+  .lc__context {
+    font-size: var(--step--1); color: var(--muted);
+    max-width: 52ch; line-height: var(--leading-snug);
+  }
+</style>
+
+<script>
+  // Set each line's exact path length so the draw-in is precise.
+  function measureLines() {
+    document.querySelectorAll<SVGPathElement>(".lc__line:not([data-measured])").forEach((p) => {
+      p.setAttribute("data-measured", "1");
+      const len = p.getTotalLength();
+      p.style.setProperty("--len", String(Math.ceil(len)));
+    });
+  }
+  document.addEventListener("astro:page-load", measureLines);
+  if (document.readyState !== "loading") measureLines();
+</script>

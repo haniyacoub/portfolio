@@ -1,0 +1,397 @@
+---
+/**
+ * RelationsGraph — an interactive whole-population fraud-relations graph.
+ * Accounts are nodes; shared hard signals are edges. Coordinated rings fall
+ * out as dense clusters (oxblood); legitimate accounts scatter (steel/ink).
+ * Hover any node to isolate its component; toggle "rings only" to strip the
+ * legit population. A deterministic, representative graph — the real one runs
+ * on confidential data, so the shape is shown, not the accounts.
+ *
+ * Interactions: hover-isolate + tooltip, rings-only toggle, gentle live drift.
+ * Pauses offscreen; renders a static settled frame under reduced-motion.
+ */
+interface Props {
+  label?: string;
+  caption?: string;
+  context?: string;
+  /** representative scale knobs */
+  population?: number;
+  rings?: number;
+  seed?: number;
+  /** the headline figure to print, e.g. "100%" of a known ring in one cluster */
+  coverage?: string;
+}
+const {
+  label = "Whole-population relations graph",
+  caption,
+  context,
+  population = 150,
+  rings = 4,
+  seed = 7,
+  coverage,
+} = Astro.props;
+const text = `${label}: ${rings} coordinated rings surface as dense clusters within a population of about ${population} accounts.${caption ? " " + caption : ""}`;
+---
+
+<figure
+  class="rg"
+  data-reveal
+  data-graph
+  data-pop={population}
+  data-rings={rings}
+  data-seed={seed}
+  aria-label={text}
+>
+  <div class="rg__head">
+    <span class="label">{label}</span>
+    <div class="rg__tools">
+      {coverage && (
+        <span class="mono rg__cov"><span class="rg__cov-n">{coverage}</span> of a known ring in one cluster</span>
+      )}
+      <button class="rg__toggle mono" type="button" data-rings-only aria-pressed="false">
+        Rings only
+      </button>
+    </div>
+  </div>
+
+  <div class="rg__stage">
+    <canvas class="rg__canvas" data-graph-canvas></canvas>
+    <div class="rg__legend">
+      <span class="mono rg__key"><i class="rg__dot rg__dot--ring"></i>flagged ring</span>
+      <span class="mono rg__key"><i class="rg__dot rg__dot--legit"></i>legitimate</span>
+      <span class="mono rg__key"><i class="rg__dot rg__dot--broker"></i>broker</span>
+    </div>
+  </div>
+
+  {caption && <figcaption class="rg__caption">{caption}</figcaption>}
+  {context && <p class="rg__context">{context}</p>}
+</figure>
+
+<style>
+  .rg { display: flex; flex-direction: column; gap: var(--space-4); }
+  .rg__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    border-bottom: var(--hair) solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+  .rg__tools { display: flex; align-items: center; gap: var(--space-4); }
+  .rg__cov { font-size: var(--step--2); color: var(--muted); }
+  .rg__cov-n { color: var(--accent); font-weight: 600; font-size: 1.15em; }
+  .rg__toggle {
+    appearance: none;
+    background: var(--paper-raised);
+    color: var(--muted);
+    border: var(--hair) solid var(--line-strong);
+    border-radius: 100px;
+    padding: 0.3em 0.9em;
+    font-size: var(--step--2);
+    cursor: pointer;
+    transition: color var(--dur-1) var(--ease-out),
+      border-color var(--dur-1) var(--ease-out),
+      background var(--dur-1) var(--ease-out);
+  }
+  .rg__toggle:hover { color: var(--ink); border-color: var(--muted); }
+  .rg__toggle[aria-pressed="true"] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-tint);
+  }
+
+  .rg__stage {
+    position: relative;
+    width: 100%;
+    height: clamp(300px, 46vw, 460px);
+    border: var(--hair) solid var(--line);
+    border-radius: var(--radius-sm);
+    background:
+      radial-gradient(circle at 50% 40%, rgba(210, 75, 57, 0.05), transparent 60%),
+      var(--paper-raised);
+    overflow: hidden;
+  }
+  .rg__canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; }
+  .rg__legend {
+    position: absolute;
+    left: var(--space-4);
+    bottom: var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .rg__key {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--step--2);
+    color: var(--muted);
+  }
+  .rg__dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .rg__dot--ring { background: var(--accent); }
+  .rg__dot--legit { background: var(--steel); }
+  .rg__dot--broker { background: var(--accent); box-shadow: 0 0 0 2px var(--accent-tint); }
+
+  .rg__caption {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    max-width: 56ch;
+    line-height: var(--leading-snug);
+  }
+  .rg__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 52ch;
+    line-height: var(--leading-snug);
+  }
+</style>
+
+<script>
+  function bootGraphs() {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document
+      .querySelectorAll<HTMLElement>("[data-graph]:not([data-init])")
+      .forEach((root) => {
+        root.setAttribute("data-init", "1");
+        const canvas = root.querySelector<HTMLCanvasElement>("[data-graph-canvas]")!;
+        const ctx = canvas.getContext("2d")!;
+        const toggle = root.querySelector<HTMLButtonElement>("[data-rings-only]")!;
+        const POP = parseInt(root.dataset.pop || "150", 10);
+        const RINGS = parseInt(root.dataset.rings || "4", 10);
+        let SEED = parseInt(root.dataset.seed || "7", 10);
+
+        const css = getComputedStyle(document.documentElement);
+        const col = (n: string, f: string) => (css.getPropertyValue(n) || f).trim();
+        const ACCENT = col("--accent", "#d24b39");
+        const STEEL = col("--steel", "#6f8794");
+        const FAINT = col("--faint", "#64594c");
+        const INK = col("--ink", "#ece4d7");
+
+        // Deterministic PRNG (mulberry32).
+        function rng() {
+          SEED |= 0; SEED = (SEED + 0x6d2b79f5) | 0;
+          let t = Math.imul(SEED ^ (SEED >>> 15), 1 | SEED);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        }
+
+        type N = { x: number; y: number; vx: number; vy: number; ring: number; broker: boolean; r: number; deg: number };
+        let nodes: N[] = [];
+        let edges: [number, number][] = [];
+        let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        function build() {
+          const rect = canvas.getBoundingClientRect();
+          w = rect.width; h = rect.height;
+          canvas.width = Math.max(1, w * dpr);
+          canvas.height = Math.max(1, h * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          nodes = []; edges = [];
+          // Ring cluster centers spread across the stage.
+          const centers: { x: number; y: number }[] = [];
+          for (let r = 0; r < RINGS; r++) {
+            centers.push({ x: w * (0.18 + 0.64 * rng()), y: h * (0.2 + 0.6 * rng()) });
+          }
+          const ringSize = Math.max(6, Math.round((POP * 0.28) / RINGS));
+
+          // Ring nodes — tight clusters, densely interconnected.
+          for (let r = 0; r < RINGS; r++) {
+            const c = centers[r];
+            const start = nodes.length;
+            for (let i = 0; i < ringSize; i++) {
+              const a = rng() * Math.PI * 2, rad = 8 + rng() * 34;
+              nodes.push({ x: c.x + Math.cos(a) * rad, y: c.y + Math.sin(a) * rad, vx: 0, vy: 0, ring: r + 1, broker: false, r: 2.4, deg: 0 });
+            }
+            const end = nodes.length;
+            for (let i = start; i < end; i++)
+              for (let j = i + 1; j < end; j++)
+                if (rng() < 0.5) edges.push([i, j]);
+          }
+          // Legitimate scatter.
+          const legitStart = nodes.length;
+          for (let i = nodes.length; i < POP; i++) {
+            nodes.push({ x: 20 + rng() * (w - 40), y: 20 + rng() * (h - 40), vx: 0, vy: 0, ring: 0, broker: false, r: 1.8, deg: 0 });
+          }
+          // A few sparse legit-legit / coincidental edges (noise).
+          for (let k = 0; k < POP * 0.18; k++) {
+            const a = legitStart + Math.floor(rng() * (nodes.length - legitStart));
+            const b = legitStart + Math.floor(rng() * (nodes.length - legitStart));
+            if (a !== b && Math.hypot(nodes[a].x - nodes[b].x, nodes[a].y - nodes[b].y) < 80) edges.push([a, b]);
+          }
+          // Brokers: one node per ring bridges to another ring (high betweenness).
+          for (let r = 0; r < RINGS - 1; r++) {
+            const aIdx = nodes.findIndex((n) => n.ring === r + 1);
+            const bIdx = nodes.findIndex((n) => n.ring === r + 2);
+            if (aIdx >= 0 && bIdx >= 0) {
+              edges.push([aIdx, bIdx]);
+              nodes[aIdx].broker = true;
+              nodes[aIdx].r = 3.2;
+            }
+          }
+          edges.forEach(([a, b]) => { nodes[a].deg++; nodes[b].deg++; });
+
+          // Quick force relaxation so clusters breathe (spring + mild repel).
+          const iters = reduce ? 60 : 90;
+          for (let it = 0; it < iters; it++) relax(0.85);
+        }
+
+        function relax(strength: number) {
+          // Springs.
+          for (const [a, b] of edges) {
+            const na = nodes[a], nb = nodes[b];
+            let dx = nb.x - na.x, dy = nb.y - na.y;
+            let d = Math.hypot(dx, dy) || 0.01;
+            const target = na.ring && na.ring === nb.ring ? 26 : 70;
+            const f = ((d - target) / d) * 0.02 * strength;
+            dx *= f; dy *= f;
+            na.vx += dx; na.vy += dy; nb.vx -= dx; nb.vy -= dy;
+          }
+          // Local repulsion (grid-free, sampled for cost).
+          for (let i = 0; i < nodes.length; i++) {
+            const ni = nodes[i];
+            for (let s = 0; s < 10; s++) {
+              const j = (i * 7 + s * 31 + 1) % nodes.length;
+              if (j === i) continue;
+              const nj = nodes[j];
+              let dx = ni.x - nj.x, dy = ni.y - nj.y;
+              let d2 = dx * dx + dy * dy;
+              if (d2 < 1) d2 = 1;
+              if (d2 < 2600) {
+                const f = (26 / d2) * strength;
+                ni.vx += dx * f; ni.vy += dy * f;
+              }
+            }
+          }
+          for (const n of nodes) {
+            n.x += n.vx; n.y += n.vy; n.vx *= 0.82; n.vy *= 0.82;
+            n.x = Math.max(10, Math.min(w - 10, n.x));
+            n.y = Math.max(10, Math.min(h - 10, n.y));
+          }
+        }
+
+        // Component membership for hover-isolate (union-find over edges).
+        let parent: number[] = [];
+        function find(x: number): number { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+        function unionAll() {
+          parent = nodes.map((_, i) => i);
+          for (const [a, b] of edges) parent[find(a)] = find(b);
+        }
+
+        const mouse = { x: -999, y: -999, hover: -1 };
+        let ringsOnly = false;
+        canvas.addEventListener("mousemove", (e) => {
+          const r = canvas.getBoundingClientRect();
+          mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+          let best = -1, bd = 14 * 14;
+          for (let i = 0; i < nodes.length; i++) {
+            const dx = nodes[i].x - mouse.x, dy = nodes[i].y - mouse.y;
+            const d = dx * dx + dy * dy;
+            if (d < bd) { bd = d; best = i; }
+          }
+          mouse.hover = best;
+          canvas.style.cursor = best >= 0 ? "pointer" : "crosshair";
+        });
+        canvas.addEventListener("mouseleave", () => { mouse.x = mouse.y = -999; mouse.hover = -1; });
+        toggle.addEventListener("click", () => {
+          ringsOnly = !ringsOnly;
+          toggle.setAttribute("aria-pressed", String(ringsOnly));
+        });
+
+        function hexA(hex: string, a: number) {
+          const c = hex.replace("#", "");
+          const n = c.length === 3 ? c.split("").map((x) => x + x).join("") : c;
+          return `rgba(${parseInt(n.slice(0,2),16)},${parseInt(n.slice(2,4),16)},${parseInt(n.slice(4,6),16)},${a})`;
+        }
+
+        let t = 0;
+        function draw(dt: number) {
+          t += dt;
+          ctx.clearRect(0, 0, w, h);
+          const hoverComp = mouse.hover >= 0 ? find(mouse.hover) : -2;
+
+          // Idle drift.
+          if (!reduce) for (const n of nodes) {
+            n.x += Math.sin(t * 0.5 + n.y * 0.03) * 0.06;
+            n.y += Math.cos(t * 0.4 + n.x * 0.03) * 0.06;
+          }
+
+          // Edges.
+          for (const [a, b] of edges) {
+            const na = nodes[a], nb = nodes[b];
+            const isRing = na.ring && na.ring === nb.ring;
+            if (ringsOnly && !isRing) continue;
+            const inHover = hoverComp !== -2 && (find(a) === hoverComp || find(b) === hoverComp);
+            let alpha = isRing ? 0.22 : 0.08;
+            let color = isRing ? ACCENT : STEEL;
+            if (hoverComp !== -2) alpha = inHover ? (isRing ? 0.5 : 0.32) : 0.03;
+            ctx.strokeStyle = hexA(color, alpha);
+            ctx.lineWidth = isRing ? 1 : 0.8;
+            ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(nb.x, nb.y); ctx.stroke();
+          }
+
+          // Nodes.
+          for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            if (ringsOnly && !n.ring) continue;
+            const inHover = hoverComp !== -2 && find(i) === hoverComp;
+            let color = n.ring ? ACCENT : STEEL;
+            let alpha = n.ring ? 0.92 : 0.55;
+            if (hoverComp !== -2) alpha = inHover ? 1 : 0.12;
+            ctx.fillStyle = hexA(color, alpha);
+            const r = n.r + (n.broker ? 0.6 : 0) + (i === mouse.hover ? 2 : 0);
+            ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
+            if (n.broker) {
+              ctx.strokeStyle = hexA(ACCENT, alpha * 0.6);
+              ctx.lineWidth = 1;
+              ctx.beginPath(); ctx.arc(n.x, n.y, r + 2.5, 0, Math.PI * 2); ctx.stroke();
+            }
+          }
+
+          // Tooltip for hovered node.
+          if (mouse.hover >= 0) {
+            const n = nodes[mouse.hover];
+            const compSize = parent.filter((_, i) => find(i) === hoverComp).length;
+            const lines = n.ring
+              ? [`Ring #${n.ring}${n.broker ? " · broker" : ""}`, `${compSize} accounts · ${n.deg} shared signals`]
+              : [`Legitimate`, `${n.deg} incidental link${n.deg === 1 ? "" : "s"}`];
+            ctx.font = "11px ui-monospace, monospace";
+            const tw = Math.max(...lines.map((l) => ctx.measureText(l).width)) + 16;
+            let tx = n.x + 12, ty = n.y - 30;
+            if (tx + tw > w) tx = n.x - tw - 12;
+            if (ty < 0) ty = n.y + 14;
+            ctx.fillStyle = hexA(INK, 0.96);
+            ctx.fillRect(tx, ty, tw, 30);
+            ctx.fillStyle = "#100d0c";
+            ctx.textBaseline = "top";
+            lines.forEach((l, k) => ctx.fillText(l, tx + 8, ty + 5 + k * 13));
+          }
+        }
+
+        build();
+        unionAll();
+        let raf = 0, running = false, last = 0;
+        function loop(now: number) {
+          const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
+          draw(dt); raf = requestAnimationFrame(loop);
+        }
+        function start() { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(loop); }
+        function stop() { running = false; cancelAnimationFrame(raf); }
+
+        window.addEventListener("resize", () => {
+          clearTimeout((canvas as any)._rt);
+          (canvas as any)._rt = setTimeout(() => { SEED = parseInt(root.dataset.seed || "7", 10); build(); unionAll(); if (reduce) draw(0); }, 200);
+        });
+
+        if (reduce) { draw(0); return; }
+        const io = new IntersectionObserver(
+          (es) => es.forEach((e) => (e.isIntersecting ? start() : stop())),
+          { threshold: 0.04 },
+        );
+        io.observe(canvas);
+      });
+  }
+  document.addEventListener("astro:page-load", bootGraphs);
+  if (document.readyState !== "loading") bootGraphs();
+</script>

@@ -1,0 +1,138 @@
+/* =========================================================================
+   tokens.css — the single source of truth for the design system.
+   Type scale · spacing · color · easing · breakpoints.
+   Built first, before any page. Nothing in this site uses a raw value that
+   isn't defined here.
+   ========================================================================= */
+
+:root {
+  /* ----------------------------------------------------------------------
+     COLOR — warm paper base, warm near-black ink, one mid-gray, ONE accent.
+     Never pure #000 on pure #fff. Accent (deep oxblood) appears on <5% of
+     the surface and doubles as the single "this is the number that matters"
+     color in every chart.
+     ---------------------------------------------------------------------- */
+  /* DARK — a fraud-investigation console. Deep warm near-black, warm
+     off-white ink, one vivid oxblood "flag" accent, plus a cool steel tone
+     for inert/secondary data. Built to read like an analyst's terminal, not
+     a hacker cliché: editorial restraint, hairlines, one alert color. */
+  --paper:        #100d0c;  /* deep warm near-black base                    */
+  --paper-raised: #181412;  /* raised panels / chart fields                 */
+  --paper-sunk:   #251f1b;  /* inert troughs (bar remainders, inputs)       */
+
+  --ink:          #ece4d7;  /* warm off-white — primary text                */
+  --ink-soft:     #b7ab9b;  /* secondary headings, strong body              */
+  --muted:        #8a7e6e;  /* secondary text, captions                     */
+  --faint:        #64594c;  /* metadata, axis labels, disabled              */
+
+  --line:         #2a2421;  /* 1px structural hairlines                      */
+  --line-strong:  #3d342d;  /* emphasized rule                              */
+
+  --accent:       #d24b39;  /* vivid oxblood — the single "flagged" highlight*/
+  --accent-deep:  #e56a57;  /* hover / pressed (brighter on dark)           */
+  --accent-tint:  #3a201b;  /* dark oxblood wash for chart context/fills    */
+
+  --steel:        #6f8794;  /* cool secondary data tone (legit/contrast)    */
+  --steel-soft:   #2a3338;  /* faint steel wash                             */
+
+  --selection:    #4a2a23;  /* selection bg, drawn from the accent family   */
+
+  --good:         #88a877;  /* sage — used ONLY where caught/positive        */
+                            /* must read in grayscale too (it's also bold)  */
+
+  /* ----------------------------------------------------------------------
+     TYPE — Fraunces (display, large only) · Hanken Grotesk (body) ·
+     JetBrains Mono (labels, metadata, EVERY numeral). Tabular figures.
+     ---------------------------------------------------------------------- */
+  /* Geist throughout (display + body), Geist Mono for labels & every numeral. */
+  --font-display: "Geist Variable", system-ui, -apple-system, sans-serif;
+  --font-body:    "Geist Variable", system-ui, -apple-system, sans-serif;
+  --font-mono:    "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Modular scale (~1.25 mobile → ~1.333 desktop) via clamp.
+     step-0 is body. Display steps go large only. */
+  --step--2: clamp(0.69rem, 0.67rem + 0.10vw, 0.75rem);   /* fine print / mono labels */
+  --step--1: clamp(0.80rem, 0.77rem + 0.14vw, 0.875rem);  /* small / captions         */
+  --step-0:  clamp(0.95rem, 0.91rem + 0.20vw, 1.0625rem); /* body                     */
+  --step-1:  clamp(1.13rem, 1.05rem + 0.36vw, 1.35rem);   /* lead / large body        */
+  --step-2:  clamp(1.35rem, 1.20rem + 0.70vw, 1.85rem);   /* small headings           */
+  --step-3:  clamp(1.65rem, 1.36rem + 1.30vw, 2.6rem);    /* section headings         */
+  --step-4:  clamp(2.10rem, 1.55rem + 2.50vw, 3.85rem);   /* page titles              */
+  --step-5:  clamp(2.70rem, 1.65rem + 4.60vw, 5.6rem);    /* large display            */
+  --step-6:  clamp(3.20rem, 1.40rem + 8.00vw, 8.0rem);    /* hero statement           */
+
+  /* Figures inside charts get their own fluid sizes (tabular, mono/display) */
+  --figure-lg: clamp(2.4rem, 1.7rem + 3.2vw, 4.2rem);
+  --figure-md: clamp(1.8rem, 1.4rem + 1.8vw, 2.8rem);
+
+  --leading-tight:  1.04;
+  --leading-snug:   1.18;
+  --leading-body:   1.62;
+  --leading-mono:   1.5;
+
+  --tracking-tight: -0.02em;
+  --tracking-flat:   0em;
+  --tracking-label:  0.08em;  /* mono section labels (uppercase) */
+  --tracking-wide:   0.14em;
+
+  --measure:       63ch;   /* body text measure ~60–70ch */
+  --measure-tight: 46ch;   /* leads, pull copy           */
+  --measure-wide:  78ch;
+
+  /* ----------------------------------------------------------------------
+     SPACING — one scale, base 4px. Used for everything.
+     ---------------------------------------------------------------------- */
+  --space-1:  0.25rem;   /*  4 */
+  --space-2:  0.5rem;    /*  8 */
+  --space-3:  0.75rem;   /* 12 */
+  --space-4:  1rem;      /* 16 */
+  --space-5:  1.5rem;    /* 24 */
+  --space-6:  2rem;      /* 32 */
+  --space-7:  3rem;      /* 48 */
+  --space-8:  4rem;      /* 64 */
+  --space-9:  6rem;      /* 96 */
+  --space-10: 8rem;      /* 128 */
+  --space-11: 11rem;     /* 176 */
+
+  /* Section rhythm */
+  --section-y: clamp(3.5rem, 2.5rem + 4.5vw, 6.5rem);
+
+  /* ----------------------------------------------------------------------
+     LAYOUT — real 12-column grid, generous gutters, hard max width.
+     ---------------------------------------------------------------------- */
+  --measure-page: 78rem;       /* outer max content width */
+  --gutter: clamp(1.25rem, 0.6rem + 3vw, 3rem);
+  --grid-gap: clamp(1rem, 0.5rem + 2vw, 1.75rem);
+
+  /* ----------------------------------------------------------------------
+     LINES / RADII / BORDERS — hairlines do the structural work.
+     Almost no radius; this is editorial, not bubbly.
+     ---------------------------------------------------------------------- */
+  --hair: 1px;
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+
+  /* ----------------------------------------------------------------------
+     MOTION — custom easing, 150–400ms. Reduced-motion neutralizes all.
+     ---------------------------------------------------------------------- */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);     /* settle              */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);     /* symmetric           */
+  --ease-draw:   cubic-bezier(0.33, 0.85, 0.30, 1);  /* chart bars/line draw */
+  --ease-expo:   cubic-bezier(0.16, 1, 0.30, 1);     /* big reveals (expo-out) */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  /* magnetic / pop      */
+
+  --dur-1: 150ms;
+  --dur-2: 240ms;
+  --dur-3: 360ms;
+  --dur-4: 520ms;  /* chart entrance only */
+  --dur-5: 820ms;  /* headline line reveals */
+
+  /* ----------------------------------------------------------------------
+     ELEVATION — used extremely sparingly. Prefer hairlines.
+     ---------------------------------------------------------------------- */
+  --shadow-card: 0 1px 0 rgba(28, 25, 22, 0.04);
+}
+
+/* Breakpoints are documented here for reference (CSS can't read vars in media
+   queries). Used consistently across components:
+     sm: 40rem (640px) · md: 52rem (832px) · lg: 64rem (1024px) · xl: 80rem  */

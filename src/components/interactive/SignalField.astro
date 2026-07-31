@@ -1,0 +1,279 @@
+---
+/**
+ * SignalField — the living hero visualization. A field of accounts: most are
+ * legitimate (faint ink dots drifting), one cluster is a coordinated ring
+ * (oxblood, connected by signal links). A slow detection sweep crosses the
+ * field and "catches" the ring as it passes — the whole site's thesis, alive.
+ * Pointer nudges nearby dots. Pauses offscreen; renders a single static frame
+ * under prefers-reduced-motion.
+ */
+---
+
+<figure class="field" aria-label="A field of accounts. Most are legitimate; one cluster is a coordinated fraud ring, highlighted as a detection sweep passes over it.">
+  <canvas class="field__canvas" data-signal-field></canvas>
+  <figcaption class="field__cap">
+    <span class="mono field__cap-item"><span class="field__key field__key--ink"></span>legitimate</span>
+    <span class="mono field__cap-item"><span class="field__key field__key--accent"></span>flagged ring</span>
+  </figcaption>
+</figure>
+
+<style>
+  .field {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    margin: 0;
+  }
+  .field__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .field__cap {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    gap: var(--space-4);
+  }
+  .field__cap-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--step--2);
+    color: var(--muted);
+  }
+  .field__key {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .field__key--ink { background: var(--faint); }
+  .field__key--accent { background: var(--accent); }
+</style>
+
+<script>
+  function boot() {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const canvases = document.querySelectorAll<HTMLCanvasElement>(
+      "[data-signal-field]:not([data-init])",
+    );
+    canvases.forEach((canvas) => {
+      canvas.setAttribute("data-init", "1");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Palette pulled from CSS tokens so the viz always matches the theme.
+      const css = getComputedStyle(document.documentElement);
+      const INK = (css.getPropertyValue("--faint") || "#98897b").trim();
+      const ACCENT = (css.getPropertyValue("--accent") || "#8a2520").trim();
+      const ACCENT_DEEP = (css.getPropertyValue("--accent-deep") || "#6f1c19").trim();
+
+      let w = 0,
+        h = 0,
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      type P = {
+        x: number; y: number; bx: number; by: number;
+        r: number; phase: number; speed: number; ring: boolean;
+      };
+      let pts: P[] = [];
+      let ringIdx: number[] = [];
+
+      const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+      function build() {
+        const rect = canvas.getBoundingClientRect();
+        w = rect.width;
+        h = rect.height;
+        canvas.width = Math.max(1, Math.floor(w * dpr));
+        canvas.height = Math.max(1, Math.floor(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const N = Math.round(Math.min(150, Math.max(70, (w * h) / 2600)));
+        pts = [];
+        for (let i = 0; i < N; i++) {
+          const x = rand(6, w - 6);
+          const y = rand(6, h - 6);
+          pts.push({ x, y, bx: x, by: y, r: rand(1.1, 2.1), phase: rand(0, Math.PI * 2), speed: rand(0.4, 1), ring: false });
+        }
+        // Carve a ring cluster around a point in the right-ish area.
+        const cx = rand(w * 0.45, w * 0.72);
+        const cy = rand(h * 0.32, h * 0.66);
+        const cluster = pts
+          .map((p, i) => ({ i, d: Math.hypot(p.x - cx, p.y - cy) }))
+          .sort((a, b) => a.d - b.d)
+          .slice(0, 9);
+        ringIdx = cluster.map((c) => c.i);
+        ringIdx.forEach((i) => {
+          pts[i].ring = true;
+          pts[i].r = rand(2.0, 2.8);
+        });
+      }
+
+      const mouse = { x: -999, y: -999 };
+      canvas.addEventListener("mousemove", (e) => {
+        const r = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - r.left;
+        mouse.y = e.clientY - r.top;
+      });
+      canvas.addEventListener("mouseleave", () => {
+        mouse.x = mouse.y = -999;
+      });
+
+      let t = 0;
+      // Sweep travels 0→1 across width, then a long pause before repeating.
+      const SWEEP_PERIOD = 7.5; // seconds
+      let raf = 0;
+      let running = false;
+
+      function frame(dt: number) {
+        t += dt;
+        ctx.clearRect(0, 0, w, h);
+
+        const sweepCycle = (t % SWEEP_PERIOD) / SWEEP_PERIOD;
+        // Sweep active for first 55% of the cycle, then rests.
+        const sweepActive = sweepCycle < 0.55;
+        const sweepX = sweepActive ? (sweepCycle / 0.55) * (w + 60) - 30 : -999;
+
+        // Ring centroid, for the "caught" pulse timing.
+        let rcx = 0, rcy = 0;
+        ringIdx.forEach((i) => { rcx += pts[i].x; rcy += pts[i].y; });
+        rcx /= ringIdx.length || 1;
+        rcy /= ringIdx.length || 1;
+        const sweepedRing = sweepActive && sweepX >= rcx;
+        const caughtGlow = sweepedRing ? Math.min(1, (sweepX - rcx) / 60) : 0;
+
+        // Drift + pointer repulsion.
+        for (const p of pts) {
+          const drift = reduce ? 0 : 1;
+          p.x = p.bx + Math.sin(t * p.speed + p.phase) * 5 * drift;
+          p.y = p.by + Math.cos(t * p.speed * 0.8 + p.phase) * 5 * drift;
+          if (mouse.x > -100) {
+            const dx = p.x - mouse.x, dy = p.y - mouse.y;
+            const d = Math.hypot(dx, dy);
+            if (d < 70 && d > 0.01) {
+              const f = (70 - d) / 70 * 12;
+              p.x += (dx / d) * f;
+              p.y += (dy / d) * f;
+            }
+          }
+        }
+
+        // Ring signal links (drawn faint, brighten once caught).
+        ctx.lineWidth = 1;
+        for (let a = 0; a < ringIdx.length; a++) {
+          for (let b = a + 1; b < ringIdx.length; b++) {
+            const pa = pts[ringIdx[a]], pb = pts[ringIdx[b]];
+            const dist = Math.hypot(pa.x - pb.x, pa.y - pb.y);
+            if (dist > 95) continue;
+            const base = 0.06 + 0.16 * caughtGlow;
+            ctx.strokeStyle = hexA(ACCENT, base);
+            ctx.beginPath();
+            ctx.moveTo(pa.x, pa.y);
+            ctx.lineTo(pb.x, pb.y);
+            ctx.stroke();
+          }
+        }
+
+        // Detection sweep line.
+        if (sweepActive) {
+          const grad = ctx.createLinearGradient(sweepX - 40, 0, sweepX, 0);
+          grad.addColorStop(0, hexA(ACCENT, 0));
+          grad.addColorStop(1, hexA(ACCENT, 0.12));
+          ctx.fillStyle = grad;
+          ctx.fillRect(sweepX - 40, 0, 40, h);
+          ctx.strokeStyle = hexA(ACCENT, 0.5);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(sweepX, 0);
+          ctx.lineTo(sweepX, h);
+          ctx.stroke();
+        }
+
+        // Dots.
+        for (const p of pts) {
+          let color = INK;
+          let alpha = 0.5;
+          let r = p.r;
+          if (p.ring) {
+            color = caughtGlow > 0 ? ACCENT : ACCENT_DEEP;
+            alpha = 0.55 + 0.45 * caughtGlow;
+            r = p.r + caughtGlow * 1.1;
+          } else if (sweepActive && Math.abs(p.x - sweepX) < 14) {
+            alpha = 0.9; // a brief glint as the sweep crosses a legit dot
+          }
+          ctx.fillStyle = hexA(color, alpha);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // "Caught" ring halo.
+        if (caughtGlow > 0) {
+          ctx.strokeStyle = hexA(ACCENT, 0.35 * caughtGlow);
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(rcx, rcy, 34 + caughtGlow * 6, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      function hexA(hex: string, a: number) {
+        const c = hex.replace("#", "");
+        const n = c.length === 3 ? c.split("").map((x) => x + x).join("") : c;
+        const r = parseInt(n.slice(0, 2), 16);
+        const g = parseInt(n.slice(2, 4), 16);
+        const b = parseInt(n.slice(4, 6), 16);
+        return `rgba(${r},${g},${b},${a})`;
+      }
+
+      let last = 0;
+      function loop(now: number) {
+        const dt = Math.min(0.05, (now - last) / 1000 || 0);
+        last = now;
+        frame(dt);
+        raf = requestAnimationFrame(loop);
+      }
+
+      function start() {
+        if (running) return;
+        running = true;
+        last = performance.now();
+        raf = requestAnimationFrame(loop);
+      }
+      function stop() {
+        running = false;
+        cancelAnimationFrame(raf);
+      }
+
+      build();
+      window.addEventListener("resize", () => {
+        // Debounced rebuild on resize.
+        clearTimeout((canvas as any)._rt);
+        (canvas as any)._rt = setTimeout(build, 180);
+      });
+
+      if (reduce) {
+        // Single static, representative frame.
+        t = SWEEP_PERIOD * 0.42;
+        frame(0);
+        return;
+      }
+
+      // Only animate while visible.
+      const io = new IntersectionObserver(
+        (ents) => ents.forEach((e) => (e.isIntersecting ? start() : stop())),
+        { threshold: 0.05 },
+      );
+      io.observe(canvas);
+    });
+  }
+
+  document.addEventListener("astro:page-load", boot);
+  if (document.readyState !== "loading") boot();
+</script>
