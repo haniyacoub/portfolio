@@ -91,7 +91,7 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
   .tab[aria-selected="true"] .tab__n { color: var(--accent); }
   .wkx__count { font-size: var(--step--1); color: var(--muted); padding-bottom: var(--space-3); }
 
-  .wkx__list { margin-top: var(--space-6); display: grid; grid-template-columns: 1fr; gap: var(--grid-gap); align-items: stretch; }
+  .wkx__list { margin-top: var(--space-6); display: grid; grid-template-columns: 1fr; gap: var(--grid-gap); align-items: start; }
   @media (min-width: 52rem) { .wkx__list { grid-template-columns: 1fr 1fr; } }
   .wkx__empty { color: var(--muted); padding-block: var(--space-8); }
 
