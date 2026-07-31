@@ -49,14 +49,14 @@ const flip = index % 2 === 1;
 
 <style>
   .witem {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-    padding-block: var(--space-7);
-    border-top: var(--hair) solid var(--line);
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    border: var(--hair) solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--paper-raised);
   }
-  .witem:last-of-type { border-bottom: var(--hair) solid var(--line); }
 
   .witem__link {
     display: grid;
@@ -104,6 +104,7 @@ const flip = index % 2 === 1;
 
   .witem__figure {
     border-top: var(--hair) solid var(--line);
-    padding-top: var(--space-6);
+    padding-top: var(--space-5);
+    margin-top: auto;
   }
 </style>
