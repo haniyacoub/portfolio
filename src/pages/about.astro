@@ -2,6 +2,30 @@
 import BaseLayout from "../components/layout/BaseLayout.astro";
 import Timeline from "../components/charts/Timeline.astro";
 import { career, markets, stack } from "../data/profile";
+
+const principles = [
+  {
+    title: "False positives first",
+    body: "A missed fraudster costs money. A wrongly banned customer costs money and trust, and surfaces weeks later as a support ticket nobody connects to the rule that caused it. Carve-outs come before bulk actions.",
+  },
+  {
+    title: "Evidence before action",
+    body: "A flag is a claim, not a verdict. Every case I ship carries the queries and the reasoning that produced it, so the decision can be defended line by line.",
+  },
+  {
+    title: "Verified, not asserted",
+    body: "Controls get measured with holdouts. Headline numbers get an adversarial pass before anyone quotes them. Being wrong in draft is cheap.",
+  },
+];
+
+const builds = [
+  { name: "A data platform", note: "two production Redshift clusters behind one Python API, with a warm daemon that cut query latency about 10x" },
+  { name: "LLM investigation agents", note: "they gather evidence and get checked by other agents before anything ships" },
+  { name: "A population-wide ring graph", note: "fraud rings surface as visual clusters, no seed account needed" },
+  { name: "Production enforcement jobs", note: "eight safety gates, a kill switch, and a shadow twin measuring precision" },
+];
+
+const chips = ["Berlin", "Arabic · German · English", "4 sectors", "6+ years"];
 ---
 
 <BaseLayout
@@ -9,59 +33,70 @@ import { career, markets, stack } from "../data/profile";
   description="Hani Yacoub, fraud and AI-abuse analyst in Berlin. Six years across cloud, fashion, automotive, and energy."
 >
   <section class="section">
-    <div class="wrap ab__inner">
-      <div class="ab__lead" data-reveal>
-        <span class="label">About</span>
-        <h1 class="ab__statement">
-          I'm Hani. I find fraud in large account populations and prove it
-          before anyone acts on it.
-        </h1>
-      </div>
+    <div class="wrap ab__lead">
+      <span class="label" data-ani>About</span>
+      <h1 class="ab__statement" data-ani style="--d: 60ms">
+        I'm Hani. I find fraud in large account populations and prove it
+        before anyone acts on it.
+      </h1>
+      <p class="ab__intro" data-ani style="--d: 140ms">
+        German-Jordanian, based in Berlin. I started in energy markets, moved
+        through automotive and fashion, and now work on fraud prevention at
+        AWS. Different industries, same job underneath: a large population, a
+        small group abusing it, and decisions that are expensive to get wrong
+        in either direction.
+      </p>
+      <ul class="ab__chips" role="list" data-ani style="--d: 220ms">
+        {chips.map((c) => <li class="mono ab__chip">{c}</li>)}
+      </ul>
+    </div>
 
-      <div class="ab__body" data-reveal data-reveal-delay="120">
-        <p>
-          German-Jordanian, based in Berlin, working in Arabic, German, and
-          English. I started in energy markets, moved through automotive and
-          fashion, and now work on fraud prevention at AWS. Different
-          industries, but underneath it was always the same job: a large
-          population, a small group abusing it, and decisions that are
-          expensive to get wrong in either direction.
-        </p>
-        <p>
-          The part I take most seriously is false positives. A missed
-          fraudster costs money. A wrongly banned customer costs money and
-          trust, and usually surfaces weeks later as a support ticket nobody
-          connects back to the rule that caused it. So I build carve-outs
-          before bulk actions, treat every flag as a claim that still needs
-          evidence, and measure whether a control worked with a holdout
-          instead of a before-and-after chart that flatters it.
-        </p>
-        <p>
-          At AWS I build the tooling as well as the analysis: the data
-          platform my investigations run on, LLM agents that gather evidence
-          and get checked by other agents, a population-wide graph that makes
-          fraud rings visible, and enforcement jobs with safety gates I can
-          defend line by line. Before that, at Zalando, I owned fraud metrics
-          for business reviews and built the Remaining Fraud Damage measure
-          across six European markets. None of it is exotic. It holds up
-          because it gets verified.
-        </p>
+    <div class="wrap ab__block">
+      <span class="label" data-ani>How I work</span>
+      <div class="ab__cards">
+        {
+          principles.map((p, i) => (
+            <article class="ab__card" data-ani style={`--d: ${i * 90}ms`}>
+              <h2 class="ab__card-title">{p.title}</h2>
+              <p class="ab__card-body">{p.body}</p>
+            </article>
+          ))
+        }
       </div>
     </div>
 
-    <div class="wrap ab__arc">
+    <div class="wrap ab__block">
+      <span class="label" data-ani>What I build at AWS</span>
+      <ul class="ab__builds" role="list">
+        {
+          builds.map((b, i) => (
+            <li class="ab__build" data-ani style={`--d: ${i * 70}ms`}>
+              <span class="ab__build-name">{b.name}</span>
+              <span class="ab__build-note">{b.note}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="ab__aside" data-ani>
+        Before AWS, at Zalando, I owned fraud metrics for business reviews and
+        built the Remaining Fraud Damage measure across six European markets.
+        None of it is exotic. It holds up because it gets verified.
+      </p>
+    </div>
+
+    <div class="wrap ab__arc" data-ani>
       <Timeline label="The arc" items={[...career]} />
     </div>
 
     <div class="wrap ab__grid">
-      <div class="ab__col" data-reveal>
+      <div class="ab__col" data-ani>
         <span class="label">Markets covered</span>
         <p class="ab__markets mono">{markets.join(" · ")}</p>
         <p class="ab__note">
           Zalando Risk &amp; Abuse fraud analytics, top six European markets.
         </p>
       </div>
-      <div class="ab__col" data-reveal data-reveal-delay="90">
+      <div class="ab__col" data-ani style="--d: 90ms">
         <span class="label">Stack</span>
         <ul class="ab__stack" role="list">
           {stack.map((s) => <li class="mono ab__tool">{s}</li>)}
@@ -72,60 +107,105 @@ import { career, markets, stack } from "../data/profile";
 </BaseLayout>
 
 <style>
-  .ab__inner { display: grid; gap: var(--space-7); }
-  @media (min-width: 52rem) {
-    .ab__inner {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-      gap: var(--space-9);
-    }
-  }
-  .ab__lead { display: flex; flex-direction: column; gap: var(--space-4); }
+  .ab__lead { display: flex; flex-direction: column; gap: var(--space-5); max-width: 62ch; }
   .ab__statement {
     font-family: var(--font-display);
     font-size: var(--step-4);
     font-weight: 520;
-    line-height: var(--leading-tight);
-    letter-spacing: -0.035em;
-    max-width: 17ch;
+    line-height: var(--leading-snug);
+    letter-spacing: -0.03em;
   }
-  .ab__body { display: flex; flex-direction: column; gap: var(--space-5); }
-  .ab__body p {
+  .ab__intro {
     font-size: var(--step-1);
-    line-height: var(--leading-body);
     color: var(--ink-soft);
-    max-width: 58ch;
+    line-height: var(--leading-body);
   }
-  .ab__body em { font-style: italic; color: var(--ink); }
-
-  .ab__arc {
-    margin-top: clamp(3rem, 2rem + 5vw, 5rem);
-    padding-top: var(--space-7);
-    border-top: var(--hair) solid var(--line);
-  }
-
-  .ab__grid {
-    margin-top: var(--space-8);
-    display: grid;
-    gap: var(--space-7);
-  }
-  @media (min-width: 46rem) {
-    .ab__grid { grid-template-columns: 1fr 1.4fr; gap: var(--space-9); }
-  }
-  .ab__col { display: flex; flex-direction: column; gap: var(--space-3); }
-  .ab__markets {
-    font-size: var(--step-2);
-    color: var(--ink);
-    letter-spacing: 0.04em;
-  }
-  .ab__note { font-size: var(--step--1); color: var(--muted); max-width: 30ch; }
-  .ab__stack { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
-  .ab__tool {
-    font-size: var(--step--2);
+  .ab__chips { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .ab__chip {
+    font-size: var(--step--1);
     color: var(--muted);
     border: var(--hair) solid var(--line-strong);
     border-radius: 100px;
-    padding: 0.3em 0.9em;
-    transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+    padding: 0.25em 0.9em;
   }
-  .ab__tool:hover { border-color: var(--accent); color: var(--ink); }
+
+  .ab__block { margin-top: var(--space-9); }
+  .ab__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--grid-gap);
+    margin-top: var(--space-5);
+  }
+  @media (min-width: 52rem) { .ab__cards { grid-template-columns: repeat(3, 1fr); } }
+  .ab__card {
+    border: var(--hair) solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--paper-raised);
+    padding: var(--space-6);
+    transition: transform var(--dur-2) var(--ease-out),
+                border-color var(--dur-2) var(--ease-out),
+                box-shadow var(--dur-2) var(--ease-out);
+  }
+  .ab__card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 6px 24px rgba(33, 29, 25, 0.06);
+  }
+  .ab__card-title { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.02em; }
+  .ab__card-body {
+    margin-top: var(--space-3);
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    line-height: var(--leading-body);
+  }
+
+  .ab__builds {
+    margin-top: var(--space-5);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  @media (min-width: 52rem) { .ab__builds { grid-template-columns: 1fr 1fr; column-gap: var(--space-8); } }
+  .ab__build {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding-block: var(--space-4);
+    border-top: var(--hair) solid var(--line);
+  }
+  .ab__build-name { font-weight: 600; letter-spacing: -0.01em; }
+  .ab__build-note { color: var(--muted); font-size: var(--step--1); line-height: var(--leading-snug); }
+  .ab__aside {
+    margin-top: var(--space-6);
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    line-height: var(--leading-body);
+    max-width: 62ch;
+  }
+
+  .ab__arc { margin-top: var(--space-9); }
+  .ab__grid {
+    margin-top: var(--space-9);
+    display: grid;
+    gap: var(--space-7);
+  }
+  @media (min-width: 52rem) { .ab__grid { grid-template-columns: 1fr 1.2fr; } }
+  .ab__markets { margin-top: var(--space-3); font-size: var(--step-1); }
+  .ab__note { margin-top: var(--space-2); color: var(--muted); font-size: var(--step--1); }
+  .ab__stack {
+    margin-top: var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .ab__tool {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    border: var(--hair) solid var(--line);
+    border-radius: 100px;
+    padding: 0.2em 0.75em;
+  }
+
 </style>
+
+

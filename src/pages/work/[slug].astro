@@ -20,6 +20,11 @@ export async function getStaticPaths() {
 const { entry, prev, next } = Astro.props;
 const { data } = entry;
 const { Content } = await render(entry);
+// Scannable "What I did": split the contribution into sentence bullets.
+const didPoints = data.contribution
+  .split(/(?<=\.)\s+(?=[A-Z])/)
+  .map((s: string) => s.trim())
+  .filter(Boolean);
 ---
 
 <BaseLayout title={data.title} description={data.summary} ogType="article">
@@ -44,7 +49,7 @@ const { Content } = await render(entry);
     <!-- Impact lead — Amazon-style: state the measurable result first. -->
     {
       data.impact && (
-        <section class="case__impact wrap" aria-label="Impact">
+        <section class="case__impact wrap" aria-label="Impact" data-ani>
           <span class="label case__impact-label">Impact</span>
           <p class="case__impact-text" set:html={data.impact} />
         </section>
@@ -54,23 +59,25 @@ const { Content } = await render(entry);
     <!-- Metrics board: the figures carry the visual weight -->
     {
       data.metrics.length > 0 && (
-        <section class="case__figures wrap" aria-label="Key results">
+        <section class="case__figures wrap" aria-label="Key results" data-ani>
           <MetricBoard metrics={data.metrics} />
         </section>
       )
     }
 
-    <!-- Context / Contribution / Outcome -->
+    <!-- Context / What I did (bulleted) / Outcome -->
     <section class="case__cco wrap" aria-label="Case summary">
-      <div class="case__cco-item">
+      <div class="case__cco-item" data-ani>
         <span class="label">Context</span>
         <p>{data.context}</p>
       </div>
-      <div class="case__cco-item">
+      <div class="case__cco-item case__cco-item--did" data-ani style="--d: 90ms">
         <span class="label">What I did</span>
-        <p>{data.contribution}</p>
+        <ul class="case__did" role="list">
+          {didPoints.map((s) => <li>{s}</li>)}
+        </ul>
       </div>
-      <div class="case__cco-item case__cco-item--out">
+      <div class="case__cco-item case__cco-item--out" data-ani style="--d: 180ms">
         <span class="label">Outcome</span>
         <p>{data.outcome}</p>
       </div>
@@ -79,18 +86,21 @@ const { Content } = await render(entry);
     <!-- Counterfactual — what would have happened without the work. -->
     {
       data.counterfactual && (
-        <section class="case__cf wrap" aria-label="What would have happened">
+        <section class="case__cf wrap" aria-label="What would have happened" data-ani>
           <span class="label case__cf-label">Without this work</span>
           <p class="case__cf-text" set:html={data.counterfactual} />
         </section>
       )
     }
 
-    <!-- Long-form body -->
-    <div class="case__body wrap">
-      <div class="prose">
-        <Content />
-      </div>
+    <!-- Long-form body, collapsed: the page above is the summary. -->
+    <div class="case__body wrap" data-ani>
+      <details class="case__full">
+        <summary class="mono case__full-toggle">Read the full story</summary>
+        <div class="prose">
+          <Content />
+        </div>
+      </details>
 
       {
         data.tags.length > 0 && (
@@ -251,6 +261,38 @@ const { Content } = await render(entry);
 
   /* ---- Body / prose ---- */
   .case__body { margin-top: var(--space-8); }
+  .case__full-toggle {
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--step--1);
+    color: var(--accent);
+    border: var(--hair) solid var(--line-strong);
+    border-radius: 100px;
+    padding: 0.5em 1.2em;
+    transition: border-color var(--dur-1) var(--ease-out);
+    user-select: none;
+  }
+  .case__full-toggle::before { content: "+"; font-weight: 600; }
+  .case__full[open] .case__full-toggle::before { content: "–"; }
+  .case__full-toggle:hover { border-color: var(--accent); }
+  .case__full-toggle::-webkit-details-marker { display: none; }
+  .case__full[open] .case__full-toggle { margin-bottom: var(--space-6); }
+  /* Bulleted "What I did" */
+  .case__did {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .case__did li {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    line-height: var(--leading-body);
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--accent-tint);
+  }
   .case__tags {
     display: flex;
     flex-wrap: wrap;
