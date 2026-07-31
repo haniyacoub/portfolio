@@ -5,7 +5,7 @@ period: "2026"
 theme: "Analytics engineering"
 track: "Tooling"
 company: "AWS"
-order: 19
+order: 24
 summary: "A self-regenerating model-monitoring pipeline: a JSON registry feeds a code generator that produces the SQL and dashboards, and newly discovered enforcement signatures enroll themselves."
 context: "Precision tracking for detection models rots quietly. A new enforcement signature appears, nobody adds it to the monitoring queries, and that model's performance simply stops being watched. The failure is silent, which is what makes it dangerous."
 contribution: "I authored a monitoring pipeline that regenerates itself: a JSON registry of enforcement signatures feeds a code generator, the generator produces the SQL, and the SQL renders the dashboards. When a new signature is discovered it is added to the registry once, and everything downstream rebuilds to include it. No detection model can silently drop out of precision tracking. I also reverse-engineered the production fraud rulesets from PDF exports into a structured machine-readable catalog with an interactive lifecycle graph, so reasoning about enforcement paths runs on the actual rules rather than on inference from data."

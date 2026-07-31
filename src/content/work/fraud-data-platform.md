@@ -6,7 +6,7 @@ theme: "Investigation infrastructure"
 track: "Tooling"
 company: "AWS"
 featured: true
-order: 4
+order: 6
 summary: "A home-grown data-access layer that unifies two heterogeneous Redshift clusters behind one API and pays the SAML handshake once, turning a multi-second wait per query into a tenth of a second."
 context: "Fraud investigation lives or dies on iteration speed, and mine was being throttled by infrastructure: two production Redshift clusters with two different auth schemes (Midway/SAML SSO and password), a multi-second federated handshake on every single query, and scripts that each had to know about drivers, connection strings, and which cluster they were hitting."
 contribution: "I built the layer so none of that touches the analyst. One `run(conn_id, sql)` API returns an identical normalized result whether it's talking to the SAML cluster via a persistent Java JDBC bridge or the password cluster directly. A warm-connection daemon over a Unix socket holds the authenticated connection open and amortizes the SAML handshake across an entire investigation. Caller-aware routing picks the right cluster from the script's location, and a DB-API shim let all the legacy pandas code adopt it with zero call-site changes. It also degrades gracefully to in-process execution if the daemon isn't up, so correctness never depends on the optimization."

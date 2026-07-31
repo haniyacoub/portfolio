@@ -5,7 +5,7 @@ period: "2026"
 theme: "Developer tools · AI orchestration"
 track: "Product"
 company: "Independent"
-order: 4.5
+order: 7
 summary: "A published VS Code extension: when one AI coding agent stops from a quota cap, a crash, or a bad answer, another continues with the task intact, and a deterministic safety layer reviews risky commands before they run."
 context: "Developers who use AI coding agents live with a specific frustration: a subscription caps or a session dies mid-task, and the next tool starts from zero. The repo context, the decisions, and the failing test all get re-explained by hand. Nothing on the market carried a task across agents cleanly."
 contribution: "I designed, built, and published Renitor (v1.75 on the VS Code marketplace, live at renitor.com). Repo-aware handoffs carry an unfinished task across 11 coding agents, including Claude Code, Codex, and Cursor, as a structured checkpoint plus a paste-ready continuation prompt, with a round-trip handback that re-injects natively into Claude Code. A multi-model chat runs Claude, GPT, Gemini, and 22 free models in one thread, failing over automatically when a provider hits its cap. A deterministic safety layer reviews risky commands before they run, and a failover dry-run plus a privacy inspector show what will happen before it does. Local-first: no backend, zero telemetry, keys in the OS keychain."

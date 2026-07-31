@@ -5,7 +5,7 @@ period: "2026"
 theme: "AI investigation methodology"
 track: "Investigation"
 company: "AWS"
-order: 6
+order: 9
 summary: "A multi-agent investigation practice built on competing personas, adversarial debate, and an LLM judge. It turns ad-hoc fraud questions into auditable runs, and once caught an agent fabricating a reconciliation."
 context: "LLM agents are fast and confident, which in fraud work is dangerous: a fluent, wrong reconciliation that lands in a stand-up is worse than no answer. I wanted the speed without trusting any single model's say-so."
 contribution: "I built a methodology, not just prompts. An 'arena' runs competing personas at a question and has a judge synthesize consensus, disagreements, and the best-supported answer. A 'debate' mode has two agents argue across rounds to a converged verdict, and an 'investigation' mode runs params-driven ring deep-dives. Every run is a self-contained folder with numbered scripts, raw outputs, and a graded report, so any number traces back to the query that produced it. Headline figures get reconciled to the cent across independent reproductions, and a second agent re-checks the first."

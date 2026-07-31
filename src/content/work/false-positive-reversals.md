@@ -5,7 +5,7 @@ period: "2026"
 theme: "False-positive prevention"
 track: "Precision"
 company: "AWS"
-order: 21
+order: 26
 summary: "Reversing fraud calls on legitimate accounts, including a seven-figure flagged account that was reserved GPU capacity, and building the SOPs that stop the next wrong shutdown."
 context: "Fraud systems flag legitimate accounts too. The expensive failure is acting on those flags at scale: a wrong shutdown breaks a real customer, and a bulk action multiplies the mistake by the size of the batch."
 contribution: "I reversed fraud calls on legitimate accounts by proving what the flags actually were. One example: a seven-figure flagged-OPEX account turned out to be reserved-but-unused GPU capacity at a VC-backed startup, expensive-looking but entirely legitimate. Another shutdown traced to a billing soft-decline, not fraud. Beyond the individual reversals, I built verification workflows and enforcement SOPs with carve-out gates for bulk shutdowns, protecting legitimate accounts structurally and quantifying the exposure for stakeholder sign-off before any batch action runs."

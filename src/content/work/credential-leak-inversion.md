@@ -5,7 +5,7 @@ period: "2026"
 theme: "Escalation forensics"
 track: "Investigation"
 company: "AWS"
-order: 3.5
+order: 5
 summary: "A partner-reported credential leak, investigated back to its premise. Every attacker call failed with zero loss, and the real gap was a key no scanner had ever registered."
 context: "A partner escalation reported leaked credentials in attacker hands and implied a targeted operation the detectors had missed. A proposed fix was already attached: lower the detector threshold."
 contribution: "I confirmed the uncomfortable part first: leaked keys really were in attacker hands on two un-enforced accounts. Then I proved every attacker call failed, with zero tokens consumed and zero loss. One account was protected because a key-quarantine policy was working exactly as designed. That refuted the threshold theory outright, since detectors fire on metered usage and there was none to see. The attribution did not survive either. The shared source infrastructure had touched 50+ accounts, the signature of mass credential spray rather than targeting. I verified key-to-account-to-user mappings independently of the database via offline key-ID decoding, ran five adversarial verification passes, and revised my own v1 conclusions in nine places."

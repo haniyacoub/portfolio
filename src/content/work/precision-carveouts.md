@@ -6,7 +6,7 @@ theme: "False-positive prevention"
 track: "Precision"
 company: "AWS"
 featured: true
-order: 7
+order: 11
 summary: "Bulk shutdowns are the bluntest instrument in fraud prevention. I built the carve-out gates and false-positive anchors that let them stay sharp, catching rings while sparing the legitimate accounts caught in the blast radius."
 context: "When you action a coordinated ring in bulk, the abusive accounts aren't the risk. The legitimate ones sitting inside the same signature are. A shared NAT, a placeholder fingerprint, a common BIN, and suddenly your bulk-shutdown candidate list has real customers in it. Get that wrong at scale and you've manufactured your own incident."
 contribution: "I made false-positive aversion structural, not a final sanity check. Bulk-action SQL is restricted to hard-identifier matches, never brittle heuristics. Before any wave, a legitimate-impact carve-out analysis quantifies which real accounts the signature would catch, and a confidence pass (adversarial review, drop-top-signal sensitivity, leave-one-out stability) has to clear before anything ships. Known false-positive accounts are catalogued as first-class 'do-not-shut' calibration anchors, so the same legitimate customer never gets re-flagged twice."

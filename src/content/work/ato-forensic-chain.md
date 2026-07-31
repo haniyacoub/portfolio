@@ -5,7 +5,7 @@ period: "2026"
 theme: "Forensic reconstruction"
 track: "Investigation"
 company: "AWS"
-order: 2.5
+order: 3
 summary: "A settled, source-tagged 37-event timeline showing a seven-figure loss came from containment and adjudication failures, not from a detection miss."
 context: "A seven-figure-cost account takeover was easy to describe as a detection miss. Nobody had assembled the complete, evidence-tagged chain of what actually happened, and without that chain the fix would have targeted the wrong control."
 contribution: "I reconstructed the full chain as a settled 37-event timeline across warehouse data, the operations UI, support cases, infrastructure tickets, and wiki SOPs. Every figure was re-derived in-run and every row tagged by its evidence source. The sequence: a reviewer lifts containment, the risk score snaps from zero to perfect one second later with no waiting period, and 22 hours on the account looks clean to every downstream gate. The holder requests tens of thousands of processors across four regions in a support chat, and all four approvals land in twelve minutes because the only automated question asked is whether the risk score is clean. Launching begins 28 minutes after the last approval."

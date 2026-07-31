@@ -5,7 +5,7 @@ period: "2026"
 theme: "ML detection"
 track: "Detection"
 company: "AWS"
-order: 14
+order: 19
 summary: "An XGBoost model and an investigation agent that surface sleeper-account fraud patterns, delivered as a ranked queue an analyst can actually work."
 context: "Sleeper accounts sit quiet until they burn. By the time billing spikes, the abuse is already running. The signals that give them away early exist in the data, but nobody had assembled them into a detector with an operational front end."
 contribution: "I built an end-to-end XGBoost fraud-detection pipeline with around 90 engineered features and leakage-aware hygiene: a temporal train and test split, a held-out validation set for early stopping, class-imbalance weighting, 5-fold cross-validation, and PR-AUC-first evaluation. The model reads billing spikes, linked accounts, IP-country mismatches, payment instruments, and risk-score history. On top of it sits an agent that surfaces the patterns and a Streamlit investigation queue that ranks the full population into tiers an analyst can work through. When the model showed signs of probable label leakage, I flagged it in writing rather than shipping an optimistic headline."

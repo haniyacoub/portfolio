@@ -5,7 +5,7 @@ period: "2024 to 2025"
 theme: "Data engineering"
 track: "Tooling"
 company: "Zalando"
-order: 10
+order: 18
 summary: "A refund-analysis Spark job that took the better part of an hour, brought down to minutes by reading less, filtering earlier, and stopping the brute-force reads from the data lake."
 context: "A core refund and Salesforce-case analysis on Databricks ran around 34 minutes. At that length the pipeline stops being a tool and becomes a tax. You batch your questions around it instead of following the investigation, which is exactly backwards for fraud work."
 contribution: "I treated the runtime as a data-layout problem, not a cluster-size one. The job was doing massive raw reads from binary data-warehouse paths to use a handful of columns. I added selective partitioned loads that read only the needed columns, pushed date and partition filters to the front so less data ever moves, broadcast the small dimension tables (like customer-extended) instead of shuffling them, cached only the DataFrames actually reused, tuned shuffle partitions, and materialized hot raw Parquet into Delta where it paid off."

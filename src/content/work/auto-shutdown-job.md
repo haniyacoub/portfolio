@@ -5,7 +5,7 @@ period: "2026"
 theme: "Enforcement automation"
 track: "Precision"
 company: "AWS"
-order: 7.5
+order: 12
 summary: "A daily fraud-relations auto-shutdown job on AWS's sovereign partition, with eight ordered gates, carve-outs routed to review, a kill switch, and a shadow twin measuring precision continuously."
 context: "Automated enforcement is where false positives stop being a metric and start being a customer outage. Handing shutdown authority to a scheduled job on a brand-new sovereign partition means every safety property has to be structural rather than a promise in a runbook."
 contribution: "I built, deployed, and own the fraud-relations auto-shutdown job running daily in production on AWS's European Sovereign Cloud partition. Candidates pass eight ordered gates: population scoping, an unlabelled filter, weighted confirmed-fraud linkage over non-placeholder hard identifiers, a not-already-enforced check, an account-age floor, legitimate-customer carve-outs routed to review rather than closure, an enforce-time re-check, and a ranked per-run cap. A hard kill switch sits above it. A shadow twin appends to a parallel table for continuous precision measurement, and every policy threshold lives in deployed environment config rather than code constants. Reaching production meant navigating a five-gate sovereign deployment path (branch build, auto-deploy, manual cross-region promote, ADC pre-approval, host run), and after six environment-level failures I wrote the path up as reusable internal guidance with a failure-symptom-to-cause table."

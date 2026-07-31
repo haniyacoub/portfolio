@@ -6,7 +6,7 @@ theme: "Fraud measurement · leakage"
 track: "Measurement"
 company: "Zalando"
 featured: true
-order: 8
+order: 13
 summary: "Remaining Fraud Damage, a method that benchmarks each customer segment against trusted customers to size the logistics refund leakage existing controls let through, in euros, per market, every week."
 context: "Everyone tracks the fraud they catch. The damage that matters for the business is the part that slips past every control: manual refund leakage on missing-delivery, item-not-received, and parcel-missing claims. It's invisible precisely because nothing flagged it, so there was no euro figure to act on."
 contribution: "I built the Remaining Fraud Damage measure. The idea is simple. Trusted high-value customers (A/VIP) set the honest baseline refund/damage rate, and every other value segment's excess over that benchmark, applied to its GMV, is the leakage estimate. Remaining Fraud Damage = return-damage + delivery-damage across the analysed segments, expressed as a share of GMV, tracked weekly and monthly across the top six markets. It runs on manual-refund and Salesforce case data joined to customer value segments and AbPP risk signals, built in PySpark/Databricks over the Zalando data lake."

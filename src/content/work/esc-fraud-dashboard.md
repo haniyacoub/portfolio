@@ -5,7 +5,7 @@ period: "2026"
 theme: "BI · reconciliation"
 track: "Tooling"
 company: "AWS"
-order: 5
+order: 8
 summary: "A launched, org-wide fraud-and-revenue dashboard for the European Sovereign Cloud, reconciled to the cent and honest about the dollars that weren't."
 context: "A brand-new AWS region (the European Sovereign Cloud) had no unified view of fraud landing on it, and leadership was making calls on fragments. The data also lived across an ESC-native surface and a mirror that didn't reconcile one-to-one, so the easy move was to ship pretty numbers that quietly didn't add up."
 contribution: "I designed, built, and announced org-wide a multi-tab analytics dashboard covering every ESC account since launch: registration outcomes, c-score trajectories, enforcement attribution, preventable compute, sleeper signals. Underneath it is a canonical account-level fact table and ~40 parameterized, QuickSight-portable SQL files. I replaced a misleading ~98% 'model automation' figure with an honest ~12 to 13% auto-shutdown rate once the attribution was modelled properly, and I drove a mirror-vs-native reconciliation that pushed a revenue undercount down to a fraction of a percent. Where absolute dollars still couldn't be trusted, the launch said so out loud."

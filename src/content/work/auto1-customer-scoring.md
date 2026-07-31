@@ -5,7 +5,7 @@ period: "2021 to 2024"
 theme: "Customer analytics"
 track: "Measurement"
 company: "AUTO1 Group"
-order: 9.7
+order: 17
 summary: "Scoring systems that told AUTO1's commercial team which B2B customers were worth pursuing, which were about to leave, and where retention money would actually pay back."
 context: "AUTO1's commercial team worked a large B2B customer base with finite outreach capacity. Without a ranking, effort spread evenly across customers who were not evenly valuable, and churn was discovered when it happened rather than before."
 contribution: "I built the scoring systems that ranked the base two ways. A value score identified high-value B2B customers worth proactive attention, and a risk score flagged accounts whose behaviour signalled churn. Alongside the scores, I analysed customer drop-off patterns to locate the highest-impact retention opportunities and quantified the revenue upside of acting on them, so the case for retention work was a number rather than a feeling."

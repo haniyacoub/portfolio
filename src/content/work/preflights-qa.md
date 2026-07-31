@@ -5,7 +5,7 @@ period: "2026"
 theme: "SaaS · deterministic validation"
 track: "Product"
 company: "Independent"
-order: 8.8
+order: 15
 summary: "Pre-import QA for Shopify catalogs: a deterministic engine that flags the irreversible mistakes, deleted variants and silently overwritten products, before a supplier file touches a live store."
 context: "Shopify merchants and agencies import supplier spreadsheets they didn't design. Two failure modes are irreversible once live: an import whose option columns silently delete existing variants, and two rows sharing one handle merging into a single overwritten product. Free CSV validators check formatting rather than what Shopify will actually do with the file."
 contribution: "I built Preflights end to end: a deterministic validation engine that reads a supplier file the way Shopify's importer will. It flags variant-delete risk from the file's own option structure with no store connection needed, catches handle collisions before they overwrite live products, and, when a Shopify export is added, checks price and stock conflicts against what's live right now. Nine further checks catch what gets products rejected by Google Merchant Center. Results arrive in seconds as a plain safe / review / blocked report where every finding shows the product, why it matters, and the one-line fix. AI is used only to explain findings and suggest fixes, never to decide whether an import is safe. Read-only by design: it never connects to the store."
