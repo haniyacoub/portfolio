@@ -33,6 +33,11 @@ const flip = index % 2 === 1;
       </span>
       <h3 class="witem__name">{entry.data.title}</h3>
       <p class="witem__summary">{entry.data.summary}</p>
+      {
+        entry.data.impact && (
+          <p class="witem__impact" set:html={entry.data.impact} />
+        )
+      }
       <span class="mono witem__more">
         Read the case <span class="witem__arrow" aria-hidden="true">→</span>
       </span>
@@ -93,6 +98,14 @@ const flip = index % 2 === 1;
     color: var(--ink-soft);
     line-height: var(--leading-body);
   }
+  .witem__impact {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    line-height: var(--leading-body);
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--accent-tint);
+  }
+  .witem__impact :global(strong) { color: var(--accent); font-weight: 600; }
   .witem__more {
     font-size: var(--step--1);
     color: var(--accent);
