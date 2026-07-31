@@ -40,7 +40,7 @@ const total = works.length;
       <div class="hero__lower">
         <p class="hero__lede" data-reveal>
           Six years turning messy data into clear, defensible enforcement
-          decisions — across cloud, fashion, automotive, and energy. Now at
+          decisions across cloud, fashion, automotive, and energy. Now at
           <strong>AWS Payments &amp; Fraud Prevention</strong>, building
           LLM-powered investigation agents, detection systems, and the tooling
           they run on. The hard part was never catching abuse. It's catching it
@@ -106,7 +106,7 @@ const total = works.length;
     <div class="wrap strip__inner" data-reveal>
       <p class="strip__line">
         German-Jordanian, Berlin-based. I build the infrastructure, the
-        methodology, and the deliverables — and hold all three to a standard
+        methodology, and the deliverables, and I hold all three to a standard
         where a caught assumption is the point, not an embarrassment.
       </p>
       <div class="strip__links">
@@ -191,7 +191,8 @@ const total = works.length;
   .feat__title { font-size: var(--step-3); margin-top: var(--space-3); }
   .feat__all { font-size: var(--step--1); color: var(--accent); text-decoration: none; white-space: nowrap; }
   .feat__all:hover { color: var(--accent-deep); }
-  .feat__list { display: flex; flex-direction: column; }
+  .feat__list { display: grid; grid-template-columns: 1fr; column-gap: var(--space-8); }
+  @media (min-width: 52rem) { .feat__list { grid-template-columns: 1fr 1fr; } }
 
   .feat__cta {
     display: flex; align-items: center; justify-content: center; gap: var(--space-3);

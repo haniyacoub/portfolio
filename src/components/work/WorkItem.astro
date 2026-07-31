@@ -52,19 +52,11 @@ const flip = index % 2 === 1;
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-6);
-    padding-block: var(--space-8);
+    padding-block: var(--space-7);
     border-top: var(--hair) solid var(--line);
     align-items: center;
   }
   .witem:last-of-type { border-bottom: var(--hair) solid var(--line); }
-  @media (min-width: 52rem) {
-    .witem {
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-      gap: var(--space-9);
-    }
-    .witem--flip .witem__text { order: 2; }
-    .witem--flip .witem__figure { order: 1; }
-  }
 
   .witem__link {
     display: grid;
@@ -111,21 +103,7 @@ const flip = index % 2 === 1;
   .witem__link:hover .witem__arrow { transform: translateX(4px); }
 
   .witem__figure {
-    border-left: var(--hair) solid var(--line);
-    padding-left: var(--space-6);
-  }
-  @media (max-width: 51.99rem) {
-    .witem__figure {
-      border-left: 0; padding-left: 0;
-      border-top: var(--hair) solid var(--line);
-      padding-top: var(--space-6);
-    }
-  }
-  @media (min-width: 52rem) {
-    .witem--flip .witem__figure {
-      border-left: 0; padding-left: 0;
-      border-right: var(--hair) solid var(--line);
-      padding-right: var(--space-6);
-    }
+    border-top: var(--hair) solid var(--line);
+    padding-top: var(--space-6);
   }
 </style>

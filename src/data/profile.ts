@@ -12,17 +12,17 @@ export const facts = [
 
 /** Career arc — drives the Timeline. Absolute periods, his real history. */
 export const career = [
-  { date: "2020", org: "Statkraft", detail: "Energy — data & risk analysis" },
-  { date: "2021", org: "AUTO1 Group", detail: "Automotive — risk & abuse analytics" },
+  { date: "2020", org: "Statkraft", detail: "Energy. Data & risk analysis" },
+  { date: "2021", org: "AUTO1 Group", detail: "Automotive. Risk & abuse analytics" },
   {
-    date: "2024–26",
+    date: "2024 to 2026",
     org: "Zalando",
-    detail: "Fashion — Risk & Abuse / Transaction Risk Management",
+    detail: "Fashion. Risk & Abuse / Transaction Risk Management",
   },
   {
     date: "2026",
     org: "AWS",
-    detail: "Cloud — Payments & Fraud Prevention (Registration)",
+    detail: "Cloud. Payments & Fraud Prevention (Registration)",
   },
 ] as const;
 

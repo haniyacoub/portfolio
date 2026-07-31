@@ -12,7 +12,7 @@ export const site = {
   linkedinLabel: "linkedin.com/in/hani1995",
   url: "https://haniyacoub.com",
   description:
-    "Hani Yacoub — fraud-prevention and AI-abuse analyst. Six years turning messy data into clear, defensible enforcement decisions across cloud, fashion, automotive, and energy. Now at AWS Payments & Fraud Prevention.",
+    "Hani Yacoub, fraud-prevention and AI-abuse analyst. Six years turning messy data into clear, defensible enforcement decisions across cloud, fashion, automotive, and energy. Now at AWS Payments & Fraud Prevention.",
   // The precision/recall through-line, stated once, reused for OG + meta.
   tagline:
     "Find the abuse, prove it, and don't break the legitimate customers doing it.",
