@@ -14,6 +14,15 @@ impact: "Turned an unranked B2B customer base into a <strong>prioritized outreac
 counterfactual: "Outreach capacity keeps spreading evenly across an unevenly valuable base, and churn keeps being discovered in the revenue numbers after the customers are already gone."
 indexMetric: 0
 metrics:
+  - chart: "signal-matrix"
+    label: "How the customer base got ranked"
+    signals:
+      - "Customer value score"
+      - "Churn-risk score"
+      - "Drop-off analysis"
+      - "Quantified revenue upside"
+    activeCount: 4
+    caption: "Two scores plus a quantified retention case turned a flat list into a call queue."
   - chart: "stat"
     label: "Scoring systems in use"
     value: "2"

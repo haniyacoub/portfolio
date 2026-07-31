@@ -14,6 +14,20 @@ impact: "A deterministic pre-import safety check that catches <strong>the two ir
 counterfactual: "The supplier file goes straight into the import tool. The variant wipe-out is discovered when customers cannot find the products, and there is no rollback."
 indexMetric: 0
 metrics:
+  - chart: "coverage-gap"
+    label: "What a free CSV validator checks"
+    items:
+      - name: "Formatting"
+        covered: true
+      - name: "Column layout"
+        covered: true
+      - name: "Variant-delete risk"
+        covered: false
+      - name: "Handle collisions"
+        covered: false
+      - name: "Live price conflicts"
+        covered: false
+    caption: "Free validators read the file. The dangerous mistakes need it read the way Shopify will."
   - chart: "stat"
     label: "Store access required"
     value: "0"

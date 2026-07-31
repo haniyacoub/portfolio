@@ -14,6 +14,17 @@ impact: "A shipped developer product: <strong>11-agent task handoffs, automatic 
 counterfactual: "Every capped session stays a restart from zero. The developer re-explains the repo, the decisions, and the failing test to the next agent by hand, or pays for capacity they only need in bursts."
 indexMetric: 0
 metrics:
+  - chart: "signal-matrix"
+    label: "What a handoff carries between agents"
+    signals:
+      - "Repo context"
+      - "Git state"
+      - "Decisions made"
+      - "What is broken"
+      - "Next steps"
+      - "Continuation prompt"
+    activeCount: 6
+    caption: "A structured checkpoint moves the task across 11 coding agents with nothing re-explained."
   - chart: "stat"
     label: "Coding agents a task can move across"
     value: "11"

@@ -14,6 +14,16 @@ impact: "Turned ad-hoc fraud questions into <strong>dozens of auditable, leaders
 counterfactual: "A single confident agent ships the fabricated reconciliation and its wrong headline straight into a stand-up, and the month's investigation throughput collapses back to one slow manual case at a time."
 indexMetric: 0
 metrics:
+  - chart: "signal-matrix"
+    label: "What a number survives before it ships"
+    signals:
+      - "Competing personas"
+      - "Adversarial debate"
+      - "LLM judge"
+      - "Independent reproduction"
+      - "Cent-level reconciliation"
+    activeCount: 5
+    caption: "The debate loop caught an agent fabricating a reconciliation before it shipped."
   - chart: "stat"
     label: "Leadership-ready reports"
     value: "Dozens"

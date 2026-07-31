@@ -12,7 +12,7 @@ contribution: "I built, deployed, and own the fraud-relations auto-shutdown job 
 outcome: "The team gained a live, automated enforcement capability whose safety case is inspectable. Carve-outs are gates rather than judgment calls, precision is measured continuously by the shadow twin rather than asserted, and thresholds are tunable without a code change. The deployment write-up turned an undocumented sovereign-region path into something a teammate can walk cold."
 impact: "A production enforcement job with <strong>eight structural safety gates, a kill switch, and a shadow twin measuring precision continuously</strong>. Carve-outs route to human review, thresholds live in config, and the deployment path is documented for the next person."
 counterfactual: "Enforcement stays manual and slow. Or worse, an automated job ships with its safety properties living in a runbook, and the first bad batch of shutdowns is discovered by the customers it hit."
-indexMetric: 1
+indexMetric: 0
 metrics:
   - chart: "signal-matrix"
     label: "Eight ordered gates before any shutdown"
