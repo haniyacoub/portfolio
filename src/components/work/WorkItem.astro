@@ -49,6 +49,7 @@ const flip = index % 2 === 1;
 
 <style>
   .witem {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
@@ -115,17 +116,28 @@ const flip = index % 2 === 1;
     border-top: var(--hair) solid var(--line);
     padding-top: var(--space-5);
     margin-top: auto;
-    height: 21rem;
-    overflow: hidden;
+    height: 23rem;
+    overflow-y: auto;
+    overflow-x: hidden;
     min-width: 0;
     position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+    -webkit-overflow-scrolling: touch;
+    padding-right: var(--space-2);
   }
-  /* Soft fade where a tall chart meets the fixed window edge. */
-  .witem__figure::after {
+  .witem__figure::-webkit-scrollbar { width: 6px; }
+  .witem__figure::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 100px;
+  }
+  .witem__figure::-webkit-scrollbar-track { background: transparent; }
+  /* Soft fade pinned to the card bottom as a scroll hint. */
+  .witem::after {
     content: "";
     position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 2.5rem;
+    left: var(--space-6); right: var(--space-6); bottom: var(--space-6);
+    height: 2.2rem;
     background: linear-gradient(to bottom, transparent, var(--paper-raised));
     pointer-events: none;
   }
