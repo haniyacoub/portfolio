@@ -20,7 +20,6 @@ export const site = {
 
 // Real routed pages — the site is multi-page, not a single scroll.
 export const nav = [
-  { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
   { label: "Résumé", href: "/Hani_Yacoub_CV.pdf" },

@@ -11,8 +11,8 @@ import { parseFigure } from "../utils/num";
 const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order,
 );
-const featured = works.filter((w) => w.data.featured).slice(0, 4);
-const total = works.length;
+const count = String(works.length).padStart(2, "0");
+const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))];
 ---
 
 <BaseLayout>
@@ -83,21 +83,34 @@ const total = works.length;
       <header class="feat__head" data-reveal>
         <div>
           <span class="label">Selected work</span>
-          <h2 id="feat-h" class="feat__title">A few that show the shape of it.</h2>
+          <h2 id="feat-h" class="feat__title">The cases that show the shape of it.</h2>
         </div>
-        <a class="feat__all mono" href="/work">
-          All {total} cases <span aria-hidden="true">→</span>
-        </a>
       </header>
 
-      <ol class="feat__list" role="list">
-        {featured.map((entry, i) => <WorkItem entry={entry} index={i} />)}
-      </ol>
+      <div class="tabs feat__tabs" data-tabs aria-label="Filter work by company">
+        <div class="tabs__list" role="tablist">
+          <button class="tab" role="tab" aria-selected="true" data-company="all">
+            All <span class="tab__n mono">{count}</span>
+          </button>
+          {
+            companies.map((co) => (
+              <button class="tab" role="tab" aria-selected="false" data-company={co}>
+                {co}
+                <span class="tab__n mono">
+                  {String(works.filter((w) => w.data.company === co).length).padStart(2, "0")}
+                </span>
+              </button>
+            ))
+          }
+          <span class="tabs__ink" aria-hidden="true"></span>
+        </div>
+        <span class="mono feat__count" data-count-target>{count} cases</span>
+      </div>
 
-      <a class="feat__cta" href="/work">
-        <span class="mono feat__cta-label">View every case</span>
-        <span class="feat__cta-arrow" aria-hidden="true">→</span>
-      </a>
+      <ol class="feat__list" role="list">
+        {works.map((entry, i) => <WorkItem entry={entry} index={i} />)}
+      </ol>
+      <p class="feat__empty mono" data-empty hidden>No cases in this view.</p>
     </div>
   </section>
 
@@ -116,6 +129,51 @@ const total = works.length;
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  function bootWorkTabs() {
+    document
+      .querySelectorAll<HTMLElement>("[data-tabs]:not([data-init])")
+      .forEach((tabs) => {
+        tabs.setAttribute("data-init", "1");
+        const buttons = Array.from(tabs.querySelectorAll<HTMLButtonElement>(".tab"));
+        const ink = tabs.querySelector<HTMLElement>(".tabs__ink")!;
+        const section = tabs.closest("section")!;
+        const items = Array.from(section.querySelectorAll<HTMLElement>(".witem"));
+        const counter = section.querySelector<HTMLElement>("[data-count-target]");
+        const empty = section.querySelector<HTMLElement>("[data-empty]");
+
+        function moveInk(btn: HTMLButtonElement) {
+          ink.style.width = btn.offsetWidth + "px";
+          ink.style.transform = `translateX(${btn.offsetLeft}px)`;
+        }
+        function select(btn: HTMLButtonElement) {
+          buttons.forEach((b) => b.setAttribute("aria-selected", String(b === btn)));
+          moveInk(btn);
+          const co = btn.dataset.company;
+          let shown = 0;
+          items.forEach((it) => {
+            const match = co === "all" || it.dataset.company === co;
+            it.classList.toggle("is-out", !match);
+            it.classList.remove("is-in");
+            if (match) { shown++; void it.offsetWidth; it.classList.add("is-in"); }
+          });
+          if (counter) counter.textContent = String(shown).padStart(2, "0") + " cases";
+          if (empty) empty.hidden = shown !== 0;
+        }
+        buttons.forEach((b) => b.addEventListener("click", () => select(b)));
+        const initial = buttons.find((b) => b.getAttribute("aria-selected") === "true") || buttons[0];
+        requestAnimationFrame(() => moveInk(initial));
+        window.addEventListener("resize", () => {
+          const cur = buttons.find((b) => b.getAttribute("aria-selected") === "true");
+          if (cur) moveInk(cur);
+        });
+      });
+  }
+  document.addEventListener("astro:page-load", bootWorkTabs);
+  if (document.readyState !== "loading") bootWorkTabs();
+</script>
+
 
 <style>
   /* ============================ OPENING ============================ */
@@ -191,8 +249,23 @@ const total = works.length;
   .feat__title { font-size: var(--step-3); margin-top: var(--space-3); }
   .feat__all { font-size: var(--step--1); color: var(--accent); text-decoration: none; white-space: nowrap; }
   .feat__all:hover { color: var(--accent-deep); }
-  .feat__list { display: grid; grid-template-columns: 1fr; gap: var(--grid-gap); align-items: start; }
+  .feat__list { display: grid; grid-template-columns: 1fr; gap: var(--grid-gap); align-items: start; margin-top: var(--space-6); }
   @media (min-width: 52rem) { .feat__list { grid-template-columns: 1fr 1fr; } }
+  .feat__tabs {
+    margin-top: var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+    border-bottom: var(--hair) solid var(--ink);
+  }
+  .feat__tabs .tabs__list { gap: var(--space-5); }
+  .tab__n { font-size: 0.7em; color: var(--faint); margin-left: 0.4em; vertical-align: super; }
+  .tab[aria-selected="true"] .tab__n { color: var(--accent); }
+  .feat__count { font-size: var(--step--1); color: var(--muted); padding-bottom: var(--space-3); }
+  .feat__empty { color: var(--muted); padding-block: var(--space-8); }
+  .feat__list :global(.witem.is-out) { display: none; }
 
   .feat__cta {
     display: flex; align-items: center; justify-content: center; gap: var(--space-3);
