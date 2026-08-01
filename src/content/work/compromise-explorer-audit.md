@@ -5,7 +5,7 @@ period: "2026"
 theme: "Investigation tooling"
 track: "Tooling"
 company: "AWS"
-order: 23
+order: 28
 summary: "A paste-an-account-ID compromise explorer that answers the eight decisions an investigator must make, hardened by a 50-round adversarial audit that found 44 defects and inverted every one to fail-closed."
 context: "The first version of the compromise tool rendered about 6,000 events on a zoom-and-pan canvas and left the analyst to find the story. Investigators do not need more events. They need the eight decisions of a compromise case answered in order, with evidence."
 contribution: "I rebuilt the tool as a decision engine over roughly 19 live data surfaces: paste an account ID and it answers the eight ordered decisions an investigator has to make, from whether this is compromise at all through when the takeover actually started to whether reinstate is safe, each with its evidence, its confidence, and its explicit unknowns. Then I ran a 50-round adversarial audit against my own tool, 2 lenses by 25 attack scenarios over 10 ground-truthed accounts. It confirmed 44 defects, and nearly every critical one was the same mistake: absent or errored evidence read as reassurance. Every instance is now inverted to fail-closed with regression tests, and a failed query yields unproven rather than a green light."

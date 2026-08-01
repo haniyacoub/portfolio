@@ -5,7 +5,7 @@ period: "2026"
 theme: "Probabilistic forecasting"
 track: "Measurement"
 company: "AWS"
-order: 14
+order: 18
 summary: "A 40,000-run Monte-Carlo forecast of a new region's human-review queue. It found that volume tracks operational decisions rather than fraud inflow, with one ring driving 71% of all tasks ever queued."
 context: "A new region needed an 18-month capacity plan for its human investigation queue. The natural assumption, that more fraud means more review work, was about to be baked into headcount planning without ever being tested."
 contribution: "From 28 complete weeks of task history I built a 40,000-run Monte-Carlo simulation producing average, p10, and p90 planning thresholds, with the coverage of that range measured against held-out data rather than assumed. The distributional work surfaced the real driver: one fraud ring accounted for 71% of all tasks ever queued. In one month, fraud-labelled sign-ups rose ~50% month-over-month while human tasks halved, because new automation closed cases before they reached a person. I ran an anchor-stability pass, an adversarial pass, and a ring-excluded companion scenario, then made and argued the conservative call to keep the ring in the baseline so the forecast would not understate capacity needs. Delivered as a stakeholder two-pager, an Excel model, two notebooks, and an animated explainer."

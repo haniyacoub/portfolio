@@ -37,7 +37,7 @@ metrics:
         note: "Same fields back either way, including a flag for when a result was cut short."
     caption: "If that background process is down, the query still runs at the old speed. The speed-up is never allowed to be the thing correctness depends on."
 tags: ["Python", "Redshift", "SAML / JDBC", "Daemon / IPC", "Developer tooling"]
-draft: false
+draft: true
 ---
 
 The bottleneck was never the analysis. It was a federated handshake firing on

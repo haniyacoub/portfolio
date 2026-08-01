@@ -5,10 +5,10 @@ period: "2026"
 theme: "Rules design"
 track: "Detection"
 company: "AWS"
-order: 21
+order: 26
 # Retired: merged into detection-signals-priced. Kept on disk per the
 # convention in src/pages/work/[...retired].astro, which forwards this slug.
-draft: true
+draft: false
 summary: "A fraud detection rule built on domain age and email-authentication signals: hundreds of abusive accounts caught, with near-zero impact on legitimate customers."
 context: "Fraudulent registrations often arrive on freshly minted domains with weak email authentication. The signals were known. The craft was turning them into a rule that catches at scale without sweeping up the legitimate startups that also register with young domains."
 contribution: "I designed a detection rule using domain age and email-authentication signals, developed through a disciplined program of more than 100 rule iterations converging on multi-condition logic scored for precision and recall and bounded by explicit false-positive carve-out exposure analysis. The shipped rule caught hundreds of abusive accounts. The collateral on legitimate customers was near zero."

@@ -7,7 +7,7 @@ track: "Precision"
 company: "AWS"
 featured: true
 draft: false
-order: 10
+order: 14
 summary: "A seven-figure flagged account turned out to be reserved-but-unused GPU capacity, not fraud. Reversals like that became the carve-out gates every bulk shutdown now passes through."
 context: "Fraud systems flag legitimate accounts too, and the expensive failure is acting on those flags at scale. When you action a coordinated ring in bulk, the abusive accounts aren't the risk. The legitimate ones sitting inside the same signature are: a shared NAT, a placeholder fingerprint, a common BIN, and suddenly the candidate list has real customers in it."
 contribution: "I reversed fraud calls on two legitimate accounts by proving what each flag actually was: one a seven-figure flagged-OPEX exposure, the other a shutdown that traced to a billing soft-decline rather than fraud. I then made false-positive aversion a standing control rather than a closing sanity check. Bulk-action SQL is restricted to hard-identifier matches, never the brittle heuristics that sweep up look-alikes. Before any wave, a legitimate-impact carve-out analysis names which real accounts the signature would catch and removes them before suspension. A confidence pass has to clear before anything ships: adversarial review, drop-the-top-signal sensitivity, leave-one-out stability. Every batch carries quantified exposure to stakeholders for sign-off before it runs. Known false-positive accounts are catalogued as first-class do-not-shut calibration anchors."

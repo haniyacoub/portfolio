@@ -6,7 +6,7 @@ theme: "Escalation forensics"
 track: "Investigation"
 company: "AWS"
 featured: false
-order: 8
+order: 11
 summary: "Two escalations arrived with a premise and a remedy already implied. Measurement broke both: the leak had cost nothing but left an unregistered key authenticating, and the region's fraud growth was one coordinated ring."
 context: "Two high-stakes escalations, each carrying its own explanation and its own proposed remedy. A partner reported leaked credentials in attacker hands and implied a targeted operation the detectors had missed, with the fix already chosen: lower the detector threshold. Separately, a regional fraud-reporting threshold breach triggered a vendor compliance escalation whose default reading was general population fraud growth, which would have meant broad, blunt controls across an entire region."
 contribution: "I confirmed the uncomfortable part of the credential report first: leaked keys really were in attacker hands, on two un-enforced accounts. I then proved every attacker call had failed, with zero tokens consumed and zero loss, and that one account was protected because a key-quarantine policy was working exactly as designed. The threshold theory could not survive that measurement, because detectors fire on metered usage and there was none to see. The targeting claim failed the same test: the shared source infrastructure had touched 50+ accounts, the signature of mass credential spray. I verified key-to-account-to-user mappings independently of the database via offline key-ID decoding, ran five adversarial verification passes, and revised my own v1 conclusions in nine places. On the compliance escalation I led a multi-week payment-fraud deep-dive that decomposed 18 months of chargeback-versus-cost data into two distinct waves instead of averaging them into a trend. Concentration analysis across issuer, BIN, email, ASN, and device fingerprint, plus shared-fingerprint connected-component clustering, proved a coordinated ring was the driver and isolated the chargebacks to a handful of accounts. The compliance findings shipped as audience-tiered reports: a leadership summary, the vendor-facing response, and a simplified variant. The hardest unresolved question went in openly, not omitted."
@@ -56,7 +56,7 @@ metrics:
         key: true
     caption: "The fix that arrived attached to the escalation appears at no step in this sequence."
 tags: ["Credential leak", "Escalation response", "Ring clustering", "Adversarial verification", "Concentration analysis"]
-draft: false
+draft: true
 ---
 
 Escalations arrive pre-solved. Both of these came with a story and a remedy

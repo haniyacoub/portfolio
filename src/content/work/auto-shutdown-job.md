@@ -5,7 +5,7 @@ period: "2026"
 theme: "Enforcement automation"
 track: "Precision"
 company: "AWS"
-order: 11
+order: 15
 featured: false
 draft: false
 summary: "Shutdown authority handed to a scheduled job on AWS's European Sovereign Cloud partition, with every safety property structural rather than procedural."

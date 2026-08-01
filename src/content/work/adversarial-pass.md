@@ -5,7 +5,7 @@ period: "2026"
 theme: "Verification methodology"
 track: "Measurement"
 company: "AWS"
-order: 10
+order: 13
 summary: "A standing rule that every stakeholder-facing number gets attacked before it ships. On its founding case it corrected the headline by +69% and turned a loose claim into a defensible one."
 context: "Fraud numbers travel into stand-ups, weekly business reviews, change tickets, and vendor responses. A wrong headline does worse than embarrass the author, since it redirects decisions. Nobody has to lie for this to happen. The usual failure is a silently truncated pull or a baseline that never existed, shipped with confidence."
 contribution: "I instituted a mandatory adversarial pass: before any quantification reaches a stakeholder, a non-author reviewer attacks the load-bearing claims with fresh queries. The founding case was my own prior report. The pass corrected the headline dollar figure by +69% after catching a silently row-cap-truncated pull, cut the cohort by ~44% because the source table's history did not start early enough to prove a baseline, showed 63% of 'change' timestamps were re-observations of a pre-existing value, and disproved both flagship example accounts' dates, while confirming three of five load-bearing claims and the underlying phenomenon."

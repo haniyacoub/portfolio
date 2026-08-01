@@ -6,8 +6,8 @@ theme: "ML detection"
 track: "Detection"
 company: "AWS"
 featured: false
-draft: false
-order: 14
+draft: true
+order: 19
 summary: "Sleeper-account fraud surfaced as a ranked queue an analyst can work, on a model whose own probable label leakage I flagged in writing."
 context: "Sleeper accounts sit quiet until they burn. By the time billing spikes, the abuse is already running. The signals that give a sleeper away early exist in the data, but nobody had assembled them into a detector with an operational front end."
 contribution: "I built an end-to-end XGBoost detection pipeline with around 90 engineered features over billing spikes, linked accounts, IP-country mismatches, payment instruments, and risk-score history. I designed the training hygiene to catch leakage rather than to assume it away. On top of the scores I put a Streamlit deep-dive that ranks the full population into tiers an analyst works through in order, and that proposes candidate rules with their precision and recall already attached. When the model's top-ranked feature turned out to be a containment score that only settles after enforcement has fired, I wrote the leakage risk next to the scores instead of publishing the headline PR-AUC unqualified."

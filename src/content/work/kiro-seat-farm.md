@@ -5,7 +5,7 @@ period: "2026"
 theme: "Abuse-chain reconstruction"
 track: "Investigation"
 company: "AWS"
-order: 4
+order: 6
 summary: "An enterprise seat-farm that turned free trial seats into millions of premium model turns billed as unpaid compute, reconstructed end to end and then proven already contained."
 context: "A flag suggested a large coordinated abuse of an enterprise agent product. The pressure in these moments is to act fast and visibly. But acting on a chain you don't fully understand is how you both miss the real abuse and shut down the wrong accounts."
 contribution: "I reconstructed the whole abuse chain from raw usage data: an org stood up, thousands of seats scripted onto it, millions of premium-model agent turns driven through those seats, the credit burned and billed as operational compute, with effectively nothing paid. Then I did the less glamorous half and checked what was actually still actionable. Across the confirmed instances the accounts were already enforced, so the actionable shutdown residual was an empty set. I proved the empty set rather than asserting it."

@@ -6,8 +6,8 @@ theme: "Forensic reconstruction"
 track: "Investigation"
 company: "AWS"
 featured: true
-order: 7
-draft: false
+order: 10
+draft: true
 summary: "Five systems reconciled into one settled chain of 37 events, where every row carries the evidence source it came from and the elapsed gaps between rows are the finding."
 context: "A seven-figure-cost account takeover was easy to file as a detection miss. Nobody had assembled the complete, evidence-tagged chain of what actually happened, and without that chain the correction of errors had no way to tell which control had failed."
 contribution: "I reconstructed the incident as a settled 37-event timeline spanning warehouse data, the operations UI, support cases, infrastructure tickets, and wiki SOPs. I re-derived every figure in-run rather than quoting an earlier summary, and tagged each row with the evidence source it came from. I put the load-bearing events on real elapsed time, which is what exposed the gaps. The risk score snapped from zero to perfect one second after a reviewer lifted containment, with no waiting period. Four regional quota approvals then landed inside twelve minutes. I traced the request path end to end, from three hours of quota checking to a support chat asking for tens of thousands of processors across four regions."

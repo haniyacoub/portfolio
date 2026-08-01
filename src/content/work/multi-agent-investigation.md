@@ -5,9 +5,9 @@ period: "2026"
 theme: "Adversarial verification methodology"
 track: "Investigation"
 company: "AWS"
-order: 9
+order: 12
 featured: true
-draft: false
+draft: true
 summary: "Speed from LLM agents, trust from a mandatory adversarial gate. The loop caught an agent fabricating a reconciliation, and the same gate corrected my own headline by +69%."
 context: "LLM agents are fast and confident, which in fraud work is the dangerous combination: a fluent, wrong reconciliation that lands in a stand-up is worse than no answer, because it redirects decisions. Nobody has to lie for this to happen. The usual failure is a silently truncated pull or a baseline that never existed, shipped with confidence. I wanted the speed without trusting any single author's say-so, mine included."
 contribution: "I built a multi-agent investigation methodology rather than a prompt library. An 'arena' runs competing personas at one question and has a judge synthesize consensus, disagreements, and the best-supported answer. A 'debate' mode has two agents argue across rounds to a converged verdict. An 'investigation' mode runs params-driven ring deep-dives. Every run is a self-contained folder of numbered scripts, raw outputs, and a graded report, so any number traces back to the query that produced it. Headline figures are reconciled to the cent across independent reproductions, and a second agent re-checks the first. I then made the same rule binding on humans: before any quantification reaches a stakeholder, a non-author reviewer attacks the load-bearing claims with fresh, independent queries. The founding case was my own prior report. The pass corrected the headline dollar figure by +69% after catching a silently row-cap-truncated pull, and cut the cohort by roughly 44% because the source table's history did not start early enough to prove a baseline. It also showed 63% of 'change' timestamps were re-observations of a pre-existing value and disproved both flagship example accounts' dates, while confirming three of five load-bearing claims and the underlying phenomenon."

@@ -6,7 +6,7 @@ theme: "Root-cause investigation"
 track: "Investigation"
 company: "AWS"
 featured: true
-order: 2
+order: 3
 summary: "A multi-six-figure SageMaker abuse incident that the enforcement layer should have stopped, traced to one newer instance family missing from a containment-score regex."
 context: "Abusers were running up multi-six-figure SageMaker compute that the containment-score limit-enforcement layer was supposed to throttle. It wasn't throttling. The interesting question wasn't who did it. It was why a control that worked for years let this through."
 contribution: "I worked it as a code-and-config problem, not a data problem. I read the actual production Java enforcement path and a ~47,000-line resource-limit config to reconstruct exactly how the c-score threshold check selects which instances it governs. The gap: a newer instance family had never been added to the regex that the enforcement layer uses to match governed instances. Those instances matched nothing, took the default zero-limit path, and sailed past the check. Crucially, I overturned my own earlier hypothesis once the Java contradicted it, rather than defending it."

@@ -6,7 +6,7 @@ theme: "Tool correctness"
 track: "Tooling"
 company: "AWS"
 featured: false
-order: 12
+order: 16
 summary: "Two tools that maintain their own correctness: one attacked for 50 rounds until missing evidence stopped reading as a pass, one that regenerates its own monitoring coverage so no model goes unwatched."
 context: "Both tools were exposed to the same failure, and it is silence rather than error. The first version of the compromise tool rendered about 6,000 events on a zoom-and-pan canvas and left the analyst to find the story. The rebuild I put in its place turned out to print something reassuring when a query failed. Precision tracking rots the same way: a new enforcement signature appears, nobody adds it to the monitoring queries, and that detection model simply stops being watched. Nothing alarms, because nothing decided to stop."
 contribution: "I rebuilt the compromise tool as a decision engine over roughly 19 live data surfaces. Paste an account ID and it answers the eight ordered decisions of a compromise case, from whether this is compromise at all, through true onset and attacker dwell rather than label time, to whether reinstate is safe. I then ran a 50-round adversarial audit against my own tool, and it confirmed 44 defects. Nearly every critical defect was the same mistake: absent or errored evidence reading as reassurance. Every instance is now inverted to fail-closed with regression tests, so a failed query yields unproven instead of a green light. I authored a model-monitoring pipeline that regenerates itself: a JSON registry of enforcement signatures feeds a code generator, the generator produces the SQL, and the SQL renders the dashboards, so a newly discovered signature is entered once and enrolls itself everywhere downstream. I also reverse-engineered the production fraud rulesets from PDF exports into a structured machine-readable catalog with an interactive lifecycle graph, so reasoning about enforcement paths runs on the actual rules instead of on inference from data."
@@ -57,7 +57,7 @@ metrics:
     value: "44"
     context: "Found by attacking my own tool: 2 lenses by 25 attack scenarios over 10 ground-truthed accounts."
 tags: ["Investigation tooling", "Adversarial audit", "Fail-closed design", "Model monitoring", "Code generation"]
-draft: false
+draft: true
 ---
 
 Silence is the dangerous failure. A wrong number gets argued with in a meeting.

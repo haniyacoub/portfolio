@@ -5,7 +5,7 @@ period: "2026"
 theme: "Payment-fraud investigation"
 track: "Investigation"
 company: "AWS"
-order: 22
+order: 27
 summary: "A vendor compliance escalation blamed general fraud growth. A multi-week deep-dive proved a coordinated ring was the driver and isolated the chargebacks to a handful of accounts."
 context: "A regional fraud-reporting threshold breach triggered a vendor compliance escalation. The default reading was general population fraud growth, which would have meant broad, blunt responses across the whole region."
 contribution: "I led a multi-week payment-fraud deep-dive that decomposed 18 months of chargeback-versus-cost data into two distinct waves. Concentration analysis across issuer, BIN, email, ASN, and device fingerprint, plus shared-fingerprint connected-component clustering, proved a coordinated ring rather than general population fraud was the driver, and isolated the chargebacks to a handful of accounts. The findings shipped as audience-tiered reports: a leadership summary, the vendor-facing response, and a simplified variant, with the hardest unresolved question surfaced openly instead of omitted."
