@@ -7,10 +7,9 @@ const year = 2026;
   <hr class="rule" />
   <div class="wrap footer__inner">
     <div class="footer__col">
-      <p class="footer__statement">
-        Find the abuse, prove it, and don't break the legitimate customers
-        doing it.
-      </p>
+      <!-- Reads from site.tagline so the footer can never drift out of sync
+           with the hero headline and the OG description. -->
+      <p class="footer__statement">{site.tagline}</p>
     </div>
     <div class="footer__meta">
       <a class="mono footer__link" href={`mailto:${site.email}`}>{site.email}</a>

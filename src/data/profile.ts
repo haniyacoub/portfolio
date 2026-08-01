@@ -3,11 +3,14 @@
  * Kept out of the markup so copy and numbers change in one place.
  */
 
-/** Framing figures shown beside the opening statement. */
+/** Framing figures shown beside the opening statement.
+    These are what a recruiter scans for in the first screenful, so they buy
+    breadth of experience and breadth of *work*. Languages moved to /about —
+    a good detail, but not worth a third of the headline space. */
 export const facts = [
-  { value: "6+", unit: "yrs", label: "In fraud, risk & abuse", emphasis: false },
-  { value: "4", unit: "sectors", label: "Cloud · fashion · auto · energy", emphasis: false },
-  { value: "3", unit: "langs", label: "Arabic · German · English", emphasis: false },
+  { value: "6+", unit: "yrs", label: "In data, risk & analytics", emphasis: false },
+  { value: "4", unit: "sectors", label: "Energy · auto · fashion · cloud", emphasis: false },
+  { value: "18", unit: "cases", label: "Platforms, dashboards, models, forecasts", emphasis: false },
 ] as const;
 
 /** Career arc — drives the Timeline. Absolute periods, his real history. */

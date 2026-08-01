@@ -18,11 +18,15 @@ const principles = [
   },
 ];
 
+/* Deliberately mixed: two infrastructure items, one model, one forecast, one
+   shipped product. The range is the point — a list of four fraud systems would
+   read as a specialist, which undersells four sectors of general data work. */
 const builds = [
-  { name: "A data platform", note: "two production Redshift clusters behind one Python API, with a warm daemon that cut query latency about 10x" },
-  { name: "LLM investigation agents", note: "they gather evidence and get checked by other agents before anything ships" },
-  { name: "A population-wide ring graph", note: "fraud rings surface as visual clusters, no seed account needed" },
-  { name: "Production enforcement jobs", note: "eight safety gates, a kill switch, and a shadow twin measuring precision" },
+  { name: "A data platform", note: "two company databases behind one interface, with a background process that made every query about 10× faster" },
+  { name: "Dashboards people actually run on", note: "the first single view of a new AWS region, about 40 charts, reconciled to the cent" },
+  { name: "Models and forecasts", note: "a fraud-detection model on ~90 signals, and a 40,000-run forecast that overturned a headcount plan" },
+  { name: "Investigation agents", note: "AI agents that gather the evidence, then argue with each other before anything ships" },
+  { name: "Two products of my own", note: "a published VS Code extension, and a safety check for Shopify imports" },
 ];
 
 const chips = ["Berlin", "Arabic · German · English", "4 sectors", "6+ years"];
@@ -30,21 +34,22 @@ const chips = ["Berlin", "Arabic · German · English", "4 sectors", "6+ years"]
 
 <BaseLayout
   title="About"
-  description="Hani Yacoub, fraud and AI-abuse analyst in Berlin. Six years across cloud, fashion, automotive, and energy."
+  description="Hani Yacoub, data and risk analyst in Berlin. Six years across energy, automotive, fashion and cloud — now at AWS on fraud prevention."
 >
   <section class="section">
     <div class="wrap ab__lead">
       <span class="label" data-ani>About</span>
       <h1 class="ab__statement" data-ani style="--d: 60ms">
-        I'm Hani. I find fraud in large account populations and prove it
-        before anyone acts on it.
+        I'm Hani. I work on the decisions that are expensive to get wrong
+        in either direction.
       </h1>
       <p class="ab__intro" data-ani style="--d: 140ms">
         German-Jordanian, based in Berlin. I started in energy markets, moved
         through automotive and fashion, and now work on fraud prevention at
-        AWS. Different industries, same job underneath: a large population, a
-        small group abusing it, and decisions that are expensive to get wrong
-        in either direction.
+        AWS. Four industries, one job underneath: a big population, a small
+        group inside it behaving badly, and a call that costs money whichever
+        way you get it wrong. Miss the abuse and it's expensive. Shut down a
+        real customer and it's worse.
       </p>
       <ul class="ab__chips" role="list" data-ani style="--d: 220ms">
         {chips.map((c) => <li class="mono ab__chip">{c}</li>)}
@@ -66,7 +71,7 @@ const chips = ["Berlin", "Arabic · German · English", "4 sectors", "6+ years"]
     </div>
 
     <div class="wrap ab__block">
-      <span class="label" data-ani>What I build at AWS</span>
+      <span class="label" data-ani>What I build</span>
       <ul class="ab__builds" role="list">
         {
           builds.map((b, i) => (

@@ -5,11 +5,18 @@ import { site } from "../data/site";
 
 <BaseLayout
   title="Contact"
-  description="Reach Hani Yacoub, fraud-prevention and AI-abuse analyst in Berlin."
+  description="Get in touch with Hani Yacoub — data and risk analyst in Berlin."
 >
   <section class="section ct">
     <div class="wrap">
       <span class="label" data-reveal>Contact</span>
+
+      <!-- A bare list of links leaves the reader to guess whether he wants to
+           be contacted at all. One warm line removes that friction. -->
+      <p class="ct__invite" data-reveal data-reveal-delay="60">
+        Happy to hear from you — about a role, a problem you're trying to
+        measure, or just to compare notes. I read everything and I reply.
+      </p>
 
       <div class="ct__links" data-reveal data-reveal-delay="120">
         <a class="ct__link" href={`mailto:${site.email}`} data-magnetic="0.3">
@@ -37,6 +44,16 @@ import { site } from "../data/site";
 
 <style>
   .ct { min-height: 60vh; display: flex; align-items: center; }
+  .ct__invite {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 440;
+    line-height: var(--leading-snug);
+    letter-spacing: -0.02em;
+    color: var(--ink-soft);
+    max-width: 40ch;
+    margin-top: var(--space-4);
+  }
   .ct__line {
     font-family: var(--font-display);
     font-size: var(--step-5);

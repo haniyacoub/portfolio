@@ -24,11 +24,15 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
       </p>
 
       <div class="hero__top">
+        <!-- Method in the main clause, domain in the tail: what he does with
+             data comes first, fraud arrives second as the deepest domain
+             rather than the whole identity. Kept to four short lines so it
+             still reads on a phone. Mirrors site.tagline — change both. -->
         <h1 class="hero__statement reveal-lines">
-          <span class="reveal-line"><span>I find the abuse,</span></span>
-          <span class="reveal-line"><span><em>prove</em> it, and don't</span></span>
-          <span class="reveal-line"><span>break the legitimate</span></span>
-          <span class="reveal-line"><span>customers doing it.</span></span>
+          <span class="reveal-line"><span>I make expensive</span></span>
+          <span class="reveal-line"><span>decisions <em>measurable</em>.</span></span>
+          <span class="reveal-line"><span>Most of them are</span></span>
+          <span class="reveal-line"><span>about fraud.</span></span>
         </h1>
 
         <div class="hero__viz">
@@ -38,11 +42,15 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
       </div>
 
       <div class="hero__lower">
+        <!-- The lede does the work the headline deliberately doesn't: it names
+             the employer, the domain, and the breadth. Short sentences, common
+             words — a smart reader outside fraud should follow every one. -->
         <p class="hero__lede" data-reveal>
-          Six years of fraud, risk, and abuse analytics across cloud, fashion,
-          automotive, and energy. Now at
-          <strong>AWS Payments &amp; Fraud Prevention</strong>, building LLM
-          investigation agents, detection systems, and the tooling they run on.
+          Six years across energy, automotive, fashion and cloud. I build the
+          things the answer depends on: the data platforms, the dashboards, the
+          models, the forecasts. Right now that's at
+          <strong>AWS</strong>, on fraud prevention — where a wrong call costs
+          money in both directions, so being right has to be provable.
         </p>
 
         <dl class="hero__facts" aria-label="At a glance" data-reveal>
@@ -81,7 +89,10 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
       <header class="feat__head" data-reveal>
         <div>
           <span class="label">Selected work</span>
-          <h2 id="feat-h" class="feat__title">The cases that show the shape of it.</h2>
+          <h2 id="feat-h" class="feat__title">
+            Eighteen cases. Each one starts with a number and ends with a
+            decision.
+          </h2>
         </div>
       </header>
 
