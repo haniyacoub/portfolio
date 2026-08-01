@@ -62,7 +62,9 @@ const flip = index % 2 === 1;
     border: var(--hair) solid var(--line);
     border-radius: var(--radius-sm);
     background: var(--paper-raised);
-    height: 100%;
+    /* No height: 100%. It made the card fill its grid row whatever the grid's
+       align-items said, so a short card next to a tall one carried up to 584px
+       of empty space below its chart. The card is now as tall as its content. */
     min-width: 0;
     overflow: hidden;
   }
@@ -121,11 +123,17 @@ const flip = index % 2 === 1;
      chart (a gate-funnel with eight stages) rendered ~700px of content into a
      368px box, so the reader had to scroll a card to see the figure it was
      showing them — and on a phone that inner scroller fights the page scroll.
-     The card now grows to fit its figure instead. */
+     The card now grows to fit its figure instead.
+
+     No `margin-top: auto` here. Grid rows stretch both cards to the taller
+     one's height, and `auto` collected every pixel of that difference into a
+     single gap between the text and the chart — measured 576px of void inside
+     card 1 and 535px inside card 8. The chart now follows its text directly and
+     the leftover sits harmlessly at the card's bottom edge. */
   .witem__figure {
     border-top: var(--hair) solid var(--line);
     padding-top: var(--space-5);
-    margin-top: auto;
+    margin-top: var(--space-5);
     min-width: 0;
     position: relative;
     /* Keep the horizontal guard: a wide chart should never widen the grid. */

@@ -264,7 +264,11 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
   .feat__title { font-size: var(--step-3); margin-top: var(--space-3); }
   .feat__all { font-size: var(--step--1); color: var(--accent); text-decoration: none; white-space: nowrap; }
   .feat__all:hover { color: var(--accent-deep); }
-  .feat__list { display: grid; grid-template-columns: 1fr; gap: var(--grid-gap); align-items: stretch; margin-top: var(--space-6); }
+  /* align-items: start, not stretch. Charts vary a lot in height (a 5-stage
+     funnel is ~2× a before/after bar), and stretching forced every card to its
+     row-mate's height — leaving up to 584px of empty card below the shorter
+     one's chart. Each card is now exactly as tall as its own content. */
+  .feat__list { display: grid; grid-template-columns: 1fr; gap: var(--grid-gap); align-items: start; margin-top: var(--space-6); }
   @media (min-width: 52rem) { .feat__list { grid-template-columns: 1fr 1fr; } }
   .feat__tabs {
     margin-top: var(--space-6);
