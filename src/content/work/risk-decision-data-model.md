@@ -6,7 +6,7 @@ theme: "Risk decision data"
 track: "Tooling"
 company: "Zalando"
 featured: false
-order: 40
+order: 22
 summary: "An abuse decision nobody can join to its outcome cannot be evaluated. I built the join, login to feedback."
 context: "Abuse-protection decisions and their outcomes were written by different services into different tables. Logins sat in authentication events. Orders sat in order-placed events and order-position rows. The risk assessment sat in assessment tables, what was decided about it sat in risk-decision tables, and the feedback on the steer that followed sat in steer-feedback tables. No single dataset ran the length of that chain, so a question about how a decision performed had no dataset behind it. Older assessments and steering decisions sat apart from the current ones too, in their own legacy sources under an older set of labels."
 contribution: "I built one joined view running from login to order to risk assessment to risk decision to steering decision to steer feedback. Alongside it I joined the context that makes a decision readable: customer data, sales channel, order positions, route access, and a rule-to-fraud-domain mapping. Return steering carries its own feedback, so return-steer feedback joined alongside the rest. I read the legacy assessment and steering-decision sources next to the current ones, because the older records only exist there. I carried the older label mapping through, so an older label and its current equivalent count as the same thing rather than two. The purpose was evaluation rather than reporting: how abuse-protection decisions performed, and where fraud damage remained. It runs in PySpark and Spark SQL on Databricks over Delta and data-lake tables."
@@ -40,7 +40,7 @@ metrics:
     betterWhen: "lower"
     context: "The bars count sources, not volume. Sizing is illustrative and implies no magnitudes. What the work established: the legacy and current assessment and steering-decision sources were read together, and the older labels were mapped onto the current ones so both sides counted as the same thing."
 tags: ["PySpark", "Spark SQL", "Databricks", "Delta", "Data modelling", "Risk decisions", "Steer feedback"]
-draft: true
+draft: false
 ---
 
 You cannot evaluate a decision you cannot join to its outcome. Risk and abuse

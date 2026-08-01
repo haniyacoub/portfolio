@@ -5,7 +5,7 @@ period: "2026"
 theme: "Adversarial verification methodology"
 track: "Investigation"
 company: "AWS"
-order: 12
+order: 9
 featured: true
 draft: true
 summary: "Speed from LLM agents, trust from a mandatory adversarial gate. The loop caught an agent fabricating a reconciliation, and the same gate corrected my own headline by +69%."

@@ -5,7 +5,7 @@ period: "2026"
 theme: "Quantitative modeling"
 track: "Measurement"
 company: "AWS"
-order: 30
+order: 35
 summary: "A unit-tested survival and decay forecasting engine for fraud compute load, with P50 and P90 cones and uncaught-fraud size modeled two independent ways."
 context: "Decisions about fraud interventions need a forecast of what the compute load does with and without action. A single-line projection invites false confidence, and an uncalibrated one invites the wrong decision."
 contribution: "I designed a unit-tested survival and decay forecasting engine for fraud compute load. Steady-state inflow is calibrated to the observed trailing slope, so the as-is scenario and the intervention scenario separate honestly instead of by assumption. Forecasts carry P50 and P90 cones, and the output includes an account-level action table rather than only aggregates. I also modeled the size of uncaught fraud two independent ways: excess over a trusted floor by risk bucket, and an exponential catch-hazard survival fit that yields an asymptotic never-caught fraction. Two methods, because one estimate of an invisible quantity is a guess with confidence."

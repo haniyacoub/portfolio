@@ -6,7 +6,7 @@ theme: "Forensic reconstruction"
 track: "Investigation"
 company: "AWS"
 featured: true
-order: 10
+order: 7
 draft: true
 summary: "Five systems reconciled into one settled chain of 37 events, where every row carries the evidence source it came from and the elapsed gaps between rows are the finding."
 context: "A seven-figure-cost account takeover was easy to file as a detection miss. Nobody had assembled the complete, evidence-tagged chain of what actually happened, and without that chain the correction of errors had no way to tell which control had failed."

@@ -5,7 +5,7 @@ period: "2026"
 theme: "BI · reconciliation"
 track: "Tooling"
 company: "AWS"
-order: 9
+order: 6
 featured: false
 draft: false
 summary: "An org-wide fraud-and-revenue dashboard for AWS's European Sovereign Cloud, whose credibility came from correcting two of its own headline numbers."

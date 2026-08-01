@@ -6,7 +6,7 @@ theme: "Root-cause analysis"
 track: "Investigation"
 company: "Zalando"
 featured: false
-order: 40
+order: 19
 summary: "A refund record says what was claimed, never why. Telling a delivery failure from abuse decides the fix."
 context: "A parcel-missing refund arrives as the record of a claim. A customer reported that the parcel never came and a manual refund went out. Nothing in that record says why it happened. A genuine delivery failure leaves the same trace as a customer-care process, a false claim, or a control that never fired. Risk cannot pick a fix without telling them apart. An operational cause and an abusive one need opposite responses."
 contribution: "I took the root-cause question on parcel-missing refunds in customer care. The question was not whether abuse existed. It was which of several causes produced a given refund, because operational causes and abusive ones need different fixes. Five causes had to be told apart: a delivery or logistics failure, customer-care process behaviour, abuse of the claim, a gap in detection, and refund-denial or steering logic too weak to hold. Steering here means the stricter handling a flagged order gets routed onto. I worked the same data the remaining fraud damage measure runs on: manual refund records, the manual refund reasons recorded against them, and Salesforce case and order data. I ran entity-level investigations wherever a rate could not separate abuse from a logistics problem, reading the individual customer, account, order or parcel behind it. I read the rates against base-rate effects and soft exclusions. Base rate is how much abuse there was to find, and soft exclusions are the cases kept out of the count. A shift in either looks exactly like a shift in cause, and only one of the two is worth acting on."
@@ -35,7 +35,7 @@ metrics:
     activeCount: 5
     caption: "All five stay live until evidence removes one. Deliberately unordered, because ranking them would assert a finding this case does not carry."
 tags: ["Root-cause analysis", "Parcel-missing refunds", "Manual refunds", "Salesforce cases", "Entity-level investigation", "Base-rate effects", "Customer care"]
-draft: true
+draft: false
 ---
 
 A refund record is a receipt, not an explanation.

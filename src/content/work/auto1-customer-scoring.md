@@ -7,7 +7,7 @@ track: "Measurement"
 company: "AUTO1 Group"
 featured: false
 draft: false
-order: 5
+order: 4
 summary: "Before the fraud work, the same ranking problem: a large business customer base, finite calling capacity, one score deciding the week."
 context: "AUTO1's commercial team worked a large base of business customers with finite outreach capacity. With no ranking over it, effort spread evenly across customers who were not evenly valuable. The most valuable accounts got the same share of the week as the least."
 contribution: "I built the value score that identified the high-value business customers worth proactive attention. I turned it into a ranked outreach queue the commercial team worked from the top down. That sent finite calling capacity to the accounts carrying the most value. I kept it separate from the churn-risk score, because who is worth keeping and who is leaving are different questions."

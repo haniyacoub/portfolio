@@ -6,8 +6,8 @@ theme: "Churn and retention"
 track: "Measurement"
 company: "AUTO1 Group"
 featured: false
-draft: true
-order: 40
+draft: false
+order: 20
 summary: "Two scores for two questions: which business customers were at risk of leaving, and which points of customer drop-off carried enough revenue to be worth working."
 context: "AUTO1's commercial team worked a large base of business customers with finite outreach capacity. Retention needs two things a customer list does not carry on its own: which accounts are at risk of leaving, and which points of customer drop-off have enough revenue behind them to be worth acting on."
 contribution: "I built the churn-risk score that identified which business customers were at risk of leaving. I kept it separate from the value score, because who is worth keeping and who is leaving are different questions. I analysed customer drop-off patterns to find where in the customer relationship the base was being lost. I quantified the revenue upside sitting behind those drop-off points, which is what made the retention opportunities rankable by size rather than only nameable. The commercial team used both scores to prioritise its outreach."

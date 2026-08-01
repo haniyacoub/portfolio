@@ -6,7 +6,7 @@ theme: "Data quality · logistics"
 track: "Measurement"
 company: "Zalando"
 featured: false
-order: 40
+order: 23
 summary: "Every delivery lead-time figure rested on one timestamp two sources disagreed about. I reconciled them shipment by shipment."
 context: "Delivery lead time is the gap between a shipment being recorded as received and the first attempt to hand it to the customer. Two logistics sources both carried that first-attempt timestamp. They did not always agree, and for some shipments one source did not carry it at all. Every figure built on top of that timestamp inherits the disagreement without showing it."
 contribution: "I joined the two shipment datasets on shipment number and compared the first-delivery-attempt timestamp record by record. I separated the two faults, a timestamp absent in one source and a timestamp present in both sources but different. Only then did I compute the received-to-first-delivery-attempt lead time in hours, so the figure had one definition behind it. I also went through the shipment and return events themselves to establish which ones were still publishing. One shipment-document event had been deprecated and was no longer published, which anyone still reading it needed to know. I fixed a returns-timing calculation in Presto that derives the earliest parcel-handover time from the date the return closed. The lead-time value had to be cast to a whole number before that subtraction behaved. Separately I built a Spark pipeline joining sales, customer, parcel-created, risk-decision and returned-to-sender data. Parcels sent back instead of delivered could then be read next to the risk decision on the order."

@@ -5,7 +5,7 @@ period: "2026"
 theme: "Model improvement"
 track: "Detection"
 company: "AWS"
-order: 25
+order: 30
 # Retired: merged into detection-signals-priced. Kept on disk per the
 # convention in src/pages/work/[...retired].astro, which forwards this slug.
 draft: true

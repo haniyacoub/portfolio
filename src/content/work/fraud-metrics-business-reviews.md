@@ -6,7 +6,7 @@ theme: "Metric ownership"
 track: "Measurement"
 company: "Zalando"
 featured: false
-order: 40
+order: 21
 summary: "I owned the weekly and monthly fraud numbers. The hard part was ruling out who was shopping that week."
 context: "A fraud metric gets read as though a move in the number is a move in fraud. Often it is not. The share flagged as suspicious can rise for three dull reasons. The customer mix changed. There was more fraud around to find. Or a set of cases was kept out of the count. All three look identical on a chart. A business review is the worst place to find that out. The room reacts to the number in front of it, and the reaction is a threshold change or an escalation."
 contribution: "I owned the fraud metrics for the weekly and monthly business reviews, wrote the SQL behind them, and explained them in those forums. The set runs from suspicious, detected and steer rates to fraud loss and remaining fraud damage. Steer rate is how a flagged customer gets handled from then on. It also carries precision, how often a flag is right, and recall, how much of the abuse gets caught. False positives, meaning real customers wrongly flagged, sit beside fraud damage as a share of gross sales. Manual refund leakage, refund rate against a benchmark and the excess refund and damage rate above it round out the set. Before any of it reached a review, I read those rates against base-rate effects and soft exclusions. Base rate is how much fraud there was to find, and soft exclusions are the cases kept out of the count. A move in either looks exactly like a move in fraud, and only one of the two is worth reacting to. I ran the what-if analysis behind threshold decisions. Moving a refund-denial threshold cuts fraud damage and turns away real customers at the same time, so I sized both. I built the dashboards this ran on in Databricks and Azure, read by Risk, Product and Finance leadership. Where a rate would not explain itself, I went to entity level and read the customers, accounts and orders behind it. My counterparts were Product, Engineering, Operations and leadership, so every explanation had to work without a fraud background."
@@ -40,7 +40,7 @@ metrics:
     caption: "Illustrative shape, since no figures are published for this. What the work establishes is that the two lines can come apart, so the reported line on its own never settles whether fraud moved."
     context: "The same pattern reads the other way round. A real rise can be flattened by a mix shift, which is why the reported line gets checked in both directions."
 tags: ["Business reviews", "Fraud metrics", "Base-rate effects", "Soft exclusions", "What-if analysis", "Precision / recall", "SQL", "Databricks", "Azure", "Stakeholder communication"]
-draft: true
+draft: false
 ---
 
 A rate that moved is not fraud that moved.

@@ -5,7 +5,7 @@ period: "2026"
 theme: "Developer tools · AI orchestration"
 track: "Product"
 company: "Independent"
-order: 23
+order: 17
 featured: false
 draft: false
 summary: "A published VS Code extension where an unfinished coding task survives the agent that started it, behind a deterministic safety layer rather than a model's judgment."

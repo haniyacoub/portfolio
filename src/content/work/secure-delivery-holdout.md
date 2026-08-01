@@ -5,7 +5,7 @@ period: "2025 to 2026"
 theme: "Counterfactual evaluation"
 track: "Measurement"
 company: "Zalando"
-order: 22
+order: 29
 summary: "Secure Delivery and refund-denial logic only 'work' if you measure them honestly. A naive before/after read flatters them. A holdout tells the truth."
 context: "Risk controls like Secure Delivery and refund-denial steering get applied exactly where abuse is most expected, which means the population they touch is nothing like the population they don't. Measure their effect by naively comparing treated vs untreated and the selection bias does the talking. You'll credit the control for a difference that was there before it ever ran."
 contribution: "I treated evaluation as a causal problem, not a reporting one. Using holdout and counterfactual framing, I separated prevented damage from remaining damage, meaning what the control actually stopped versus what would have happened anyway, and was explicit about where biased intervention groups would otherwise inflate the result. The same discipline ran through the fraud KPIs I owned for weekly and monthly business reviews. Suspicious, detected, and steer rates read against base-rate effects and soft exclusions, so a shift in population mix never got mistaken for a shift in fraud."
