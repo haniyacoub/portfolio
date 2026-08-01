@@ -8,31 +8,31 @@ company: "AUTO1 Group"
 featured: false
 draft: false
 order: 5
-summary: "Before the fraud work, the same ranking problem: a large B2B base, finite outreach capacity, and two scores deciding who got called."
-context: "AUTO1's commercial team worked a large B2B customer base with finite outreach capacity. With no ranking over it, effort spread evenly across customers who were not evenly valuable, and churn was discovered in the revenue numbers rather than before it happened."
-contribution: "I built the two scores that ranked the base: a value score identifying the high-value B2B customers worth proactive attention, and a churn-risk score flagging accounts whose behaviour signalled they were about to leave. I analysed customer drop-off patterns to locate where in the relationship the base was actually being lost. I quantified the revenue upside of the highest-impact retention opportunities, so the case for retention spend was a number rather than a feeling."
-outcome: "Outreach ran off a queue instead of spreading evenly, so the rank decided the week rather than whoever happened to call in. Retention spend was argued from a payback figure attached to a named opportunity."
-impact: "Replaced flat outreach across a large B2B base with a <strong>ranked call queue</strong>: a value score, a churn-risk score, and a <strong>quantified revenue case</strong> behind the highest-impact retention plays."
-counterfactual: "Retention money keeps going to whichever play sounds most urgent in the room, and <strong>nobody can say which one would have paid back</strong>."
+summary: "Before the fraud work, the same ranking problem: a large business customer base, finite calling capacity, one score deciding the week."
+context: "AUTO1's commercial team worked a large base of business customers with finite outreach capacity. With no ranking over it, effort spread evenly across customers who were not evenly valuable. The most valuable accounts got the same share of the week as the least."
+contribution: "I built the value score that identified the high-value business customers worth proactive attention. I turned it into a ranked outreach queue the commercial team worked from the top down. That sent finite calling capacity to the accounts carrying the most value. I kept it separate from the churn-risk score, because who is worth keeping and who is leaving are different questions."
+outcome: "Outreach ran off a queue instead of spreading evenly, so the rank decided the week rather than whoever happened to call in."
+impact: "Replaced flat outreach across a large business customer base with a <strong>ranked call queue</strong>. Finite calling capacity went to the accounts carrying the most value."
+counterfactual: "Calling capacity keeps being spent evenly across a base that was never evenly valuable, and <strong>the largest accounts get the same week as the smallest</strong>."
 indexMetric: 0
 metrics:
-  - chart: "signal-matrix"
-    label: "What turned a flat customer list into a call queue"
-    signals:
-      - "Customer value score"
-      - "Churn-risk score"
-      - "Drop-off pattern analysis"
-      - "Quantified revenue upside"
-    activeCount: 4
-    caption: "None of the four is useful alone: a rank with no revenue behind it is a list, and a revenue figure with no rank is a wish."
-  - chart: "line"
-    label: "How the base drained over the relationship"
-    points: [100, 92, 84, 76, 68, 61, 54, 47]
-    seriesLabel: "still active"
-    xLabel: "time in the relationship"
-    yLabel: "share still active (illustrative)"
-    caption: "Illustrative shape, since the live curve runs on AUTO1's customer data. What the real analysis established is where in the relationship customers were actually being lost, which is what let the retention plays be ranked by the revenue at stake behind each drop-off point rather than by anecdote."
-tags: ["Customer scoring", "Churn", "B2B", "Revenue analytics"]
+  - chart: "ranked-bars"
+    label: "What a value rank does to a week of calling"
+    unit: "relative value carried"
+    sort: true
+    bars:
+      - name: "Top-ranked accounts"
+        value: 100
+        key: true
+        note: "Worked first, because the rank put them first rather than because they called in."
+      - name: "Next band"
+        value: 58
+      - name: "Middle of the base"
+        value: 31
+      - name: "Long tail"
+        value: 12
+    caption: "Illustrative magnitudes, since the live score runs on AUTO1's customer data. What the work established is the ordering, and that the base was not evenly valuable. Flat outreach treats these four bands as though they were the same bar."
+tags: ["Customer scoring", "B2B", "Prioritisation", "Revenue analytics"]
 ---
 
 Fraud came later. The question did not change. A commercial team with finite
@@ -43,14 +43,14 @@ guaranteed to be wrong. Unranked, the most valuable accounts got the same
 share of the week as the least, and the accounts quietly on their way out got
 none of it.
 
-So I built the ranking as two scores rather than one blended number, because
-who is worth keeping and who is leaving are different questions, and answering
-them in one figure hides which of the two is driving a call.
+So I built the value score as its own number rather than blending it with
+churn risk, because who is worth keeping and who is leaving are different
+questions, and answering them in one figure hides which of the two is driving a
+call. The churn side became its own piece of work, and its own case.
 
-Scores rank work. They do not justify spending money on it. That was the third
-piece. Attaching revenue to each drop-off point turned "we should do something
-about churn" into a list of retention plays with a payback figure next to each
-one.
+What the score changed was mundane and it was the whole point. The team stopped
+deciding the week by whoever happened to ring in, and started at the top of a
+list.
 
 This role was the training ground for everything after it. Population-level
 scoring, ranking under a hard capacity constraint, and the discipline of
