@@ -46,8 +46,16 @@ const intro = [
     proof: "See the scoring work",
   },
 ];
+/* Every habit is always shown. Only the "see the case" link is conditional,
+   because unpublishing a case must not silently delete a paragraph about how he
+   works. The earlier version filtered the whole item and dropped two of the four
+   the moment two cases were unticked, leaving the copy promising four habits and
+   rendering two. */
 const liveSlugs = new Set(works.map((w) => w.id));
-const introItems = intro.filter((i) => liveSlugs.has(i.slug));
+const introItems = intro.map((i) => ({
+  ...i,
+  href: liveSlugs.has(i.slug) ? `/work/${i.slug}` : null,
+}));
 ---
 
 <BaseLayout>
@@ -122,7 +130,7 @@ const introItems = intro.filter((i) => liveSlugs.has(i.slug));
       <header class="me__head" data-reveal>
         <span class="label">Who is doing this</span>
         <h2 id="me-h" class="me__title">
-          I am Hani. German-Jordanian, based in Berlin, six years in data.
+          I am Hani. Based in Berlin, six years in data.
         </h2>
         <p class="me__sub">
           The short version is four habits and the projects that came out of
@@ -138,9 +146,13 @@ const introItems = intro.filter((i) => liveSlugs.has(i.slug));
               <div class="me__body">
                 <h3 class="me__lead">{item.lead}</h3>
                 <p class="me__text">{item.body}</p>
-                <a class="mono me__proof" href={`/work/${item.slug}`}>
-                  {item.proof} <span aria-hidden="true">→</span>
-                </a>
+                {
+                  item.href && (
+                    <a class="mono me__proof" href={item.href}>
+                      {item.proof} <span aria-hidden="true">→</span>
+                    </a>
+                  )
+                }
               </div>
             </li>
           ))
