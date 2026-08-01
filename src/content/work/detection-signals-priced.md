@@ -6,7 +6,7 @@ theme: "Signal economics"
 track: "Detection"
 company: "AWS"
 featured: false
-draft: true
+draft: false
 order: 17
 summary: "Device fingerprint was missing from the Fraud Relations model's linkage signals, and young-domain registrations were going unchallenged. Adding either meant writing down what it would cost in customers wrongly linked."
 context: "More signals always catch more fraud, so recall is never the interesting column. What each signal costs in customers wrongly linked is, and that column usually goes unwritten. Device fingerprint was missing from the Fraud Relations model's linkage signals. Separately, fraudulent registrations were arriving on freshly minted domains with weak email authentication, on exactly the axes where legitimate new companies also look young and unauthenticated."

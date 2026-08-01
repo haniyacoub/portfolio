@@ -26,7 +26,7 @@ metrics:
     context: "vs. remaining damage: what the control stopped, not what was already going to happen."
     emphasis: true
 tags: ["Holdout", "Counterfactual", "Causal evaluation", "Base-rate effects", "WBR/MBR"]
-draft: false
+draft: true
 ---
 
 Risk controls are applied exactly where abuse is most expected, which quietly
