@@ -20,7 +20,7 @@ metrics:
     before: { label: "Brute-force reads", value: 34, unit: "min", display: "~34 min" }
     after: { label: "Tuned layout", value: 5, unit: "min", display: "minutes" }
     betterWhen: "lower"
-    context: "Same analysis, same cluster. The change was in what the job read, not what it ran on. Only the ~34-minute baseline is measured; the after bar is sized illustratively against it to show the shape."
+    context: "Same analysis, same cluster. The change was in what the job read, not what it ran on. Only the ~34-minute baseline is measured. The after bar is sized illustratively against it to show the shape."
   - chart: "ranked-bars"
     label: "Where the runtime actually went"
     unit: "relative contribution"
@@ -29,7 +29,7 @@ metrics:
       - name: "Column pruning"
         value: 100
         key: true
-        note: "Reading only the needed columns. A handful were used; the whole binary path was being opened."
+        note: "Reading only the needed columns. A handful were used while the whole binary path was being opened."
       - name: "Early partition filters"
         value: 68
         note: "Filtering before the read means pruned partitions are never opened, not opened and discarded."
@@ -42,7 +42,7 @@ metrics:
       - name: "Delta materialization"
         value: 21
         note: "Only where the same raw Parquet was re-read often enough to amortize the write."
-    caption: "Relative magnitudes are illustrative. What the work established is the ordering; only the runtime figures are measured."
+    caption: "Relative magnitudes are illustrative. What the work established is the ordering. Only the runtime figures are measured."
 tags: ["PySpark", "Databricks", "Delta", "Performance", "Partition pruning"]
 draft: false
 ---
@@ -58,9 +58,9 @@ the work it did was work nobody had asked for. That ratio is what made column
 pruning the dominant lever rather than a guess: the cheapest honest version of
 this job still had to read the columns the analysis used, and everything above
 that floor was waste being paid for on every single run. The levers that
-followed are the same principle pushed further down the job — less data
-entering the pipeline at all, less of it crossing the network, less memory
-spent holding things that get read once.
+followed push the same principle further down the job. Less data enters the
+pipeline at all, less of it crosses the network, and less memory goes to
+holding things that get read once.
 
 A pipeline you schedule your day around is a different instrument from one you
 run mid-thought. Refund and leakage questions arrive in chains, where the

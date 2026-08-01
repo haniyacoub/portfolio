@@ -8,7 +8,7 @@ company: "AWS"
 featured: false
 order: 12
 summary: "Two tools that maintain their own correctness: one attacked for 50 rounds until missing evidence stopped reading as a pass, one that regenerates its own monitoring coverage so no model goes unwatched."
-context: "Both tools were exposed to the same failure, and it is silence rather than error. The first version of the compromise tool rendered about 6,000 events on a zoom-and-pan canvas and left the analyst to find the story; the rebuild I put in its place turned out to print something reassuring when a query failed. Precision tracking rots the same way: a new enforcement signature appears, nobody adds it to the monitoring queries, and that detection model simply stops being watched. Nothing alarms, because nothing decided to stop."
+context: "Both tools were exposed to the same failure, and it is silence rather than error. The first version of the compromise tool rendered about 6,000 events on a zoom-and-pan canvas and left the analyst to find the story. The rebuild I put in its place turned out to print something reassuring when a query failed. Precision tracking rots the same way: a new enforcement signature appears, nobody adds it to the monitoring queries, and that detection model simply stops being watched. Nothing alarms, because nothing decided to stop."
 contribution: "I rebuilt the compromise tool as a decision engine over roughly 19 live data surfaces. Paste an account ID and it answers the eight ordered decisions of a compromise case, from whether this is compromise at all, through true onset and attacker dwell rather than label time, to whether reinstate is safe. I then ran a 50-round adversarial audit against my own tool, and it confirmed 44 defects. Nearly every critical defect was the same mistake: absent or errored evidence reading as reassurance. Every instance is now inverted to fail-closed with regression tests, so a failed query yields unproven instead of a green light. I authored a model-monitoring pipeline that regenerates itself: a JSON registry of enforcement signatures feeds a code generator, the generator produces the SQL, and the SQL renders the dashboards, so a newly discovered signature is entered once and enrolls itself everywhere downstream. I also reverse-engineered the production fraud rulesets from PDF exports into a structured machine-readable catalog with an interactive lifecycle graph, so reasoning about enforcement paths runs on the actual rules instead of on inference from data."
 outcome: "Investigators get a case file instead of a canvas, and the verdicts are trustworthy in a specific, tested sense: a gate turns green only on positive evidence, and not proven safe is a distinct verdict from blocked. The ruleset catalog gives investigations a ground truth for how enforcement actually behaves. The audit's core finding outgrew the tool it came from and is now how I design anything that renders a verdict."
 impact: "Inverted every critical failure to fail-closed after a 50-round adversarial audit against my own compromise tool confirmed <strong>44 defects</strong>, nearly all of them absent or errored evidence reading as reassurance, and made monitoring coverage regenerate from its own registry so <strong>no detection model drops out of precision tracking</strong>. Neither tool can report a pass it did not earn."
@@ -60,28 +60,28 @@ tags: ["Investigation tooling", "Adversarial audit", "Fail-closed design", "Mode
 draft: false
 ---
 
-Silence is the dangerous failure. A wrong number gets argued with in a meeting;
-a missing one gets read as fine. Both of these tools had that failure available
+Silence is the dangerous failure. A wrong number gets argued with in a meeting.
+A missing one gets read as fine. Both of these tools had that failure available
 to them, and both were rebuilt so it cannot happen quietly.
 
 The compromise tool started out honest about the data and useless about the
 decision: every event on a canvas, and an analyst left to zoom, pan and
-hopefully notice the story. The rebuild starts from the decisions instead —
-eight of them, in order, because nothing later means anything until the earlier
+hopefully notice the story. The rebuild starts from the decisions instead, all
+eight of them in order, because nothing later means anything until the earlier
 ones are settled. You cannot price what an attacker cost before you have
 established that there was an attacker.
 
 Then I attacked it, and the critical findings were almost embarrassingly
 consistent: **absent or errored evidence read as reassurance**. A timed-out
 query printed as a passing gate. A coverage claim over surfaces never checked.
-The tool was not lying about what it knew; it had no way to say that it did not
+The tool was not lying about what it knew. It had no way to say that it did not
 know. Every instance is inverted now. A failed query yields unproven, and a
 regression suite over documented anchors keeps it that way.
 
 The monitoring pipeline applies the same rule before anything breaks: coverage
-is generated, not remembered. Its companion was ground truth — the production
-fraud rulesets, reverse-engineered from PDF exports into a machine-readable
-catalog with an interactive lifecycle graph, so investigations reason from what
-the rules say rather than from what the data implies.
+is generated, not remembered. Its companion was ground truth. I
+reverse-engineered the production fraud rulesets from PDF exports into a
+machine-readable catalog with an interactive lifecycle graph, so investigations
+reason from what the rules say rather than from what the data implies.
 
 Neither tool is smarter than its inputs. Both now say so out loud.

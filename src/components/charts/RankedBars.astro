@@ -91,8 +91,8 @@ const text = `${label}. ${rows
 
   <ChartTable
     columns={["Category", unit ? `Value (${unit})` : "Value", "Note"]}
-    rows={rows.map((r) => [r.name, r.printed, r.note ?? "—"])}
-    caption={`${label} — ranked.`}
+    rows={rows.map((r) => [r.name, r.printed, r.note ?? ""])}
+    caption={`${label}: ranked.`}
   />
 </figure>
 

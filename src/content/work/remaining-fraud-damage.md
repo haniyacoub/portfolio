@@ -30,7 +30,7 @@ metrics:
     before: { label: "Naive treated-vs-untreated", value: 100, unit: "", display: "overstated" }
     after: { label: "Holdout / counterfactual", value: 55, unit: "", display: "true effect" }
     betterWhen: "lower"
-    context: "Illustrative shape. Selection bias inflates the naive read; the holdout strips out what would have happened anyway, leaving prevented damage separated from remaining damage."
+    context: "Illustrative shape. Selection bias inflates the naive read. The holdout strips out what would have happened anyway, leaving prevented damage separated from remaining damage."
 tags: ["PySpark / Databricks", "Refund leakage", "Benchmarking", "GMV", "Holdout", "Counterfactual", "Base-rate effects", "WBR/MBR"]
 draft: false
 ---
@@ -53,7 +53,7 @@ That is exactly where this kind of measurement goes wrong. Naive before/after
 flatters every control you will ever ship.
 
 So I evaluated them causally instead. The honest effect is smaller than the naive
-one. That is not a disappointment; it is the difference between a number that
+one. That is not a disappointment. It is the difference between a number that
 survives scrutiny and one that doesn't, and it is the only kind of number I would
 want to hand to someone who is about to move a threshold.
 

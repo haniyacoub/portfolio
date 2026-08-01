@@ -60,10 +60,10 @@ never the problem. The unwritten column beside it is.
 I wrote it twice.
 
 Device fingerprint was missing from the Fraud Relations model's linkage
-signals. The model already linked abusive accounts through shared identifiers;
-device was simply not one of them, so a whole class of linkage stayed
+signals. The model already linked abusive accounts through shared identifiers.
+Device was simply not one of them, so a whole class of linkage stayed
 invisible. Adding it as an ensemble feature caught **34% more disputed
-dollars** — enough on its own to ship a feature and stop asking questions. I
+dollars**. That alone is enough to ship a feature and stop asking questions. I
 priced the other column anyway, signal by signal. Without it the owners
 inherit a recall gain and an unpriced bill.
 

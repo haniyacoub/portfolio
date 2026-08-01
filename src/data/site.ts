@@ -1,13 +1,13 @@
 /**
- * site.ts — single source for identity + contact details.
+ * site.ts: single source for identity + contact details.
  * Kept out of components so copy/links change in one place.
  */
 export const site = {
   name: "Hani Yacoub",
   /* Role names the discipline first and the domain second. He is a data
-     generalist — platform, BI, ML, forecasting — whose deepest domain happens
-     to be fraud. Leading with "Fraud Analyst" pigeonholed him into one of the
-     four sectors he has actually worked in. */
+     generalist across platform, BI, ML and forecasting, whose deepest domain
+     happens to be fraud. Leading with "Fraud Analyst" pigeonholed him into one
+     of the four sectors he has actually worked in. */
   role: "Data & Risk Analyst",
   shortRole: "Data & risk analyst",
   location: "Berlin",
@@ -16,22 +16,39 @@ export const site = {
   linkedinLabel: "linkedin.com/in/hani1995",
   url: "https://haniyacoub.com",
   description:
-    "Hani Yacoub — data and risk analyst in Berlin. Six years measuring decisions that are expensive to get wrong, across cloud, fashion, automotive, and energy. I build the data platforms, dashboards, models and forecasts behind those calls. Now at AWS, working on fraud prevention.",
-  /* The through-line, stated once and reused for the hero, OG image and
-     footer, so the three can never drift apart. Method in the main clause,
-     domain in the tail. */
+    "Hani Yacoub, data and risk analyst in Berlin. Six years across energy, automotive, fashion and cloud. I build the data platforms, dashboards, models and forecasts that fraud decisions run on. Now at AWS.",
+  /* Stated once and reused by the hero, the OG card and the footer, so the
+     three can never drift apart. States what was built rather than making a
+     claim about the person who built it. */
   tagline:
-    "I make expensive decisions measurable. Most of them are about fraud.",
+    "I built the platform, the dashboards, the models and the forecasts that fraud decisions run on.",
 } as const;
 
-/* Real routed pages — the site is multi-page, not a single scroll.
-   Work comes first: the case studies are the substance of the portfolio, and
-   without this entry there was no path to them from the first screenful at
-   all — a visitor had to scroll past two full screens on faith. */
+/* Shipped products, linked so a reader can go and use them. Two independently
+   designed, built and released products are the most verifiable thing on this
+   site, and they were previously named without being clickable. */
+export const products = [
+  {
+    name: "Renitor",
+    url: "https://renitor.com",
+    label: "renitor.com",
+    note: "VS Code extension. Your coding task survives when one AI agent stops.",
+  },
+  {
+    name: "Preflights",
+    url: "https://preflights.app",
+    label: "preflights.app",
+    note: "Catches the Shopify import mistakes that cannot be undone.",
+  },
+] as const;
+
+/* One page plus the case studies. About and Contact were separate routes that
+   each held a few lines. Both now live on the home page, so the nav points at
+   sections rather than sending the reader away to read one paragraph.
+   Email is a persistent button in the nav instead of a page of its own. */
 export const nav = [
   { label: "Work", href: "/#work" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "About", href: "/#about" },
   // Opens in a new tab (see Nav.astro): a PDF viewer has none of the site's
   // chrome, so navigating the current tab into it is a dead end.
   { label: "Résumé", href: "/Hani_Yacoub_CV.pdf", external: true },

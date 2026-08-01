@@ -110,7 +110,7 @@ const text = `${label}. ${segs
   <ChartTable
     columns={["Segment", "Share"]}
     rows={segs.map((s) => [s.name, s.printed])}
-    caption={`${label}${of ? " — " + of : ""}.`}
+    caption={`${label}${of ? ", " + of : ""}.`}
   />
 </figure>
 

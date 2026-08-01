@@ -12,7 +12,7 @@ summary: "Sleeper-account fraud surfaced as a ranked queue an analyst can work, 
 context: "Sleeper accounts sit quiet until they burn. By the time billing spikes, the abuse is already running. The signals that give a sleeper away early exist in the data, but nobody had assembled them into a detector with an operational front end."
 contribution: "I built an end-to-end XGBoost detection pipeline with around 90 engineered features over billing spikes, linked accounts, IP-country mismatches, payment instruments, and risk-score history. I designed the training hygiene to catch leakage rather than to assume it away. On top of the scores I put a Streamlit deep-dive that ranks the full population into tiers an analyst works through in order, and that proposes candidate rules with their precision and recall already attached. When the model's top-ranked feature turned out to be a containment score that only settles after enforcement has fired, I wrote the leakage risk next to the scores instead of publishing the headline PR-AUC unqualified."
 outcome: "Analysts get a tiered worklist, and the model's known limitation travels with its scores rather than living in my notes."
-impact: "<strong>Every account in the population now carries a sleeper score</strong> and lands in a ranked tier an analyst works top-down, instead of surfacing on a billing report after the compute is already burned — on <strong>around 90 engineered features</strong>, a temporal split, and PR-AUC-first evaluation."
+impact: "<strong>Every account in the population now carries a sleeper score</strong> and lands in a ranked tier an analyst works top-down, instead of surfacing on a billing report after the compute is already burned. The score rests on <strong>around 90 engineered features</strong>, a temporal split, and PR-AUC-first evaluation."
 counterfactual: "Nothing gets scored until it makes noise, so the worklist is whatever happened to bill loudly and the accounts sitting quiet are <strong>never ranked at all</strong>."
 indexMetric: 0
 metrics:
@@ -64,7 +64,7 @@ in a queue somebody can work is a chart, not a control.
 
 Then the awkward part. The top feature was doing its best work after the fact,
 which means the offline PR-AUC reads better than the model will behave in front
-of a real population — and the training sample was fraud-heavy rather than the
+of a real population. The training sample was also fraud-heavy rather than the
 low base rate the model would meet. Both went into writing next to the scores. A
 detector people can calibrate their trust against is worth more than one with a
 prettier headline.

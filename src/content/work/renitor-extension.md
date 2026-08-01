@@ -70,8 +70,8 @@ loses the work anyway.
 
 Safety could have been another model asked to review the commands. That is
 cheaper to build and it demonstrates well. I made it a **rules layer** instead,
-because a probabilistic check on an irreversible action is not really a check —
-it is a hope with a log line. The same reasoning made **local-first** a
+because a probabilistic check on an irreversible action is not really a check.
+It is a hope with a log line. The same reasoning made **local-first** a
 precondition rather than a feature: an extension that reads your repo has no
 business sending it anywhere, and the most auditable form of that promise is
 having no backend to audit.

@@ -151,8 +151,8 @@ const text = `${label}. ${evs
 
   <ChartTable
     columns={["Event", "Elapsed", "Evidence source"]}
-    rows={evs.map((e) => [e.label, e.time, e.source ?? "—"])}
-    caption={`${label} — the settled sequence.`}
+    rows={evs.map((e) => [e.label, e.time, e.source ?? ""])}
+    caption={`${label}, the settled sequence.`}
   />
 </figure>
 

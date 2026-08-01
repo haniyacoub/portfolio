@@ -1,41 +1,41 @@
 /**
- * profile.ts — editable bio figures, career timeline, markets, stack.
+ * profile.ts: editable bio figures, career timeline, markets, stack.
  * Kept out of the markup so copy and numbers change in one place.
  */
 
 /** Framing figures shown beside the opening statement.
     These are what a recruiter scans for in the first screenful, so they buy
-    breadth of experience and breadth of *work*. Languages moved to /about —
-    a good detail, but not worth a third of the headline space. */
+    breadth of experience and breadth of *work*. Languages moved to /about.
+    A good detail, but not worth a third of the headline space. */
 export const facts = [
   { value: "6+", unit: "yrs", label: "In data, risk & analytics", emphasis: false },
   { value: "4", unit: "sectors", label: "Energy · auto · fashion · cloud", emphasis: false },
   { value: "18", unit: "cases", label: "Platforms, dashboards, models, forecasts", emphasis: false },
 ] as const;
 
-/** Career arc — drives the Timeline.
+/** Career arc, which drives the Timeline.
     CLOSED date ranges on purpose: an open-ended single year ("2021") leaves a
     recruiter unable to work out tenure, which is one of the few hard tokens
     they actually scan for. Each entry names the sector and the real job title,
     because "Statkraft" and "AUTO1" mean nothing to a reader outside Germany. */
 export const career = [
   {
-    date: "2020–2021",
+    date: "2020 to 2021",
     org: "Statkraft",
     detail: "Energy · Quantitative analyst intern, energy markets",
   },
   {
-    date: "2021–2024",
+    date: "2021 to 2024",
     org: "AUTO1 Group",
     detail: "Automotive · Data analyst, customer acquisition",
   },
   {
-    date: "2024–2026",
+    date: "2024 to 2026",
     org: "Zalando",
     detail: "Fashion e-commerce · Senior product analyst, risk & abuse",
   },
   {
-    date: "2026–present",
+    date: "2026 to present",
     org: "AWS",
     detail: "Cloud · Payments & fraud prevention",
   },
@@ -55,7 +55,7 @@ export const education = [
   },
   {
     what: "ML engineering, self-directed",
-    where: "12-month curriculum, ongoing — built from scratch before reaching for libraries",
+    where: "12-month curriculum, ongoing: built from scratch before reaching for libraries",
   },
 ] as const;
 

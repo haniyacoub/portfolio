@@ -60,7 +60,7 @@ metrics:
 tags: ["Multi-agent", "LLM judge", "Adversarial debate", "Verification", "Reproducibility", "MCP"]
 ---
 
-Fluent and wrong is the dangerous pair. A slow answer costs time; a confident
+Fluent and wrong is the dangerous pair. A slow answer costs time. A confident
 wrong one costs whatever got decided on it, and it spends that credibility
 before anyone has a reason to look. So the check could not be a habit I kept on
 good days. It had to be something a run passes through on its way out.

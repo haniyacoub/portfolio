@@ -1,82 +1,28 @@
 ---
-import BaseLayout from "../components/layout/BaseLayout.astro";
-import { site } from "../data/site";
+/**
+ * /contact — kept only as a redirect.
+ *
+ * The contact page held one line and two links, so it became a persistent
+ * "Get in touch" button in the nav instead. This route stays because the old URL
+ * may already be in circulation, and it lands on the products section, which is
+ * where the email button and the two shipped products both sit in view.
+ */
+const target = "/#about";
 ---
 
-<BaseLayout
-  title="Contact"
-  description="Get in touch with Hani Yacoub — data and risk analyst in Berlin."
->
-  <section class="section ct">
-    <div class="wrap">
-      <span class="label" data-reveal>Contact</span>
-
-      <!-- A bare list of links leaves the reader to guess whether he wants to
-           be contacted at all. One warm line removes that friction. -->
-      <p class="ct__invite" data-reveal data-reveal-delay="60">
-        Happy to hear from you — about a role, a problem you're trying to
-        measure, or just to compare notes. I read everything and I reply.
-      </p>
-
-      <div class="ct__links" data-reveal data-reveal-delay="120">
-        <a class="ct__link" href={`mailto:${site.email}`} data-magnetic="0.3">
-          <span class="label">Email</span>
-          <span class="mono ct__value">{site.email}</span>
-        </a>
-        <a
-          class="ct__link"
-          href={site.linkedin}
-          rel="me noopener"
-          target="_blank"
-          data-magnetic="0.3"
-        >
-          <span class="label">LinkedIn</span>
-          <span class="mono ct__value">{site.linkedinLabel}</span>
-        </a>
-        <div class="ct__link">
-          <span class="label">Based in</span>
-          <span class="mono ct__value ct__value--static">{site.location}</span>
-        </div>
-      </div>
-    </div>
-  </section>
-</BaseLayout>
-
-<style>
-  .ct { min-height: 60vh; display: flex; align-items: center; }
-  .ct__invite {
-    font-family: var(--font-display);
-    font-size: var(--step-2);
-    font-weight: 440;
-    line-height: var(--leading-snug);
-    letter-spacing: -0.02em;
-    color: var(--ink-soft);
-    max-width: 40ch;
-    margin-top: var(--space-4);
-  }
-  .ct__line {
-    font-family: var(--font-display);
-    font-size: var(--step-5);
-    font-weight: 520;
-    line-height: 1.05;
-    letter-spacing: -0.035em;
-    max-width: 18ch;
-    margin-top: var(--space-4);
-  }
-  .ct__line em { font-style: italic; color: var(--accent); }
-  .ct__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-8);
-    margin-top: var(--space-9);
-  }
-  .ct__link { display: flex; flex-direction: column; gap: var(--space-2); text-decoration: none; color: var(--ink); }
-  .ct__value {
-    font-size: var(--step-1);
-    border-bottom: var(--hair) solid var(--line-strong);
-    padding-bottom: var(--space-1);
-    transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-  }
-  a.ct__link:hover .ct__value { color: var(--accent); border-color: var(--accent); }
-  .ct__value--static { border-color: transparent; color: var(--muted); }
-</style>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Moved · Hani Yacoub</title>
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <p>
+      Contact is now a button in the site header.
+      <a href={target}>Continue to the home page</a>.
+    </p>
+  </body>
+</html>

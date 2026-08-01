@@ -4,8 +4,9 @@ import BaseLayout from "../components/layout/BaseLayout.astro";
 import WorkItem from "../components/work/WorkItem.astro";
 import ThresholdDial from "../components/interactive/ThresholdDial.astro";
 import SignalField from "../components/interactive/SignalField.astro";
-import { site } from "../data/site";
-import { facts } from "../data/profile";
+import Timeline from "../components/charts/Timeline.astro";
+import { site, products } from "../data/site";
+import { facts, career, education, stack } from "../data/profile";
 import { parseFigure } from "../utils/num";
 
 const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
@@ -13,6 +14,40 @@ const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
 );
 const count = String(works.length).padStart(2, "0");
 const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))];
+
+/* The intro is told THROUGH the work rather than beside it. Each item pairs one
+   thing about how Hani works with the project that proves it, and links to that
+   case, so reading about him and reading his work are the same act. Slugs are
+   resolved against the live collection so a renamed or drafted case can never
+   leave a dead link here. */
+const intro = [
+  {
+    lead: "I start with the false positives.",
+    body: "A missed fraudster costs money. A wrongly closed customer costs money and trust, and turns up weeks later as a support ticket nobody connects to the rule that caused it. So the carve-outs get built before the bulk action does.",
+    slug: "precision-carveouts",
+    proof: "See how the carve-outs work",
+  },
+  {
+    lead: "Then I build whatever the answer depends on.",
+    body: "Usually that is infrastructure nobody asked for. Two company databases sat behind two different logins with a slow sign-in on every query, so I put them behind one interface and made queries about ten times faster. Every other project I have shipped runs on it.",
+    slug: "fraud-data-platform",
+    proof: "See the platform",
+  },
+  {
+    lead: "I do not trust a number until something has tried to break it.",
+    body: "Headline figures get attacked before they reach anyone. On its founding case it caught a silently truncated query and moved the headline by 69 percent. Catching that in draft beats being wrong in a room full of stakeholders.",
+    slug: "multi-agent-investigation",
+    proof: "See the verification loop",
+  },
+  {
+    lead: "And the same instinct works outside fraud.",
+    body: "Before AWS I scored which customers were worth calling at an automotive marketplace, cut a Zalando pipeline from 34 minutes to a few, and put a euro figure on refund abuse across six markets. Same job underneath, different domain on top.",
+    slug: "auto1-customer-scoring",
+    proof: "See the scoring work",
+  },
+];
+const liveSlugs = new Set(works.map((w) => w.id));
+const introItems = intro.filter((i) => liveSlugs.has(i.slug));
 ---
 
 <BaseLayout>
@@ -24,15 +59,14 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
       </p>
 
       <div class="hero__top">
-        <!-- Method in the main clause, domain in the tail: what he does with
-             data comes first, fraud arrives second as the deepest domain
-             rather than the whole identity. Kept to four short lines so it
-             still reads on a phone. Mirrors site.tagline — change both. -->
+        <!-- Not a slogan. A slogan asks to be believed. This states what was
+             built and lets the work carry it. Each line is a real thing that
+             shipped, so the opening screen is evidence rather than a claim. -->
         <h1 class="hero__statement reveal-lines">
-          <span class="reveal-line"><span>I make expensive</span></span>
-          <span class="reveal-line"><span>decisions <em>measurable</em>.</span></span>
-          <span class="reveal-line"><span>Most of them are</span></span>
-          <span class="reveal-line"><span>about fraud.</span></span>
+          <span class="reveal-line"><span>I built the platform,</span></span>
+          <span class="reveal-line"><span>the dashboards, the models</span></span>
+          <span class="reveal-line"><span>and the forecasts that</span></span>
+          <span class="reveal-line"><span><em>fraud decisions</em> run on.</span></span>
         </h1>
 
         <div class="hero__viz">
@@ -42,15 +76,14 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
       </div>
 
       <div class="hero__lower">
-        <!-- The lede does the work the headline deliberately doesn't: it names
-             the employer, the domain, and the breadth. Short sentences, common
-             words — a smart reader outside fraud should follow every one. -->
+        <!-- Names the employer, the domain and the breadth. Short sentences,
+             common words, so a reader outside fraud follows every one. -->
         <p class="hero__lede" data-reveal>
-          Six years across energy, automotive, fashion and cloud. I build the
-          things the answer depends on: the data platforms, the dashboards, the
-          models, the forecasts. Right now that's at
-          <strong>AWS</strong>, on fraud prevention — where a wrong call costs
-          money in both directions, so being right has to be provable.
+          Six years across energy, automotive, fashion and cloud. Now at
+          <strong>AWS</strong>, on fraud prevention, where a wrong call costs
+          money in both directions. Miss the abuse and it is expensive. Shut
+          down a real customer and it is worse. So I measure both sides before
+          anyone acts.
         </p>
 
         <dl class="hero__facts" aria-label="At a glance" data-reveal>
@@ -83,6 +116,86 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
   <!-- ===================== INTERACTIVE: THE TRADEOFF ================= -->
   <ThresholdDial />
 
+  <!-- ===================== ABOUT, TOLD THROUGH THE WORK ============== -->
+  <section class="me section" id="about" aria-labelledby="me-h">
+    <div class="wrap">
+      <header class="me__head" data-reveal>
+        <span class="label">Who is doing this</span>
+        <h2 id="me-h" class="me__title">
+          I am Hani. German-Jordanian, based in Berlin, six years in data.
+        </h2>
+        <p class="me__sub">
+          The short version is four habits and the projects that came out of
+          them.
+        </p>
+      </header>
+
+      <ol class="me__list" role="list">
+        {
+          introItems.map((item, i) => (
+            <li class="me__item" data-reveal data-reveal-delay={i * 70}>
+              <span class="mono me__n">{String(i + 1).padStart(2, "0")}</span>
+              <div class="me__body">
+                <h3 class="me__lead">{item.lead}</h3>
+                <p class="me__text">{item.body}</p>
+                <a class="mono me__proof" href={`/work/${item.slug}`}>
+                  {item.proof} <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="me__grid">
+        <div class="me__col" data-reveal>
+          <Timeline label="Where I have worked" items={[...career]} />
+        </div>
+        <div class="me__col" data-reveal data-reveal-delay="90">
+          <span class="label">Studied</span>
+          <ul class="me__edu" role="list">
+            {
+              education.map((e) => (
+                <li class="me__eduitem">
+                  <span class="me__eduwhat">{e.what}</span>
+                  <span class="me__eduwhere">{e.where}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <span class="label me__stacklabel">Tools</span>
+          <ul class="me__stack" role="list">
+            {stack.map((s) => <li class="mono me__tool">{s}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SHIPPED PRODUCTS (CLICKABLE) ============== -->
+  <section class="prod section" aria-labelledby="prod-h">
+    <div class="wrap">
+      <header class="prod__head" data-reveal>
+        <span class="label">Built on my own time</span>
+        <h2 id="prod-h" class="prod__title">
+          Two products you can go and use right now.
+        </h2>
+      </header>
+      <ul class="prod__list" role="list">
+        {
+          products.map((p, i) => (
+            <li class="prod__item" data-reveal data-reveal-delay={i * 80}>
+              <a class="prod__link" href={p.url} target="_blank" rel="noopener">
+                <span class="prod__name">{p.name}</span>
+                <span class="mono prod__url">{p.label} <span aria-hidden="true">↗</span></span>
+              </a>
+              <p class="prod__note">{p.note}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
   <!-- ====================== FEATURED WORK TEASER ===================== -->
   <section class="feat section" id="work" aria-labelledby="feat-h">
     <div class="wrap">
@@ -123,19 +236,6 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
     </div>
   </section>
 
-  <!-- ========================= ABOUT / CTA STRIP ===================== -->
-  <section class="strip section" aria-label="About, in brief">
-    <div class="wrap strip__inner" data-reveal>
-      <p class="strip__line">
-        Based in Berlin. I build the infrastructure, the methodology, and the
-        deliverables.
-      </p>
-      <div class="strip__links">
-        <a class="strip__link mono" href="/about">More about me <span aria-hidden="true">→</span></a>
-        <a class="strip__link mono" href="/contact">Get in touch <span aria-hidden="true">→</span></a>
-      </div>
-    </div>
-  </section>
 </BaseLayout>
 
 <script>
@@ -153,7 +253,7 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
 
         /* The tab row wraps on narrow screens. The indicator is positioned
            absolutely inside that wrapping container, so anchoring it to the
-           container's bottom edge left it stranded under the wrong row —
+           container's bottom edge left it stranded under the wrong row. It
            measured 97px below the tab it was supposed to mark on a 390px
            viewport. Tracking offsetTop as well as offsetLeft keeps it attached
            to its own tab on any number of rows. */
@@ -266,7 +366,7 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
   .feat__all:hover { color: var(--accent-deep); }
   /* align-items: start, not stretch. Charts vary a lot in height (a 5-stage
      funnel is ~2× a before/after bar), and stretching forced every card to its
-     row-mate's height — leaving up to 584px of empty card below the shorter
+     row-mate's height. That left up to 584px of empty card below the shorter
      one's chart. Each card is now exactly as tall as its own content. */
   .feat__list { display: grid; grid-template-columns: 1fr; gap: var(--grid-gap); align-items: start; margin-top: var(--space-6); }
   @media (min-width: 52rem) { .feat__list { grid-template-columns: 1fr 1fr; } }
@@ -298,19 +398,80 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
   .feat__cta-arrow { transition: transform var(--dur-2) var(--ease-out); }
   .feat__cta:hover .feat__cta-arrow { transform: translateX(5px); }
 
-  /* ====================== ABOUT / CTA STRIP ===================== */
-  .strip__inner {
-    display: grid; gap: var(--space-6); align-items: end;
+  /* ============ ABOUT, TOLD THROUGH THE WORK ============ */
+  .me__head { border-bottom: var(--hair) solid var(--ink); padding-bottom: var(--space-4); }
+  .me__title { font-size: var(--step-3); margin-top: var(--space-3); max-width: 34ch; }
+  .me__sub {
+    font-size: var(--step-1); color: var(--muted); margin-top: var(--space-3);
+    max-width: 48ch; line-height: var(--leading-body);
+  }
+
+  .me__list { margin-top: var(--space-7); display: grid; gap: var(--space-7); }
+  @media (min-width: 60rem) {
+    .me__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-8) var(--space-9); }
+  }
+  .me__item { display: grid; grid-template-columns: 2.2rem 1fr; gap: var(--space-3); }
+  .me__n { font-size: var(--step--2); color: var(--faint); padding-top: 0.35rem; }
+  .me__body { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+  .me__lead {
+    font-family: var(--font-display); font-size: var(--step-2); font-weight: 500;
+    line-height: var(--leading-snug); letter-spacing: -0.02em; color: var(--ink);
+    max-width: 26ch;
+  }
+  .me__text {
+    font-size: var(--step-0); color: var(--ink-soft);
+    line-height: var(--leading-body); max-width: 48ch;
+  }
+  .me__proof { font-size: var(--step--1); color: var(--accent); text-decoration: none; }
+  .me__proof:hover { color: var(--accent-deep); }
+
+  .me__grid {
+    margin-top: var(--space-9); display: grid; gap: var(--space-7);
     border-top: var(--hair) solid var(--line); padding-top: var(--space-7);
   }
-  @media (min-width: 52rem) { .strip__inner { grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-8); } }
-  .strip__line {
-    font-family: var(--font-display); font-size: var(--step-2); font-weight: 460;
-    line-height: var(--leading-snug); color: var(--ink-soft); max-width: 42ch;
-    letter-spacing: -0.02em;
+  @media (min-width: 52rem) { .me__grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--space-8); } }
+  .me__col { min-width: 0; }
+  .me__edu { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-3); }
+  .me__eduitem { display: flex; flex-direction: column; gap: 0.15em; }
+  .me__eduwhat { font-size: var(--step-0); color: var(--ink); font-weight: 500; }
+  .me__eduwhere {
+    font-size: var(--step--1); color: var(--muted);
+    line-height: var(--leading-snug); max-width: 34ch;
   }
-  .strip__links { display: flex; flex-direction: column; gap: var(--space-3); }
-  @media (min-width: 52rem) { .strip__links { align-items: flex-end; } }
-  .strip__link { font-size: var(--step-0); color: var(--ink); text-decoration: none; }
-  .strip__link:hover { color: var(--accent); }
+  .me__stacklabel { display: block; margin-top: var(--space-6); }
+  .me__stack { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-top: var(--space-3); }
+  .me__tool {
+    font-size: var(--step--2); color: var(--muted);
+    border: var(--hair) solid var(--line-strong); border-radius: 100px;
+    padding: 0.25em 0.85em;
+  }
+
+  /* ====================== SHIPPED PRODUCTS ===================== */
+  .prod__head { border-bottom: var(--hair) solid var(--ink); padding-bottom: var(--space-4); }
+  .prod__title { font-size: var(--step-3); margin-top: var(--space-3); max-width: 30ch; }
+  .prod__list { margin-top: var(--space-6); display: grid; gap: var(--space-6); }
+  @media (min-width: 44rem) { .prod__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7); } }
+  .prod__item {
+    display: flex; flex-direction: column; gap: var(--space-2);
+    padding: var(--space-6); border: var(--hair) solid var(--line);
+    border-radius: var(--radius-sm); background: var(--paper-raised);
+    transition: border-color var(--dur-1) var(--ease-out);
+  }
+  .prod__item:hover { border-color: var(--accent); }
+  .prod__link {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--space-4); flex-wrap: wrap;
+    text-decoration: none; color: var(--ink);
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .prod__link:hover { color: var(--accent); }
+  .prod__name {
+    font-family: var(--font-display); font-size: var(--step-2);
+    font-weight: 520; letter-spacing: -0.02em;
+  }
+  .prod__url { font-size: var(--step--2); color: var(--accent); }
+  .prod__note {
+    font-size: var(--step-0); color: var(--ink-soft);
+    line-height: var(--leading-body); max-width: 40ch;
+  }
 </style>

@@ -56,7 +56,7 @@ metrics:
         label: "96% of the brand-new ceiling consumed in two regions"
         source: "warehouse"
         punch: true
-    caption: "The eight load-bearing events from the settled 37-event timeline. Detection latency is measured from the first anomalous hour. The spine is compressed so a one-second event and a 22-hour gap can share an axis; the printed offset on each row is the authoritative figure. The account was released four times, and this is the release that ran to launch."
+    caption: "The eight load-bearing events from the settled 37-event timeline. Detection latency is measured from the first anomalous hour. The spine is compressed so a one-second event and a 22-hour gap can share an axis. The printed offset on each row is the authoritative figure. The account was released four times, and this is the release that ran to launch."
     context: "The gap is not the detector. It is a score with no waiting period feeding a quota gate."
   - chart: "stat"
     label: "Source-tagged events"
@@ -77,7 +77,7 @@ produced the loss was an account **released four times** and a gate that never
 asked how old the clean score was.
 
 That distinction is the deliverable. "Detection was too slow" names no owner and
-no fix — it points at a model that had already done its job, and a correction of
+no fix. It points at a model that had already done its job, and a correction of
 errors can close it by tuning a threshold and changing nothing about the path
 the loss actually took. "A quota gate clears an account on a one-second-old
 score" names both, and it puts the question in front of the people who own

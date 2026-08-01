@@ -12,15 +12,15 @@
 <section class="dial section" id="tradeoff" aria-labelledby="dial-h">
   <div class="wrap">
     <header class="dial__head">
-      <span class="label">Interactive — the tradeoff, live</span>
+      <span class="label">Try it yourself</span>
       <h2 id="dial-h" class="dial__title">
         Anyone can catch more abuse. The craft is the cost of catching it.
       </h2>
       <p class="dial__intro">
-        Move the detection threshold. Catching more abuse is easy — drag it up
-        and watch recall climb. The hard part is the second bar: every step too
-        far flags real customers. The job is living in the narrow band where one
-        is high and the other is near zero.
+        Move the detection threshold. Catching more abuse is the easy part. Drag
+        it up and watch the first bar climb. The hard part is the second bar,
+        because every step too far flags real customers. The job is living in the
+        narrow band where one is high and the other is near zero.
       </p>
     </header>
 
@@ -255,16 +255,16 @@
           let msg = "";
           if (t < ZONE_LO - 6) {
             msg =
-              "<b>Under-enforcing.</b> Comfortable false-positive rate — but real abuse is walking straight through.";
+              "<b>Too cautious.</b> Almost no real customers affected, but plenty of abuse is walking straight through.";
           } else if (t > ZONE_HI + 8) {
             msg =
-              "<b>Over-blocking.</b> You're catching nearly everything, and torching legitimate customers to do it. This is the expensive failure.";
+              "<b>Too aggressive.</b> You are catching nearly everything, and closing real customers to do it. This is the expensive failure.";
           } else if (t >= ZONE_LO && t <= ZONE_HI) {
             msg =
-              '<b class="is-good">Precision zone.</b> Most of the abuse caught, collateral still near zero. This narrow band is the whole job.';
+              '<b class="is-good">This is the zone.</b> Most of the abuse caught, and almost no real customers touched. That narrow band is the whole job.';
           } else {
             msg =
-              "<b>Almost.</b> Nudge into the highlighted band — that's where recall is high and the second bar hasn't bitten yet.";
+              "<b>Almost.</b> Nudge into the highlighted band, where the first bar is high and the second one has not started to bite.";
           }
           verdict.innerHTML = msg;
         }

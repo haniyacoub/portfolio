@@ -10,9 +10,9 @@ featured: false
 draft: false
 summary: "Shutdown authority handed to a scheduled job on AWS's European Sovereign Cloud partition, with every safety property structural rather than procedural."
 context: "Automated enforcement is where a false positive stops being a metric and becomes a customer outage. A scheduled job acts unattended, on a brand-new sovereign partition, so each safety property has to hold with nobody watching the run."
-contribution: "I built, deployed, and own the fraud-relations auto-shutdown job that runs daily in production on AWS's European Sovereign Cloud partition. Candidates pass eight ordered gates, and the sixth routes legitimate-customer patterns to human review rather than closure. A hard kill switch sits above all eight. A shadow twin runs the same selection into a parallel table, so precision is measured continuously rather than asserted at launch. Every policy threshold lives in deployed environment config instead of a code constant, so tuning enforcement needs no release. Reaching production meant clearing a five-gate sovereign deployment path — branch build, auto-deploy, manual cross-region promote, ADC pre-approval, host run. After six environment-level failures I wrote that path up as internal guidance with a failure-symptom-to-cause table."
+contribution: "I built, deployed, and own the fraud-relations auto-shutdown job that runs daily in production on AWS's European Sovereign Cloud partition. Candidates pass eight ordered gates, and the sixth routes legitimate-customer patterns to human review rather than closure. A hard kill switch sits above all eight. A shadow twin runs the same selection into a parallel table, so precision is measured continuously rather than asserted at launch. Every policy threshold lives in deployed environment config instead of a code constant, so tuning enforcement needs no release. Reaching production meant clearing a five-gate sovereign deployment path: branch build, auto-deploy, manual cross-region promote, ADC pre-approval, host run. After six environment-level failures I wrote that path up as internal guidance with a failure-symptom-to-cause table."
 outcome: "The team gained a live automated enforcement capability whose safety case is inspectable rather than argued: every property is a gate a reviewer can read off the code, not a claim they have to take on trust. The write-up turned an undocumented sovereign-region deploy path into something a teammate can walk cold."
-impact: "<strong>Eight ordered safety gates, a hard kill switch, and a shadow twin measuring precision continuously</strong> now stand between a candidate account and closure — with <strong>zero policy thresholds hardcoded</strong>."
+impact: "<strong>Eight ordered safety gates, a hard kill switch, and a shadow twin measuring precision continuously</strong> now stand between a candidate account and closure. <strong>Zero policy thresholds are hardcoded</strong>."
 counterfactual: "Enforcement stays manual and slow. Or worse, an automated job ships with its safety properties living in a runbook, and the first bad batch of shutdowns is discovered by the customers it hit."
 indexMetric: 0
 metrics:
@@ -37,7 +37,7 @@ metrics:
       - name: "Ranked per-run cap"
         note: "Ranked and capped, so one run has a bounded blast radius."
     caption: "Order carries the meaning: the carve-out gate only ever sees accounts that cleared the five before it. Runs daily in production under a hard kill switch."
-    context: "Candidate accounts enter at gate one; per-gate survivor counts are not published."
+    context: "Candidate accounts enter at gate one. Per-gate survivor counts are not published."
   - chart: "stat"
     label: "Policy thresholds in code"
     value: "0"
@@ -57,8 +57,8 @@ answer is worth trusting, not where it was easiest to write. Two gates
 deliberately follow it, because selection and action are different moments and
 the world can change between them.
 
-Launch is the easy half; staying trustworthy afterwards is not. Precision
-asserted once is a claim with an expiry date nobody can see — thresholds drift,
+Launch is the easy half. Staying trustworthy afterwards is not. Precision
+asserted once is a claim with an expiry date nobody can see. Thresholds drift,
 populations shift, and an unmeasured job goes on reporting success either way.
 Running the selection continuously in shadow is what turns that claim into an
 observation. Externalized thresholds do the same work for change itself: because
@@ -67,6 +67,6 @@ adjustment to enforcement policy leaves a dated record without anyone
 maintaining one.
 
 Production on a sovereign partition was its own problem. All six failures I hit
-were environmental rather than logical — nothing about the job was wrong, only
-the ground it stood on — which is exactly why the guidance I wrote is a
+were environmental rather than logical. Nothing about the job was wrong, only
+the ground it stood on. That is exactly why the guidance I wrote is a
 symptom-to-cause table.

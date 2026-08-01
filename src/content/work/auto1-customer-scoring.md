@@ -12,7 +12,7 @@ summary: "Before the fraud work, the same ranking problem: a large B2B base, fin
 context: "AUTO1's commercial team worked a large B2B customer base with finite outreach capacity. With no ranking over it, effort spread evenly across customers who were not evenly valuable, and churn was discovered in the revenue numbers rather than before it happened."
 contribution: "I built the two scores that ranked the base: a value score identifying the high-value B2B customers worth proactive attention, and a churn-risk score flagging accounts whose behaviour signalled they were about to leave. I analysed customer drop-off patterns to locate where in the relationship the base was actually being lost. I quantified the revenue upside of the highest-impact retention opportunities, so the case for retention spend was a number rather than a feeling."
 outcome: "Outreach ran off a queue instead of spreading evenly, so the rank decided the week rather than whoever happened to call in. Retention spend was argued from a payback figure attached to a named opportunity."
-impact: "Replaced flat outreach across a large B2B base with a <strong>ranked call queue</strong> — a value score, a churn-risk score, and a <strong>quantified revenue case</strong> behind the highest-impact retention plays."
+impact: "Replaced flat outreach across a large B2B base with a <strong>ranked call queue</strong>: a value score, a churn-risk score, and a <strong>quantified revenue case</strong> behind the highest-impact retention plays."
 counterfactual: "Retention money keeps going to whichever play sounds most urgent in the room, and <strong>nobody can say which one would have paid back</strong>."
 indexMetric: 0
 metrics:
@@ -47,7 +47,7 @@ So I built the ranking as two scores rather than one blended number, because
 who is worth keeping and who is leaving are different questions, and answering
 them in one figure hides which of the two is driving a call.
 
-Scores rank work; they do not justify spending money on it. That was the third
+Scores rank work. They do not justify spending money on it. That was the third
 piece. Attaching revenue to each drop-off point turned "we should do something
 about churn" into a list of retention plays with a payback figure next to each
 one.
@@ -55,5 +55,5 @@ one.
 This role was the training ground for everything after it. Population-level
 scoring, ranking under a hard capacity constraint, and the discipline of
 quantifying a decision before asking anyone to make it are the same habits the
-fraud work runs on. What changed later was the cost of being wrong — a missed
+fraud work runs on. What changed later was the cost of being wrong. A missed
 call became a shut-down account. The structure of the problem did not move.

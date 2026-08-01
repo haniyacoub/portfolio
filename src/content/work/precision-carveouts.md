@@ -10,7 +10,7 @@ draft: false
 order: 10
 summary: "A seven-figure flagged account turned out to be reserved-but-unused GPU capacity, not fraud. Reversals like that became the carve-out gates every bulk shutdown now passes through."
 context: "Fraud systems flag legitimate accounts too, and the expensive failure is acting on those flags at scale. When you action a coordinated ring in bulk, the abusive accounts aren't the risk. The legitimate ones sitting inside the same signature are: a shared NAT, a placeholder fingerprint, a common BIN, and suddenly the candidate list has real customers in it."
-contribution: "I reversed fraud calls on two legitimate accounts by proving what each flag actually was: one a seven-figure flagged-OPEX exposure, the other a shutdown that traced to a billing soft-decline rather than fraud. I then made false-positive aversion a standing control rather than a closing sanity check. Bulk-action SQL is restricted to hard-identifier matches, never the brittle heuristics that sweep up look-alikes. Before any wave, a legitimate-impact carve-out analysis names which real accounts the signature would catch and removes them before suspension. A confidence pass — adversarial review, drop-the-top-signal sensitivity, leave-one-out stability — has to clear before anything ships. Every batch carries quantified exposure to stakeholders for sign-off before it runs. Known false-positive accounts are catalogued as first-class do-not-shut calibration anchors."
+contribution: "I reversed fraud calls on two legitimate accounts by proving what each flag actually was: one a seven-figure flagged-OPEX exposure, the other a shutdown that traced to a billing soft-decline rather than fraud. I then made false-positive aversion a standing control rather than a closing sanity check. Bulk-action SQL is restricted to hard-identifier matches, never the brittle heuristics that sweep up look-alikes. Before any wave, a legitimate-impact carve-out analysis names which real accounts the signature would catch and removes them before suspension. A confidence pass has to clear before anything ships: adversarial review, drop-the-top-signal sensitivity, leave-one-out stability. Every batch carries quantified exposure to stakeholders for sign-off before it runs. Known false-positive accounts are catalogued as first-class do-not-shut calibration anchors."
 outcome: "Rings still get closed. What changed is the order of operations: the evidence gets checked before the action instead of after the apology, and the gates run whether or not anyone is feeling careful that week. Precision stops being a virtue and becomes a step you can audit."
 impact: "Fraud calls reversed on legitimate accounts, including a <strong>seven-figure account proven to be reserved GPU capacity</strong>, then hardened into a standing control: bulk ring actions catch the abuse with <strong>≈0 collateral</strong>, every wave ships with its legitimate-impact exposure priced for sign-off, and known false positives are catalogued so they're <strong>never re-flagged</strong>."
 counterfactual: "The startup loses its infrastructure over a spend pattern that was never fraud, and the next bulk action sweeps legitimate customers up with the ring. That manufactures a customer incident, burns trust at scale, and forces reactive reversals and apologies instead of preventing the harm."
@@ -51,8 +51,8 @@ reversed because I checked what the flag meant before treating it as a verdict.
 
 Individual saves don't scale, and both reversals taught the same thing: a flag
 is a hypothesis, not a verdict. Reversed once, each of those accounts became a
-do-not-shut anchor — which is where the catalogue started. Scaled up, that
-lesson is the whole argument for the gates.
+do-not-shut anchor. The catalogue started there. Scaled up, that lesson is the
+whole argument for the gates.
 
 So I built the second half as structure, and the choices in it are the
 substance. Hard identifiers instead of heuristics, because a heuristic match is
@@ -60,8 +60,8 @@ a guess about a customer while an identifier match is a fact. A carve-out
 analysis before the wave rather than a review after it, because a name you read
 before suspension is a customer you still have. And the confidence pass exists
 because a cluster held together by one signal is one bad signal away from being
-a customer incident — so it has to survive losing its strongest link before
-anyone acts on it.
+a customer incident. The cluster has to survive losing its strongest link
+before anyone acts on it.
 
 The piece I'm proudest of is the smallest. Those **do-not-shut** anchors are
 kept as first-class calibration cases, not closed tickets, so a legitimate

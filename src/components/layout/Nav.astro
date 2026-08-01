@@ -32,6 +32,12 @@ const isActive = (href: string) =>
             </li>
           ))
         }
+        <!-- Persistent contact button. It replaces a whole /contact page that
+             held one line and two links, and it stays reachable from every
+             page, which a separate route never was. -->
+        <li>
+          <a class="mono nav__cta" href={`mailto:${site.email}`}>Get in touch</a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -94,6 +100,20 @@ const isActive = (href: string) =>
     margin-left: 0.25em;
     color: var(--faint);
   }
+
+  .nav__cta {
+    font-size: var(--step--1);
+    text-decoration: none;
+    color: var(--paper);
+    background: var(--accent);
+    border-radius: 100px;
+    padding: 0.45em 1.1em;
+    white-space: nowrap;
+    transition: background var(--dur-1) var(--ease-out);
+  }
+  .nav__cta:hover { background: var(--accent-deep); color: var(--paper); }
+  /* No hover underline: it is a button, not a link in prose. */
+  .nav__cta::after { display: none; }
   /* Custom underline that grows from the left on hover — not the default. */
   .nav__link::after {
     content: "";
