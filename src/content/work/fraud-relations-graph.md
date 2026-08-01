@@ -7,12 +7,12 @@ track: "Detection"
 company: "AWS"
 featured: true
 draft: false
-order: 1
-summary: "A seedless graph that loads an entire account population and lets coordinated rings fall out as clusters, kept honest by an edge-confidence model and a key-reliability audit."
+order: 2
+summary: "Groups of accounts working together are invisible one at a time. Drawn as a map of who is connected to whom, they stand out as clusters — without dragging real customers in with them."
 context: "Coordinated abuse hides in the gaps between accounts. One account at a time, a ring is invisible; as a graph it is a dense knot in an otherwise sparse field. The catch is that naive linking on a shared IP or a shared phone format also ties together thousands of unrelated legitimate customers, so a careless graph just draws one giant useless blob."
 contribution: "I built a whole-population fraud-relations graph explorer: a Python backend that loads the full account population, builds a two-tier hard/soft relationship graph, and renders it client-side over WebGL. I designed the edge-confidence model that makes the graph work: an information-retrieval weighting of excess purity over base rate × IDF, tuned for a fraud-dense population where plain shared-attribute counting is worthless. I then ran a key-reliability audit that removed the identifiers which would have falsely linked legitimate accounts. I layered the ring-finding on top of it, so components surface the rings, sub-communities split them, and centrality flags the brokers bridging two rings. I re-pointed the graph engine at the global payments-fraud cluster with a windowed population rebuild so it holds at multi-million-account scale."
 outcome: "An analyst acts on a whole cluster instead of working the members separately, and the brokers bridging two rings surface as a finding of their own. I validated the graph against a known ring held as ground truth before trusting any cluster it drew, and the key-reliability audit kept legitimate look-alikes out."
-impact: "On ground-truth validation the graph placed <strong>100% of a known ring in a single component</strong>, turning coordinated rings into clusters an analyst could action in minutes. The engine then scaled from a region cluster to the <strong>multi-million-account</strong> global population."
+impact: "Tested against a group already confirmed by hand, the map put <strong>every one of its members in a single cluster</strong> — turning something invisible one account at a time into a group an analyst could act on in minutes. It then scaled from one region to the <strong>multi-million-account</strong> global population."
 counterfactual: "Rings stay hidden in pairwise queries. Analysts chase individual members and miss the brokers bridging rings entirely. Any naive linking graph would have swept thousands of legitimate customers into the same clusters, trading invisible fraud for false accusations."
 indexMetric: 0
 metrics:
@@ -22,8 +22,8 @@ metrics:
     population: 150
     rings: 4
     seed: 11
-    caption: "Hover a node to isolate its component. Toggle to strip the legitimate population and leave only the rings. Representative shape, since the live graph runs on confidential data."
-    context: "Edges are hard shared signals weighted by excess-purity-over-base-rate × IDF. Brokers are high-betweenness accounts bridging two rings."
+    caption: "Hover any dot to isolate the group it belongs to. Toggle to hide the ordinary customers and leave only the suspicious groups. Representative shape — the live version runs on confidential data."
+    context: "A line means two accounts share something meaningful, weighted by how rare that thing is and how strongly it actually predicts fraud. The larger dots are the accounts that bridge two groups, which are often the ones worth acting on first."
   - chart: "ranked-bars"
     label: "What a shared signal is worth as an edge"
     sort: true
@@ -32,20 +32,20 @@ metrics:
         value: 100
         display: "informative"
         key: true
-        note: "High excess purity over the base rate, high IDF. These are the edges the clusters are built from."
+        note: "Rare, and far more common among fraudsters than among everyone else. These are the connections the clusters are built from."
       - name: "Shared IP range"
         value: 12
-        display: "near base rate"
-        note: "Legitimate customers share IP ranges by chance, so the excess purity collapses."
+        display: "tells you little"
+        note: "Real customers share IP ranges by chance all the time, so on its own this means almost nothing."
       - name: "Shared phone format"
         value: 12
-        display: "near base rate"
-        note: "A format repeats across unrelated legitimate accounts, which is what the key-reliability audit exists to catch."
+        display: "tells you little"
+        note: "The same format repeats across unrelated real accounts. Checking which identifiers are trustworthy is exactly what stops this creating fake groups."
       - name: "Shared BIN range"
         value: 12
-        display: "near base rate"
-        note: "An issuer BIN is shared by legitimate customers who have nothing else to do with each other."
-    caption: "Illustrative weights, since the live scores run on confidential data. What is real is that plain shared-attribute counting would treat all four bars alike."
+        display: "tells you little"
+        note: "Thousands of real customers share a card issuer and have nothing else to do with each other."
+    caption: "Illustrative weights — the live scores run on confidential data. What is real is that simply counting shared details would treat all four of these as equally meaningful."
     context: "The three context bars are deliberately equal. The finding was that they sit near the base rate, not that one outranks another."
 tags: ["Graph analysis", "sigma.js / WebGL", "Community detection", "Betweenness", "Ring detection"]
 ---

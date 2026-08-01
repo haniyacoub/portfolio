@@ -100,13 +100,24 @@ const { columns, rows, summary = "Show the data table", caption } = Astro.props;
     overflow-x: auto;
     margin-top: var(--space-3);
     border-top: var(--hair) solid var(--line);
+    /* Without this the table sets its own intrinsic width and the wrapper grows
+       with it instead of scrolling — a long note column measured 1373px inside a
+       390px phone viewport. min-width:0 lets the flex/grid parent actually
+       clamp it, and max-width caps it in non-flex contexts. */
+    min-width: 0;
+    max-width: 100%;
   }
 
   .ctab__table {
     width: 100%;
     border-collapse: collapse;
     font-size: var(--step--2);
+    /* Long free-text notes wrap rather than forcing the table wide. */
+    table-layout: auto;
   }
+  /* The note column is the one that runs long; let it wrap. */
+  .ctab__table td:not(.ctab__num),
+  .ctab__rowhead { overflow-wrap: anywhere; }
   .ctab__caption {
     text-align: left;
     font-size: var(--step--2);

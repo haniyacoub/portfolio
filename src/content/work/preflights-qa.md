@@ -5,7 +5,7 @@ period: "2026"
 theme: "SaaS · deterministic validation"
 track: "Product"
 company: "Independent"
-order: 17
+order: 18
 featured: false
 draft: false
 summary: "Pre-import QA for Shopify catalogs: a deterministic engine that flags variant deletion and silent product overwrites before a supplier file touches a live store."

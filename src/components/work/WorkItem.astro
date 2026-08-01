@@ -117,35 +117,23 @@ const flip = index % 2 === 1;
   .witem__arrow { transition: transform var(--dur-2) var(--ease-out); }
   .witem__link:hover .witem__arrow { transform: translateX(4px); }
 
+  /* A fixed height here made a nested vertical scrollbar inside a card: a tall
+     chart (a gate-funnel with eight stages) rendered ~700px of content into a
+     368px box, so the reader had to scroll a card to see the figure it was
+     showing them — and on a phone that inner scroller fights the page scroll.
+     The card now grows to fit its figure instead. */
   .witem__figure {
     border-top: var(--hair) solid var(--line);
     padding-top: var(--space-5);
     margin-top: auto;
-    height: 23rem;
-    overflow-y: auto;
-    overflow-x: hidden;
     min-width: 0;
     position: relative;
-    scrollbar-width: thin;
-    scrollbar-color: var(--line-strong) transparent;
-    -webkit-overflow-scrolling: touch;
-    padding-right: var(--space-2);
+    /* Keep the horizontal guard: a wide chart should never widen the grid. */
+    overflow-x: hidden;
   }
-  .witem__figure::-webkit-scrollbar { width: 6px; }
-  .witem__figure::-webkit-scrollbar-thumb {
-    background: var(--line-strong);
-    border-radius: 100px;
-  }
-  .witem__figure::-webkit-scrollbar-track { background: transparent; }
-  /* Soft fade pinned to the card bottom as a scroll hint. */
-  .witem::after {
-    content: "";
-    position: absolute;
-    left: var(--space-6); right: var(--space-6); bottom: var(--space-6);
-    height: 2.2rem;
-    background: linear-gradient(to bottom, transparent, var(--paper-raised));
-    pointer-events: none;
-  }
+  /* The bottom fade existed to hint at the inner scroller. With the figure no
+     longer clipped there is nothing to scroll to, so the gradient would just
+     wash out the bottom of a real chart. Removed with the scroller. */
   .witem__figure :global(svg),
   .witem__figure :global(canvas),
   .witem__figure :global(img) {

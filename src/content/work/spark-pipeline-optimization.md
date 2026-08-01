@@ -1,12 +1,12 @@
 ---
 title: "Cutting a fraud pipeline from a coffee break to a glance"
-role: "Senior Data Analyst, Zalando"
+role: "Senior Product Analyst, Risk & Abuse, Zalando"
 period: "2024 to 2025"
 theme: "Data engineering"
 track: "Tooling"
 company: "Zalando"
 featured: false
-order: 15
+order: 3
 summary: "A refund-analysis Spark job that set the pace of every leakage question asked through it, cut from ~34 minutes to minutes without a bigger cluster."
 context: "A core refund and Salesforce-case analysis on Databricks ran around 34 minutes. At that length a pipeline stops being a tool and becomes a tax: you batch questions to amortize the wait instead of following the thread, which is backwards for fraud work."
 contribution: "I treated the runtime as a data-layout problem, not a cluster-size one. I replaced the brute-force reads of whole binary warehouse paths with selective partitioned loads that pull only the columns the analysis uses. I pushed date and partition filters to the front so less data ever moves. I broadcast the small dimension tables, such as customer-extended, instead of shuffling them across the cluster. I cached only the DataFrames that are genuinely reused, tuned the shuffle-partition count to the real volume, and materialized hot raw Parquet into Delta where it paid for itself."

@@ -229,10 +229,14 @@ a:focus-visible {
 }
 .tab[aria-selected="true"] { color: var(--ink); }
 .tab:hover { color: var(--ink); }
-/* The sliding ink indicator is one absolutely-positioned element moved in JS. */
+/* The sliding ink indicator is one absolutely-positioned element moved in JS.
+   Anchored to the TOP, not the bottom: the tab row wraps on narrow viewports,
+   and the JS translates the indicator to the active tab's own row
+   (offsetTop + offsetHeight). Anchoring to the bottom stranded it under the
+   last row instead of under its tab. */
 .tabs__ink {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   height: 2px;
   background: var(--accent);

@@ -151,9 +151,16 @@ const companies = [...new Set(works.map((w) => w.data.company).filter(Boolean))]
         const counter = section.querySelector<HTMLElement>("[data-count-target]");
         const empty = section.querySelector<HTMLElement>("[data-empty]");
 
+        /* The tab row wraps on narrow screens. The indicator is positioned
+           absolutely inside that wrapping container, so anchoring it to the
+           container's bottom edge left it stranded under the wrong row —
+           measured 97px below the tab it was supposed to mark on a 390px
+           viewport. Tracking offsetTop as well as offsetLeft keeps it attached
+           to its own tab on any number of rows. */
         function moveInk(btn: HTMLButtonElement) {
           ink.style.width = btn.offsetWidth + "px";
-          ink.style.transform = `translateX(${btn.offsetLeft}px)`;
+          ink.style.transform =
+            `translate(${btn.offsetLeft}px, ${btn.offsetTop + btn.offsetHeight}px)`;
         }
         function select(btn: HTMLButtonElement) {
           buttons.forEach((b) => b.setAttribute("aria-selected", String(b === btn)));

@@ -7,7 +7,7 @@ track: "Detection"
 company: "AWS"
 featured: false
 draft: false
-order: 11
+order: 13
 summary: "Device fingerprint was missing from the Fraud Relations model's linkage signals, and young-domain registrations were going unchallenged. Adding either meant writing down what it would cost in customers wrongly linked."
 context: "More signals always catch more fraud, so recall is never the interesting column. What each signal costs in customers wrongly linked is, and that column usually goes unwritten. Device fingerprint was missing from the Fraud Relations model's linkage signals. Separately, fraudulent registrations were arriving on freshly minted domains with weak email authentication, on exactly the axes where legitimate new companies also look young and unauthenticated."
 contribution: "I added device fingerprint as an ensemble feature to the Fraud Relations model and measured both sides of the trade. The recall side came back at 34% more disputed dollars caught. I quantified the false-positive tradeoffs per signal, so the model's owners could see what each linkage signal contributes and what it risks instead of assuming the cost side. I then designed a detection rule on domain age and email-authentication signals through more than 100 rule iterations, each candidate scored for precision and recall and bounded by explicit false-positive carve-out exposure analysis. Single-signal versions failed the combined precision-and-exposure bar, so the shipped rule is multi-condition logic. In production that rule caught hundreds of abusive accounts with near-zero collateral on legitimate customers."

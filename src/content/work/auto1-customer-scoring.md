@@ -1,13 +1,13 @@
 ---
 title: "Scoring which customers were worth the call"
-role: "Data Analyst, Customer Acquisition"
+role: "Data Analyst, Customer Acquisition, AUTO1 Group"
 period: "2021 to 2024"
 theme: "Customer analytics"
 track: "Measurement"
 company: "AUTO1 Group"
 featured: false
 draft: false
-order: 18
+order: 4
 summary: "Before the fraud work, the same ranking problem: a large B2B base, finite outreach capacity, and two scores deciding who got called."
 context: "AUTO1's commercial team worked a large B2B customer base with finite outreach capacity. With no ranking over it, effort spread evenly across customers who were not evenly valuable, and churn was discovered in the revenue numbers rather than before it happened."
 contribution: "I built the two scores that ranked the base: a value score identifying the high-value B2B customers worth proactive attention, and a churn-risk score flagging accounts whose behaviour signalled they were about to leave. I analysed customer drop-off patterns to locate where in the relationship the base was actually being lost. I quantified the revenue upside of the highest-impact retention opportunities, so the case for retention spend was a number rather than a feeling."

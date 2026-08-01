@@ -6,7 +6,7 @@ theme: "Root-cause investigation"
 track: "Investigation"
 company: "AWS"
 featured: true
-order: 2
+order: 5
 summary: "Two six-figure compute-abuse incidents where the finding was never who did it: one bypassed enforcement through a regex that had never learned a newer instance family, the other was already contained."
 context: "Two compute-abuse incidents landed as dollar figures with an implied question about who. In the first, abusers were running up multi-six-figure SageMaker compute that the containment-score limit-enforcement layer was supposed to throttle, and it wasn't throttling. In the second, a flag suggested large coordinated abuse of an enterprise agent product built on free-trial seats, with the usual pressure to act fast and visibly."
 contribution: "I worked the SageMaker case as a code-and-config problem, reading the production Java enforcement path and a ~47,000-line resource-limit config until I could state exactly how the c-score threshold check selects which instances it governs. The gap was that a newer instance family had never been added to the matching regex, so those instances matched nothing, took the default zero-limit path, and sailed past the synchronous check. I overturned my own earlier hypothesis the moment the production code contradicted it. On the seat-farm case I reconstructed the abuse chain from raw usage data: scripted seats through one enterprise org, the trial credit burned and billed as operational compute. Then I checked what was still actionable, found every confirmed account already enforced, and proved the shutdown residual was an empty set."
