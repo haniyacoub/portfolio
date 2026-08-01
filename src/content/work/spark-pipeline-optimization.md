@@ -44,7 +44,7 @@ metrics:
         note: "Only where the same raw Parquet was re-read often enough to amortize the write."
     caption: "Relative magnitudes are illustrative. What the work established is the ordering. Only the runtime figures are measured."
 tags: ["PySpark", "Databricks", "Delta", "Performance", "Partition pruning"]
-draft: true
+draft: false
 ---
 
 A 34-minute pipeline is not a performance footnote. It sets the cadence of
