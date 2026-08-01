@@ -15,7 +15,16 @@ const { metrics } = Astro.props;
 
 const COMPACT = new Set(["stat", "delta"]);
 // These viz need the full content width to breathe.
-const FULL = new Set(["relations-graph", "abuse-chain", "coverage-gap", "line"]);
+const FULL = new Set([
+  "relations-graph",
+  "abuse-chain",
+  "coverage-gap",
+  "line",
+  "gate-funnel",
+  "share-bar",
+  "ranked-bars",
+  "event-trace",
+]);
 
 // Collapse consecutive compact metrics into grouped rows; wide ones stand alone.
 type Block =

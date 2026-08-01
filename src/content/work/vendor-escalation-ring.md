@@ -36,6 +36,7 @@ metrics:
     context: "Coordinated ring, not general population fraud. Prior assumptions overturned."
     emphasis: false
 tags: ["Chargebacks", "Ring clustering", "Compliance", "Concentration analysis"]
+draft: true
 ---
 
 A threshold breach reads like weather: fraud is up. Weather gets broad

@@ -5,13 +5,14 @@ period: "2024 to 2025"
 theme: "Data engineering"
 track: "Tooling"
 company: "Zalando"
-order: 18
-summary: "A refund-analysis Spark job that took the better part of an hour, brought down to minutes by reading less, filtering earlier, and stopping the brute-force reads from the data lake."
-context: "A core refund and Salesforce-case analysis on Databricks ran around 34 minutes. At that length the pipeline stops being a tool and becomes a tax. You batch your questions around it instead of following the investigation, which is exactly backwards for fraud work."
-contribution: "I treated the runtime as a data-layout problem, not a cluster-size one. The job was doing massive raw reads from binary data-warehouse paths to use a handful of columns. I added selective partitioned loads that read only the needed columns, pushed date and partition filters to the front so less data ever moves, broadcast the small dimension tables (like customer-extended) instead of shuffling them, cached only the DataFrames actually reused, tuned shuffle partitions, and materialized hot raw Parquet into Delta where it paid off."
-outcome: "The same analysis returns in a fraction of the time, turning a job you scheduled around into one you just run. More than the minutes saved, it changed the cadence. Refund and leakage questions could be iterated in a session instead of one expensive run per sitting."
-impact: "Cut a core refund-analysis pipeline from <strong>~34 minutes to minutes</strong> by reading only needed columns, filtering on partitions early, and broadcasting small dimensions, turning refund/leakage analysis from one expensive run per sitting into iteration in flow."
-counterfactual: "Every refund question keeps costing a half-hour brute-force read from the data lake. Analysts batch their work around the wait, and the iterative leakage investigations behind Remaining Fraud Damage are far slower to produce."
+featured: false
+order: 15
+summary: "A refund-analysis Spark job that set the pace of every leakage question asked through it, cut from ~34 minutes to minutes without a bigger cluster."
+context: "A core refund and Salesforce-case analysis on Databricks ran around 34 minutes. At that length a pipeline stops being a tool and becomes a tax: you batch questions to amortize the wait instead of following the thread, which is backwards for fraud work."
+contribution: "I treated the runtime as a data-layout problem, not a cluster-size one. I replaced the brute-force reads of whole binary warehouse paths with selective partitioned loads that pull only the columns the analysis uses. I pushed date and partition filters to the front so less data ever moves. I broadcast the small dimension tables, such as customer-extended, instead of shuffling them across the cluster. I cached only the DataFrames that are genuinely reused, tuned the shuffle-partition count to the real volume, and materialized hot raw Parquet into Delta where it paid for itself."
+outcome: "The same analysis returns in a fraction of the time, and the cadence of the work changed with it. Refund and leakage questions could be iterated inside one session instead of costing one expensive run per sitting."
+impact: "Cut a core refund-analysis pipeline from <strong>~34 minutes to minutes</strong>, mostly by <strong>reading only the needed columns</strong> and filtering on partitions before any data moved."
+counterfactual: "Every refund question keeps costing a half-hour brute-force read from the data lake, and the iterative leakage investigations behind Remaining Fraud Damage stay far slower to produce."
 indexMetric: 0
 metrics:
   - chart: "before-after"
@@ -19,30 +20,49 @@ metrics:
     before: { label: "Brute-force reads", value: 34, unit: "min", display: "~34 min" }
     after: { label: "Tuned layout", value: 5, unit: "min", display: "minutes" }
     betterWhen: "lower"
-    context: "Column pruning + early partition filters + broadcast joins + selective caching."
-  - chart: "stat"
-    label: "Biggest lever"
-    value: "Read less"
-    context: "Selective partitioned column loads instead of raw whole-path reads."
-    emphasis: true
+    context: "Same analysis, same cluster. The change was in what the job read, not what it ran on. Only the ~34-minute baseline is measured; the after bar is sized illustratively against it to show the shape."
+  - chart: "ranked-bars"
+    label: "Where the runtime actually went"
+    unit: "relative contribution"
+    sort: true
+    bars:
+      - name: "Column pruning"
+        value: 100
+        key: true
+        note: "Reading only the needed columns. A handful were used; the whole binary path was being opened."
+      - name: "Early partition filters"
+        value: 68
+        note: "Filtering before the read means pruned partitions are never opened, not opened and discarded."
+      - name: "Broadcast joins"
+        value: 47
+        note: "A dimension table small enough to ship to every executor costs a copy instead of a shuffle."
+      - name: "Selective caching"
+        value: 29
+        note: "Caching a DataFrame read once pays memory for nothing, and the shuffle-partition default was sized for a volume this job never sees."
+      - name: "Delta materialization"
+        value: 21
+        note: "Only where the same raw Parquet was re-read often enough to amortize the write."
+    caption: "Relative magnitudes are illustrative. What the work established is the ordering; only the runtime figures are measured."
 tags: ["PySpark", "Databricks", "Delta", "Performance", "Partition pruning"]
+draft: false
 ---
 
-A 34-minute pipeline isn't a performance footnote. It dictates how you work.
-When a refund analysis takes that long, you stop following the thread and start
-batching questions to amortize the wait, which is the opposite of how a fraud
-investigation should go.
+A 34-minute pipeline is not a performance footnote. It sets the cadence of
+every question asked through it, and at half an hour a run, the question you
+cannot quite justify is the question you never ask.
 
-The fix wasn't a bigger cluster. It was reading less. The job was doing brute
-reads from binary data-warehouse paths to use a few columns, so the first and
-biggest win was selective partitioned loads that pull only the columns needed.
-Then push date and partition filters to the front so less data ever enters the
-pipeline, broadcast the small dimension tables instead of shuffling them across
-the cluster, cache only the DataFrames that are genuinely reused, tune the
-shuffle-partition count, and materialize the hot raw Parquet into Delta where it
-earned its keep.
+The obvious request is a bigger cluster. Compute was never the problem, and
+the shape of the read said so before any tuning did. The job opened whole
+binary data-warehouse paths in order to use a handful of columns, so most of
+the work it did was work nobody had asked for. That ratio is what made column
+pruning the dominant lever rather than a guess: the cheapest honest version of
+this job still had to read the columns the analysis used, and everything above
+that floor was waste being paid for on every single run. The levers that
+followed are the same principle pushed further down the job — less data
+entering the pipeline at all, less of it crossing the network, less memory
+spent holding things that get read once.
 
-The result is the same analysis in a fraction of the time. The number I care
-about isn't the minutes, though. It's the cadence. A pipeline you schedule your
-day around is a different tool from one you just run mid-thought, and refund and
-leakage questions are far better answered in flow than one costly run at a time.
+A pipeline you schedule your day around is a different instrument from one you
+run mid-thought. Refund and leakage questions arrive in chains, where the
+answer to one suggests the next, and a chain only gets followed when asking is
+cheap.

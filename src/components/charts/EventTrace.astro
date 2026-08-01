@@ -1,0 +1,282 @@
+---
+/**
+ * EventTrace — a forensic event sequence plotted on a real elapsed-time axis.
+ *
+ * The difference from AbuseChain (evenly spaced stages) is that here the
+ * *spacing is the evidence*. In the takeover case the damning fact is that a
+ * risk score snapped to perfect one second after containment lifted, and four
+ * regional approvals landed inside twelve minutes. Evenly spaced steps hide
+ * exactly that. Plotting real offsets on a shared axis makes the gaps — and
+ * the absent waiting period — visible.
+ *
+ * Offsets are given in minutes and laid out on a log-ish compressed scale, so
+ * a one-second event and a 22-hour gap can share one axis without the short
+ * intervals collapsing into a single pixel.
+ *
+ * Color: status tokens, because these events mean things (a control working
+ * vs. a gate failing) — that is state, not series identity. Every marked
+ * event ships its label, never color alone.
+ */
+import ChartTable from "./ChartTable.astro";
+
+interface Event {
+  /** Minutes elapsed from T0. Use fractions for sub-minute events (1/60). */
+  at: number;
+  /** Printed time, e.g. "T0", "+1 sec", "+12 min". Authoritative for display. */
+  time: string;
+  label: string;
+  /** Where the evidence came from — the source tag. */
+  source?: string;
+  /** What this event means. `fail` = the gate that failed, `good` = a control
+      that worked, `plain` = a neutral step. */
+  kind?: "plain" | "good" | "fail";
+  /** Marks the payoff event. */
+  punch?: boolean;
+}
+interface Props {
+  label: string;
+  events: Event[];
+  caption?: string;
+  context?: string;
+}
+const { label, events, caption, context } = Astro.props;
+
+const sorted = [...events].sort((a, b) => a.at - b.at);
+
+/* Compressed scale: sqrt keeps sub-minute events visible next to multi-hour
+   gaps without pretending the axis is linear. The printed `time` on each event
+   is what the reader takes away; the axis carries relative shape.
+
+   Clustering is a FEATURE here — "four approvals inside twelve minutes" should
+   look tight. But two marks at the same pixel read as one mark, which loses an
+   event, so after scaling we make one pass to enforce a minimum separation.
+   The dodge is capped small: it keeps a cluster legible without pretending the
+   events are further apart than they were. */
+const INSET = 3; // % of track kept clear at each end so end marks aren't clipped
+const SPAN = 100 - INSET * 2;
+const MIN_GAP = 2.4; // % — just past the mark's own width, so rings still read
+
+/* Shift so the earliest event sits at zero before the sqrt. A case can legibly
+   place an event BEFORE T0 (detection firing ahead of the release it precedes)
+   with a negative `at`, and sqrt of a negative is NaN — which would silently
+   drop the mark. Rebasing keeps the whole scale defined for any offsets. */
+const minAt = Math.min(...sorted.map((e) => e.at), 0);
+const rel = sorted.map((e) => e.at - minAt);
+const maxRel = Math.max(...rel, 0);
+
+const raw = rel.map((v) =>
+  maxRel <= 0 ? INSET : INSET + (Math.sqrt(v) / Math.sqrt(maxRel)) * SPAN,
+);
+const xs = raw.slice();
+for (let i = 1; i < xs.length; i++) {
+  if (xs[i] - xs[i - 1] < MIN_GAP) xs[i] = xs[i - 1] + MIN_GAP;
+}
+/* If dodging pushed the tail past the track, rescale the whole run back inside
+   rather than letting the last marks sit off the end. */
+const overflow = xs[xs.length - 1] - (100 - INSET);
+if (overflow > 0) {
+  const first = xs[0];
+  const width = xs[xs.length - 1] - first || 1;
+  for (let i = 0; i < xs.length; i++) {
+    xs[i] = INSET + ((xs[i] - first) / width) * SPAN;
+  }
+}
+
+const evs = sorted.map((e, i) => ({ ...e, x: xs[i] }));
+
+const KIND_COLOR: Record<string, string> = {
+  plain: "var(--axis)",
+  good: "var(--status-good)",
+  fail: "var(--status-critical)",
+};
+
+const text = `${label}. ${evs
+  .map((e) => `${e.time}: ${e.label}`)
+  .join("; ")}.`;
+---
+
+<figure class="et" data-reveal aria-label={text}>
+  <div class="et__head">
+    <span class="label">{label}</span>
+    <span class="mono et__n">{evs.length} events</span>
+  </div>
+
+  {/* The time spine. Marker positions carry relative timing; each event
+      prints its own authoritative offset beside it. */}
+  <div class="et__plot">
+    <span class="et__axis" aria-hidden="true"></span>
+    {
+      evs.map((e, i) => (
+        <span
+          class:list={[
+            "et__mark",
+            `et__mark--${e.kind ?? "plain"}`,
+            { "et__mark--punch": e.punch },
+          ]}
+          style={`--x:${e.x.toFixed(2)}%; --i:${i}; --c:${KIND_COLOR[e.kind ?? "plain"]}`}
+          data-tip={`<strong>${e.time}</strong><br>${e.label}${
+            e.source ? `<br><em>source: ${e.source}</em>` : ""
+          }`}
+          tabindex="0"
+          aria-hidden="true"
+        />
+      ))
+    }
+  </div>
+
+  <ol class="et__list" role="list">
+    {
+      evs.map((e, i) => (
+        <li
+          class:list={[
+            "et__row",
+            `et__row--${e.kind ?? "plain"}`,
+            { "et__row--punch": e.punch },
+          ]}
+          style={`--i:${i}; --c:${KIND_COLOR[e.kind ?? "plain"]}`}
+        >
+          <span class="mono et__time">{e.time}</span>
+          <span class="et__dot" aria-hidden="true" />
+          <div class="et__body">
+            <span class="et__label">{e.label}</span>
+            {e.source && <span class="mono et__source">{e.source}</span>}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  {caption && <figcaption class="et__caption">{caption}</figcaption>}
+  {context && <p class="et__context">{context}</p>}
+
+  <ChartTable
+    columns={["Event", "Elapsed", "Evidence source"]}
+    rows={evs.map((e) => [e.label, e.time, e.source ?? "—"])}
+    caption={`${label} — the settled sequence.`}
+  />
+</figure>
+
+<style>
+  .et { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  .et__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-bottom: var(--hair) solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+  .et__n { font-size: var(--step--1); color: var(--muted); }
+
+  /* ---- The compressed time spine ---- */
+  .et__plot {
+    position: relative;
+    height: 2.2rem;
+    margin-top: var(--space-2);
+  }
+  /* The rule stops just short of the ends, matching the 3% mark inset, so the
+     first and last markers sit ON the line rather than hanging off it. */
+  .et__axis {
+    position: absolute;
+    left: 3%;
+    right: 3%;
+    top: 50%;
+    height: 1px;
+    background: var(--axis);
+  }
+  .et__mark {
+    position: absolute;
+    left: var(--x);
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-top: -5px;
+    border-radius: 50%;
+    background: var(--c);
+    /* 2px surface ring so overlapping markers stay legible. */
+    box-shadow: 0 0 0 2px var(--paper-raised);
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity var(--dur-2) var(--ease-out),
+      transform var(--dur-2) var(--ease-spring);
+    transition-delay: calc(min(var(--i), 20) * 55ms);
+    cursor: default;
+  }
+  :global([data-revealed]) .et__mark { opacity: 1; transform: scale(1); }
+  /* Generous hit target without changing the visible mark size. */
+  .et__mark::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+  }
+  .et__mark:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .et__mark--punch {
+    width: 13px;
+    height: 13px;
+    margin-left: -6.5px;
+    margin-top: -6.5px;
+    box-shadow: 0 0 0 2px var(--paper-raised), 0 0 0 5px var(--accent-tint);
+  }
+
+  /* ---- The readable event list ---- */
+  .et__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: var(--hair) solid var(--line);
+  }
+  .et__row {
+    display: grid;
+    grid-template-columns: 5.2rem 12px 1fr;
+    gap: var(--space-3);
+    align-items: baseline;
+    padding-block: var(--space-3);
+    border-bottom: var(--hair) solid var(--line);
+  }
+  .et__row:last-child { border-bottom: 0; }
+
+  .et__time {
+    font-size: var(--step--2);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .et__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c);
+    transform: translateY(0.45em);
+  }
+  .et__body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+  .et__label {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    line-height: var(--leading-snug);
+  }
+  /* Status meaning is carried by the label weight too, never hue alone. */
+  .et__row--fail .et__label { color: var(--ink); font-weight: 600; }
+  .et__row--punch .et__label { color: var(--ink); font-weight: 600; }
+  .et__source {
+    font-size: var(--step--2);
+    color: var(--faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .et__caption {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    max-width: 56ch;
+    line-height: var(--leading-snug);
+  }
+  .et__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 52ch;
+    line-height: var(--leading-snug);
+  }
+</style>

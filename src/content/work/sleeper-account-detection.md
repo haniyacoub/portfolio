@@ -5,13 +5,15 @@ period: "2026"
 theme: "ML detection"
 track: "Detection"
 company: "AWS"
-order: 19
-summary: "An XGBoost model and an investigation agent that surface sleeper-account fraud patterns, delivered as a ranked queue an analyst can actually work."
-context: "Sleeper accounts sit quiet until they burn. By the time billing spikes, the abuse is already running. The signals that give them away early exist in the data, but nobody had assembled them into a detector with an operational front end."
-contribution: "I built an end-to-end XGBoost fraud-detection pipeline with around 90 engineered features and leakage-aware hygiene: a temporal train and test split, a held-out validation set for early stopping, class-imbalance weighting, 5-fold cross-validation, and PR-AUC-first evaluation. The model reads billing spikes, linked accounts, IP-country mismatches, payment instruments, and risk-score history. On top of it sits an agent that surfaces the patterns and a Streamlit investigation queue that ranks the full population into tiers an analyst can work through. When the model showed signs of probable label leakage, I flagged it in writing rather than shipping an optimistic headline."
-outcome: "Sleeper-account patterns became a ranked queue instead of a surprise on the billing report. The pipeline scores the whole population, the queue orders the work, and the model's known limitation is documented where every user of the scores can see it."
-impact: "A full-population sleeper-account detector: <strong>around 90 engineered features, leakage-aware training, PR-AUC-first evaluation</strong>, and a ranked investigation queue, with the model's own probable label leakage <strong>flagged in writing</strong>."
-counterfactual: "Sleeper accounts keep announcing themselves through the billing spike, after the compute is burned, and the honest caveat about label leakage never reaches the people quoting the model's numbers."
+featured: false
+draft: false
+order: 12
+summary: "Sleeper-account fraud surfaced as a ranked queue an analyst can work, on a model whose own probable label leakage I flagged in writing."
+context: "Sleeper accounts sit quiet until they burn. By the time billing spikes, the abuse is already running. The signals that give a sleeper away early exist in the data, but nobody had assembled them into a detector with an operational front end."
+contribution: "I built an end-to-end XGBoost detection pipeline with around 90 engineered features over billing spikes, linked accounts, IP-country mismatches, payment instruments, and risk-score history. I designed the training hygiene to catch leakage rather than to assume it away. On top of the scores I put a Streamlit deep-dive that ranks the full population into tiers an analyst works through in order, and that proposes candidate rules with their precision and recall already attached. When the model's top-ranked feature turned out to be a containment score that only settles after enforcement has fired, I wrote the leakage risk next to the scores instead of publishing the headline PR-AUC unqualified."
+outcome: "Analysts get a tiered worklist, and the model's known limitation travels with its scores rather than living in my notes."
+impact: "<strong>Every account in the population now carries a sleeper score</strong> and lands in a ranked tier an analyst works top-down, instead of surfacing on a billing report after the compute is already burned — on <strong>around 90 engineered features</strong>, a temporal split, and PR-AUC-first evaluation."
+counterfactual: "Nothing gets scored until it makes noise, so the worklist is whatever happened to bill loudly and the accounts sitting quiet are <strong>never ranked at all</strong>."
 indexMetric: 0
 metrics:
   - chart: "signal-matrix"
@@ -23,40 +25,46 @@ metrics:
       - "Payment instruments"
       - "Risk-score history"
     activeCount: 5
-    caption: "Around 90 engineered features across these families, scored for the full population."
-  - chart: "stat"
-    label: "Engineered features"
-    value: "~90"
-    context: "Temporal split, held-out early stopping, imbalance weighting, 5-fold CV, PR-AUC first."
-    emphasis: false
-  - chart: "stat"
-    label: "Known limitation"
-    value: "Flagged"
-    context: "Probable label leakage documented in writing rather than shipped as an optimistic headline."
-    emphasis: false
+    caption: "Read for every account in the population, not only the ones already making noise."
+  - chart: "gate-funnel"
+    label: "The training pipeline, in the order it runs"
+    stages:
+      - name: "Temporal train/test split"
+        note: "Ordered in time, so the model never sees the future."
+      - name: "Class-imbalance weighting"
+        note: "Fraud positives are rare, and the loss function has to say so."
+      - name: "Held-out early stopping"
+        note: "Stops on a separate set, never on the test data."
+      - name: "5-fold cross-validation"
+        note: "Checks the score is not one lucky fold."
+      - name: "PR-AUC-first evaluation"
+        note: "Precision is the expensive half, so it leads the report."
+      - name: "Feature importances read"
+        note: "Where leakage surfaced: the top feature settles only after enforcement fires."
+        key: true
+    caption: "Five hygiene steps went in by construction. The sixth is where leakage surfaced anyway, so it went into writing next to the scores."
 tags: ["XGBoost", "Feature engineering", "Detection", "Investigation queue"]
 ---
 
 A sleeper account is patient. It registers clean, stays quiet, and burns
-compute only when its operator decides the moment is right. Waiting for the
-billing spike means arriving after the damage.
+compute only when its operator decides the moment has come. Waiting for the
+billing spike means arriving after the damage is already paid for.
 
-The detector is an XGBoost pipeline with around 90 engineered features built
-from the signals that give sleepers away early: billing behaviour, linked
-accounts, IP-country mismatches, payment instruments, and risk-score history.
-The training hygiene is the part I would defend in a review. The split is
-temporal so the model never peeks at the future. Early stopping runs on a
-separate held-out set. Class imbalance is weighted, validation is 5-fold, and
-the first evaluation number is PR-AUC because in fraud the positives are rare
-and precision is the expensive half.
+So the detector had to score everyone, not only the accounts making noise. I
+trained an XGBoost model on the behaviour that gives sleepers away before the
+burn, and then treated the training hygiene as the part I would have to defend
+in a review. That is why the split is temporal and why the first number I
+report is PR-AUC: in fraud the positives are rare, and precision is the
+expensive half.
 
-The model feeds an agent that surfaces the patterns and a Streamlit queue
-that turns full-population scores into tiers an analyst can work through in
-order. Detection that does not end in a workable queue is a chart, not a
-control.
+Scores on their own change nothing. The deep-dive turns full-population output
+into tiers an analyst works through in order, and prices every rule it proposes
+on both sides before anyone considers shipping it. Detection that does not end
+in a queue somebody can work is a chart, not a control.
 
-One more thing mattered. The model showed signs of probable label leakage,
-the kind of thing that makes offline numbers look better than reality. I put
-that in writing next to the scores instead of shipping the flattering
-version. A detector people can calibrate their trust against is worth more
-than one with a prettier headline.
+Then the awkward part. The top feature was doing its best work after the fact,
+which means the offline PR-AUC reads better than the model will behave in front
+of a real population — and the training sample was fraud-heavy rather than the
+low base rate the model would meet. Both went into writing next to the scores. A
+detector people can calibrate their trust against is worth more than one with a
+prettier headline.

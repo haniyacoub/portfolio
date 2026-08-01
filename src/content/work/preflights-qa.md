@@ -5,11 +5,13 @@ period: "2026"
 theme: "SaaS · deterministic validation"
 track: "Product"
 company: "Independent"
-order: 15
-summary: "Pre-import QA for Shopify catalogs: a deterministic engine that flags the irreversible mistakes, deleted variants and silently overwritten products, before a supplier file touches a live store."
-context: "Shopify merchants and agencies import supplier spreadsheets they didn't design. Two failure modes are irreversible once live: an import whose option columns silently delete existing variants, and two rows sharing one handle merging into a single overwritten product. Free CSV validators check formatting rather than what Shopify will actually do with the file."
-contribution: "I built Preflights end to end: a deterministic validation engine that reads a supplier file the way Shopify's importer will. It flags variant-delete risk from the file's own option structure with no store connection needed, catches handle collisions before they overwrite live products, and, when a Shopify export is added, checks price and stock conflicts against what's live right now. Nine further checks catch what gets products rejected by Google Merchant Center. Results arrive in seconds as a plain safe / review / blocked report where every finding shows the product, why it matters, and the one-line fix. AI is used only to explain findings and suggest fixes, never to decide whether an import is safe. Read-only by design: it never connects to the store."
-outcome: "A shipped product with a clear wedge against both neighbors. Import tools execute changes while Preflights inspects their safety first, and free validators read the file while Preflights reads it like Shopify will. The free tier shows a store's risks in seconds."
+order: 17
+featured: false
+draft: false
+summary: "Pre-import QA for Shopify catalogs: a deterministic engine that flags variant deletion and silent product overwrites before a supplier file touches a live store."
+context: "Shopify merchants and agencies import supplier spreadsheets they did not design, into stores that have no rollback. Free CSV validators check formatting rather than what Shopify will actually do with the file, so the failure modes that cannot be undone pass review and surface only once they are permanent."
+contribution: "I built Preflights end to end: a deterministic validation engine that reads a supplier file the way Shopify's importer will. It flags variant-delete risk from the file's own option structure, and catches handle collisions before they overwrite a live product. When the merchant adds a Shopify export, it also checks price and stock conflicts against what is live right now. Nine further checks catch what gets products rejected by Google Merchant Center. Results arrive in seconds as a plain safe / review / blocked report where every finding shows the product, why it matters, and the one-line fix. AI is used only to explain findings and suggest fixes, never to decide whether an import is safe."
+outcome: "A shipped product with a clear wedge against both neighbors. Import tools execute changes; Preflights inspects their safety first. The free tier shows a store's risks in seconds."
 impact: "A deterministic pre-import safety check that catches <strong>the two irreversible Shopify mistakes</strong>, variant deletion and handle collisions, <strong>with zero store access</strong>, in seconds."
 counterfactual: "The supplier file goes straight into the import tool. The variant wipe-out is discovered when customers cannot find the products, and there is no rollback."
 indexMetric: 0
@@ -28,45 +30,48 @@ metrics:
       - name: "Live price conflicts"
         covered: false
     caption: "Free validators read the file. The dangerous mistakes need it read the way Shopify will."
-  - chart: "stat"
-    label: "Store access required"
-    value: "0"
-    context: "Read-only on uploaded files. It never connects to the store."
-  - chart: "stat"
-    label: "Checks in one pass"
-    value: "9+"
-    context: "From variant-delete risk and handle collisions to GTIN, price, and image issues."
-    emphasis: false
-  - chart: "stat"
-    label: "Time to report"
-    value: "Seconds"
-    context: "A plain safe / review / blocked verdict, each finding with its one-line fix."
-    emphasis: false
+  - chart: "gate-funnel"
+    label: "What one supplier file passes through, in order"
+    stages:
+      - name: "Variant-delete risk"
+        note: "Option columns that don't line up with how products are already built."
+        key: true
+      - name: "Handle collisions"
+        note: "Two rows sharing one handle silently merge, the second overwriting the first."
+        key: true
+      - name: "Live price and stock conflicts"
+        note: "Only once the merchant adds a Shopify export, against what is live right now."
+      - name: "Nine Merchant Center checks"
+        note: "GTIN, price, and image issues that get products rejected by Google."
+      - name: "safe / review / blocked"
+        note: "One verdict per import, each finding with its product and one-line fix."
+      - name: "AI explanation"
+        note: "Explanation only, never a safety verdict."
+    caption: "Order carries the meaning: the two irreversible mistakes are caught from the file alone, before any check that needs a store export."
 tags: ["SaaS", "Deterministic validation", "E-commerce", "Product design", "Risk triage"]
 ---
-
-Preflights applies a fraud analyst's habit, check the file before it can hurt
-you, to a domain where the damage is self-inflicted: bulk catalog imports.
 
 Two Shopify import mistakes cannot be taken back. If a supplier file's option
 columns don't line up with how products are already built, the import can
 **delete the live size and color variants**, and Shopify imports have no
 rollback. When two rows share one handle, the import doesn't create two
-products. It **silently merges them**, with the second overwriting the first.
-Free CSV validators miss both because they check formatting rather than what
-Shopify will do with the structure.
+products; it **silently merges them**, the second overwriting the first. Both
+are invisible in the file and permanent in the store.
 
-The engine is deliberately deterministic. It reads the supplier file the way
-Shopify's importer will: variant-delete risk detected from the file's own
-option structure with no store connection needed, handle collisions flagged
-before they rewrite a live product, and, once the merchant adds a Shopify
-export, price and stock conflicts against what's live right now. Nine more
-checks catch what gets products rejected by Google Merchant Center. **AI
-explains findings and suggests fixes, and it never decides whether an import
-is safe.** That division of labor is the product's spine: repeatable checks
-and row-level evidence where it matters, plain language where it helps.
+Reading a spreadsheet the way Shopify's importer will, rather than the way a
+spreadsheet validator does, is what makes those two mistakes cheap to catch.
+Both are decidable from the file against itself: one from its option structure,
+one from its rows read against each other. Neither needs a store connection.
+Only the price and stock check needs anything external. That ordering is the
+design: the damage that cannot be reversed is found before the merchant has
+handed over anything at all.
 
-The deliverable is triage rather than a data dump. Every import lands as
-**safe, review, or blocked**, and every finding names the product, the reason
-it matters, and the one-line fix. Free to see your risks, read-only by design,
-report in seconds.
+Everything that decides is deterministic. **The moment a model gets a vote on
+safety, the check stops being repeatable, and a check you cannot repeat is not a
+check.** So AI writes the explanation and proposes the fix, and the engine alone
+rules on the import. Read-only is the same principle in the architecture.
+
+The deliverable is triage, not a data dump. Every import lands as **safe,
+review, or blocked** — the difference between knowing a file is risky and
+knowing which row to change. It is a fraud analyst's habit, check the file
+before it can hurt you, applied to damage that is self-inflicted.

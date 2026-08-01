@@ -1,0 +1,77 @@
+---
+/**
+ * Redirects for retired case-study URLs.
+ *
+ * Consolidating 26 cases into 18 merged eight pairs of files into one. Those
+ * eight retired slugs may already be linked from a CV, an application, or a
+ * search index, so each one gets a real page that forwards to the case that
+ * absorbed it — not a 404.
+ *
+ * This route is a catch-all, so it only ever matches paths that
+ * `work/[slug].astro` did not claim. Adding a merge means one line in RETIRED.
+ */
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  /* retired slug → the slug that absorbed it.
+     Declared inside getStaticPaths on purpose: Astro hoists this function into
+     its own module scope, so a const in the component script above is not
+     visible here. */
+  const RETIRED: Record<string, string> = {
+    // precision: the individual reversals became the evidence for the control
+    "false-positive-reversals": "precision-carveouts",
+    // forecasting: the Monte-Carlo queue forecast + the survival engine
+    "review-volume-forecast": "forecasting-under-uncertainty",
+    "survival-forecasting": "forecasting-under-uncertainty",
+    // Zalando measurement: leakage sizing + honest control evaluation
+    "secure-delivery-holdout": "remaining-fraud-damage",
+    // agent methodology: the adversarial pass is the gate the agents run through
+    "adversarial-pass": "multi-agent-investigation",
+    // detection signals, both priced on the false-positive side
+    "fingerprint-ensemble": "detection-signals-priced",
+    "domain-age-rule": "detection-signals-priced",
+    // escalations whose premise did not survive investigation
+    "credential-leak-inversion": "escalations-inverted",
+    "vendor-escalation-ring": "escalations-inverted",
+    // tools that refuse to degrade quietly
+    "compromise-explorer-audit": "tools-that-hold",
+    "model-monitoring-pipeline": "tools-that-hold",
+    // compute abuse, traced past the symptom
+    "sagemaker-regex-gap": "compute-abuse-root-cause",
+    "kiro-seat-farm": "compute-abuse-root-cause",
+  };
+
+  // Only emit a redirect when the destination actually exists and the source is
+  // genuinely gone — so a half-finished merge can't ship a self-redirect or a
+  // link to a page that isn't there. Retired sources are kept on disk as
+  // `draft: true` rather than deleted, so "live" must mean *published*: a draft
+  // source would otherwise block its own redirect and leave the old URL a 404.
+  const live = new Set(
+    (await getCollection("work", ({ data }) => !data.draft)).map((e) => e.id),
+  );
+
+  return Object.entries(RETIRED)
+    .filter(([from, to]) => live.has(to) && !live.has(from))
+    .map(([from, to]) => ({ params: { retired: from }, props: { to } }));
+}
+
+const { to } = Astro.props;
+const target = `/work/${to}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Moved · Hani Yacoub</title>
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <p>
+      This case study was merged into a fuller one.
+      <a href={target}>Continue to it</a>.
+    </p>
+  </body>
+</html>

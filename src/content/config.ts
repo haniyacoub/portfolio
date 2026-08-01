@@ -155,6 +155,81 @@ const metric = z.discriminatedUnion("chart", [
     caption: z.string().optional(),
     context: z.string().optional(),
   }),
+
+  /* An ORDERED sequence of gates/stages on a single-hue ordinal ramp.
+     Use instead of signal-matrix whenever the order carries meaning (gate 6
+     only sees what gates 1-5 passed). Add `survivors` to make it a funnel. */
+  z.object({
+    chart: z.literal("gate-funnel"),
+    label: z.string(),
+    stages: z.array(
+      z.object({
+        name: z.string(),
+        note: z.string().optional(),
+        survivors: z.number().optional(),
+        key: z.boolean().optional(),
+      }),
+    ),
+    unit: z.string().optional(),
+    caption: z.string().optional(),
+    context: z.string().optional(),
+  }),
+
+  /* Part-to-whole as one horizontal stacked bar. For "one slice dominates". */
+  z.object({
+    chart: z.literal("share-bar"),
+    label: z.string(),
+    segments: z.array(
+      z.object({
+        name: z.string(),
+        value: z.number(),
+        display: z.string().optional(),
+        key: z.boolean().optional(),
+      }),
+    ),
+    of: z.string().optional(),
+    caption: z.string().optional(),
+    context: z.string().optional(),
+  }),
+
+  /* Ranked magnitude bars with ONE emphasized bar and the rest grayed.
+     The honest form when the story is "this one is the outlier". */
+  z.object({
+    chart: z.literal("ranked-bars"),
+    label: z.string(),
+    bars: z.array(
+      z.object({
+        name: z.string(),
+        value: z.number(),
+        display: z.string().optional(),
+        key: z.boolean().optional(),
+        note: z.string().optional(),
+      }),
+    ),
+    unit: z.string().optional(),
+    sort: z.boolean().optional(),
+    caption: z.string().optional(),
+    context: z.string().optional(),
+  }),
+
+  /* Forensic events on a real elapsed-time axis, where the GAPS are the
+     evidence. Use instead of abuse-chain when timing is the finding. */
+  z.object({
+    chart: z.literal("event-trace"),
+    label: z.string(),
+    events: z.array(
+      z.object({
+        at: z.number(), // minutes from T0; fractions for sub-minute
+        time: z.string(), // printed offset, authoritative for display
+        label: z.string(),
+        source: z.string().optional(),
+        kind: z.enum(["plain", "good", "fail"]).optional(),
+        punch: z.boolean().optional(),
+      }),
+    ),
+    caption: z.string().optional(),
+    context: z.string().optional(),
+  }),
 ]);
 
 export type Metric = z.infer<typeof metric>;

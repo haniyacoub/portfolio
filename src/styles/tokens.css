@@ -40,6 +40,69 @@
                             /* must read in grayscale too (it's also bold)  */
 
   /* ----------------------------------------------------------------------
+     DATA-VIZ COLOR — the chart palette. Separate from the UI accent above
+     because chart color does a *job* (identity / magnitude / polarity /
+     state), not decoration.
+
+     Every value here is validated, not eyeballed. The categorical order is
+     the colorblind-safety mechanism and must not be reordered without
+     re-running the validator. Measured on both chart surfaces
+     (--paper #faf8f4 and --paper-raised #ffffff), light mode:
+
+       lightness band  PASS  all 8 inside OKLCH L 0.43–0.77
+       chroma floor    PASS  all 8 >= 0.10
+       CVD separation  PASS  worst adjacent pair ΔE 9.1 (protanopia)
+       normal-vision   PASS  worst adjacent pair ΔE 19.6 (floor is 15)
+       contrast        WARN  series 3/4/5 sit below 3:1 on paper —
+                             every chart using them ships visible direct
+                             labels (the documented relief channel).
+
+     Slot 1 is the site accent, so charts open on the brand color.
+     Categorical hues are assigned in fixed order and NEVER cycled; a 9th
+     series folds into "Other" or becomes small multiples.
+     ---------------------------------------------------------------------- */
+  --series-1: #2c4fbf;  /* indigo — the site accent; always the first series */
+  --series-2: #eb6834;  /* orange                                            */
+  --series-3: #1baf7a;  /* aqua    (sub-3:1 — needs a direct label)          */
+  --series-4: #eda100;  /* yellow  (sub-3:1 — needs a direct label)          */
+  --series-5: #e87ba4;  /* magenta (sub-3:1 — needs a direct label)          */
+  --series-6: #008300;  /* green                                             */
+  --series-7: #4a3aa7;  /* violet                                            */
+  --series-8: #e34948;  /* red                                               */
+
+  /* ORDINAL / SEQUENTIAL ramp — one hue, light→dark, for ordered marks
+     (funnel stages, tiers, gate sequences). Validated with --ordinal:
+     monotone lightness PASS · adjacent ΔL >= 0.06 PASS · light end 2.36:1
+     PASS · single hue (3° spread) PASS. Do not insert lighter steps: the
+     light end is at the 2:1 contrast floor already. */
+  --ramp-1: #6da7ec;  /* lightest — "first stage" / lowest magnitude        */
+  --ramp-2: #3987e5;
+  --ramp-3: #256abf;
+  --ramp-4: #184f95;
+  --ramp-5: #0d366b;  /* darkest  — "final stage" / highest magnitude       */
+
+  /* DIVERGING — two hues that read as opposite, neutral gray midpoint.
+     Used for above/below a baseline (over- vs under-count, delta to target). */
+  --div-neg: #2c4fbf;  /* cool pole                                         */
+  --div-mid: #efeae1;  /* neutral: "nothing", never a hue                   */
+  --div-pos: #e34948;  /* warm pole                                         */
+
+  /* STATUS — reserved meaning (state, not identity). Never used as
+     "series 4", and always shipped with an icon or a label, never color
+     alone. On paper, warning/serious sit below 3:1 by design; the
+     icon+label pairing is the documented mitigation. */
+  --status-good:     #0ca30c;
+  --status-warning:  #fab219;
+  --status-serious:  #ec835a;
+  --status-critical: #d03b3b;
+
+  /* CHART CHROME — recessive by construction. Gridlines and axes are
+     solid hairlines one step off the surface; never dashed. */
+  --grid:     #e1e0d9;  /* gridline hairline                                */
+  --axis:     #c3c2b7;  /* baseline / axis rule                             */
+  --de-emph:  #b4ac9d;  /* the "gray the rest" tone for emphasis charts     */
+
+  /* ----------------------------------------------------------------------
      TYPE — Fraunces (display, large only) · Hanken Grotesk (body) ·
      JetBrains Mono (labels, metadata, EVERY numeral). Tabular figures.
      ---------------------------------------------------------------------- */

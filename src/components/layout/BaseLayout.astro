@@ -40,7 +40,9 @@ const ogImage = new URL("/og.png", site.url).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark" />
+    <!-- The palette is warm paper, so declare light. A stale "dark" here makes
+         the browser render form controls and scrollbars against the wrong ground. -->
+    <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#faf8f4" />
 
     <title>{fullTitle}</title>

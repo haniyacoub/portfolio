@@ -5,52 +5,55 @@ period: "2021 to 2024"
 theme: "Customer analytics"
 track: "Measurement"
 company: "AUTO1 Group"
-order: 17
-summary: "Scoring systems that told AUTO1's commercial team which B2B customers were worth pursuing, which were about to leave, and where retention money would actually pay back."
-context: "AUTO1's commercial team worked a large B2B customer base with finite outreach capacity. Without a ranking, effort spread evenly across customers who were not evenly valuable, and churn was discovered when it happened rather than before."
-contribution: "I built the scoring systems that ranked the base two ways. A value score identified high-value B2B customers worth proactive attention, and a risk score flagged accounts whose behaviour signalled churn. Alongside the scores, I analysed customer drop-off patterns to locate the highest-impact retention opportunities and quantified the revenue upside of acting on them, so the case for retention work was a number rather than a feeling."
-outcome: "The commercial team could prioritize outreach instead of spreading it evenly. Value scores decided who to call first, churn scores decided who to save, and the quantified drop-off analysis decided where retention investment would actually pay back."
-impact: "Turned an unranked B2B customer base into a <strong>prioritized outreach queue</strong> with value scoring, churn-risk flags, and a <strong>quantified revenue case</strong> for the highest-impact retention plays."
-counterfactual: "Outreach capacity keeps spreading evenly across an unevenly valuable base, and churn keeps being discovered in the revenue numbers after the customers are already gone."
+featured: false
+draft: false
+order: 18
+summary: "Before the fraud work, the same ranking problem: a large B2B base, finite outreach capacity, and two scores deciding who got called."
+context: "AUTO1's commercial team worked a large B2B customer base with finite outreach capacity. With no ranking over it, effort spread evenly across customers who were not evenly valuable, and churn was discovered in the revenue numbers rather than before it happened."
+contribution: "I built the two scores that ranked the base: a value score identifying the high-value B2B customers worth proactive attention, and a churn-risk score flagging accounts whose behaviour signalled they were about to leave. I analysed customer drop-off patterns to locate where in the relationship the base was actually being lost. I quantified the revenue upside of the highest-impact retention opportunities, so the case for retention spend was a number rather than a feeling."
+outcome: "Outreach ran off a queue instead of spreading evenly, so the rank decided the week rather than whoever happened to call in. Retention spend was argued from a payback figure attached to a named opportunity."
+impact: "Replaced flat outreach across a large B2B base with a <strong>ranked call queue</strong> — a value score, a churn-risk score, and a <strong>quantified revenue case</strong> behind the highest-impact retention plays."
+counterfactual: "Retention money keeps going to whichever play sounds most urgent in the room, and <strong>nobody can say which one would have paid back</strong>."
 indexMetric: 0
 metrics:
   - chart: "signal-matrix"
-    label: "How the customer base got ranked"
+    label: "What turned a flat customer list into a call queue"
     signals:
       - "Customer value score"
       - "Churn-risk score"
-      - "Drop-off analysis"
+      - "Drop-off pattern analysis"
       - "Quantified revenue upside"
     activeCount: 4
-    caption: "Two scores plus a quantified retention case turned a flat list into a call queue."
-  - chart: "stat"
-    label: "Scoring systems in use"
-    value: "2"
-    context: "High-value B2B customer scoring and churn-risk scoring, both feeding the commercial team's outreach priorities."
-  - chart: "stat"
-    label: "Time in role"
-    value: "2.5"
-    unit: "yrs"
-    context: "Customer-acquisition analytics at AUTO1 Group, Oct 2021 to Apr 2024."
-    emphasis: false
+    caption: "None of the four is useful alone: a rank with no revenue behind it is a list, and a revenue figure with no rank is a wish."
+  - chart: "line"
+    label: "How the base drained over the relationship"
+    points: [100, 92, 84, 76, 68, 61, 54, 47]
+    seriesLabel: "still active"
+    xLabel: "time in the relationship"
+    yLabel: "share still active (illustrative)"
+    caption: "Illustrative shape, since the live curve runs on AUTO1's customer data. What the real analysis established is where in the relationship customers were actually being lost, which is what let the retention plays be ranked by the revenue at stake behind each drop-off point rather than by anecdote."
 tags: ["Customer scoring", "Churn", "B2B", "Revenue analytics"]
 ---
 
-Before fraud, the question I worked on was gentler but structurally identical:
-in a large population, which accounts deserve attention first?
+Fraud came later. The question did not change. A commercial team with finite
+outreach capacity and a customer base that is not evenly valuable faces the
+same problem as a fraud analyst holding a review queue: the population is
+large, attention is scarce, and spending it evenly is the one strategy
+guaranteed to be wrong. Unranked, the most valuable accounts got the same
+share of the week as the least, and the accounts quietly on their way out got
+none of it.
 
-AUTO1's commercial team had finite outreach capacity and a B2B customer base
-that was not evenly valuable. I built the two scores that ranked it. A **value
-score** identified the high-value customers worth proactive attention, and a
-**churn-risk score** flagged the accounts whose behaviour said they were about
-to leave. Together they turned a flat customer list into a queue: who to call
-first, who to save this week.
+So I built the ranking as two scores rather than one blended number, because
+who is worth keeping and who is leaving are different questions, and answering
+them in one figure hides which of the two is driving a call.
 
-The third piece made the case for acting. I analysed **drop-off patterns** to
-find where customers were actually being lost, then quantified the revenue
-upside of the highest-impact retention opportunities. Retention investment
-stopped being argued from anecdote and had a number attached instead.
+Scores rank work; they do not justify spending money on it. That was the third
+piece. Attaching revenue to each drop-off point turned "we should do something
+about churn" into a list of retention plays with a payback figure next to each
+one.
 
-Looking back, this role was the training ground for the fraud work that
-followed: population-level scoring, ranking under capacity constraints, and
-the discipline of quantifying a decision before asking anyone to make it.
+This role was the training ground for everything after it. Population-level
+scoring, ranking under a hard capacity constraint, and the discipline of
+quantifying a decision before asking anyone to make it are the same habits the
+fraud work runs on. What changed later was the cost of being wrong — a missed
+call became a shut-down account. The structure of the problem did not move.

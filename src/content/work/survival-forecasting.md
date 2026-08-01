@@ -30,6 +30,8 @@ metrics:
     context: "Excess over a trusted floor by risk bucket, and an exponential catch-hazard survival fit."
     emphasis: false
 tags: ["Forecasting", "Survival modeling", "Uncertainty", "Capacity planning"]
+# Merged into forecasting-under-uncertainty; kept on disk so /work/survival-forecasting redirects.
+draft: true
 ---
 
 Any forecast can draw a line. The useful ones say how wrong they might be

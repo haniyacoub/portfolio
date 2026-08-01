@@ -1,18 +1,18 @@
 ---
-title: "Putting a euro figure on the fraud the system didn't catch"
+title: "A euro figure on the fraud that survived, and controls that can't flatter themselves"
 role: "Senior Product Analyst, Risk & Abuse, Zalando"
 period: "2024 to 2026"
-theme: "Fraud measurement · leakage"
+theme: "Fraud measurement · counterfactual"
 track: "Measurement"
 company: "Zalando"
 featured: true
-order: 13
-summary: "Remaining Fraud Damage, a method that benchmarks each customer segment against trusted customers to size the logistics refund leakage existing controls let through, in euros, per market, every week."
-context: "Everyone tracks the fraud they catch. The damage that matters for the business is the part that slips past every control: manual refund leakage on missing-delivery, item-not-received, and parcel-missing claims. It's invisible precisely because nothing flagged it, so there was no euro figure to act on."
-contribution: "I built the Remaining Fraud Damage measure. The idea is simple. Trusted high-value customers (A/VIP) set the honest baseline refund/damage rate, and every other value segment's excess over that benchmark, applied to its GMV, is the leakage estimate. Remaining Fraud Damage = return-damage + delivery-damage across the analysed segments, expressed as a share of GMV, tracked weekly and monthly across the top six markets. It runs on manual-refund and Salesforce case data joined to customer value segments and AbPP risk signals, built in PySpark/Databricks over the Zalando data lake."
-outcome: "Risk and leadership got a defensible, recurring euro estimate of the damage that survived existing controls, broken down by segment and market with weekly and monthly trends. That turned 'fraud we can't see' into a number that could be argued about, owned, and reduced."
-impact: "Produced the <strong>first euro-denominated estimate</strong> of logistics refund leakage that survived existing controls, broken down by customer segment and by market across <strong>six countries</strong>, refreshed weekly and monthly for business reviews."
-counterfactual: "The leakage stays invisible because nothing flagged it: no euro figure to budget against, no segment or market to target, and no way to tell whether refund damage is getting better or worse."
+order: 14
+summary: "Remaining Fraud Damage sizes the logistics refund leakage that slips past every control, in euros, per segment, per market. Holdout and counterfactual framing then stops the controls taking credit for reducing it."
+context: "Everyone tracks the fraud they catch. The damage that matters for the business is the part that slips past every control: manual refund leakage on missing-delivery, item-not-received, and parcel-missing claims, invisible precisely because nothing flagged it. The mirror-image error sits on the other side of the same ledger. Risk controls like Secure Delivery and refund-denial steering are applied exactly where abuse is most expected, so a naive treated-vs-untreated read lets selection bias do the talking and credits the control for a difference that was already there."
+contribution: "I built the Remaining Fraud Damage measure. Trusted high-value customers (A/VIP) set the honest baseline refund and damage rate, and every other segment's excess over that benchmark, applied to its GMV, is the leakage estimate. Remaining Fraud Damage = return damage + delivery damage as a share of GMV, computed across the top six markets on manual-refund and Salesforce case data in PySpark on Databricks. A leakage figure is only worth the evaluation of the controls aimed at it, so I treated that evaluation as causal work rather than reporting. Holdout and counterfactual framing separated prevented damage from remaining damage. I stated plainly where a biased intervention group would inflate the result. I also owned the fraud KPIs for weekly and monthly business reviews. I read suspicious, detected, and steer rates against base-rate effects and soft exclusions, so a shift in population mix never got mistaken for a shift in fraud."
+outcome: "'Fraud we can't see' became a number Risk could argue about, own, and set targets against, and Secure Delivery and refund-denial thresholds got debated against prevented damage the control had actually caused."
+impact: "Produced the <strong>first euro-denominated estimate</strong> of logistics refund leakage surviving existing controls, by customer segment and across <strong>six markets</strong>, refreshed weekly and monthly for business reviews, and replaced flattering before/after reads with <strong>holdout / counterfactual evaluation</strong> so prevented damage was separated from remaining damage."
+counterfactual: "The leakage stays invisible: no euro figure to budget against, no segment or market to target, and no way to tell whether refund damage is getting better or worse. Meanwhile the controls get credited for differences that existed before they ran, and threshold decisions get made on a number that was never real."
 indexMetric: 0
 metrics:
   - chart: "line"
@@ -21,41 +21,42 @@ metrics:
     baseline: [3.2, 3.2, 3.2, 3.2]
     seriesLabel: "segment rate"
     baselineLabel: "A/VIP benchmark"
-    xLabel: "value segment  →  higher risk"
+    xLabel: "trusted A/VIP floor  →  higher-risk value segments"
     yLabel: "refund/damage rate (illustrative)"
     caption: "Each segment's excess over the trusted A/VIP benchmark, applied to its GMV, is the leakage estimate. Shape is illustrative. Live values come from the model."
-    context: "Remaining Fraud Damage = Return Damage + Delivery Damage, as a share of GMV."
-  - chart: "stat"
-    label: "Markets covered"
-    value: "6"
-    context: "DE · NL · BE · FR · IT · CH, tracked weekly and monthly."
-    emphasis: false
-  - chart: "stat"
-    label: "Benchmark"
-    value: "A/VIP"
-    context: "Trusted customers set the honest floor. N · C · D are measured against it."
-    emphasis: false
-tags: ["PySpark / Databricks", "Refund leakage", "Benchmarking", "GMV", "WBR/MBR"]
+    context: "Remaining Fraud Damage = Return Damage + Delivery Damage, as a share of GMV, tracked across DE · NL · BE · FR · IT · CH weekly and monthly."
+  - chart: "before-after"
+    label: "Estimated effect of the control"
+    before: { label: "Naive treated-vs-untreated", value: 100, unit: "", display: "overstated" }
+    after: { label: "Holdout / counterfactual", value: 55, unit: "", display: "true effect" }
+    betterWhen: "lower"
+    context: "Illustrative shape. Selection bias inflates the naive read; the holdout strips out what would have happened anyway, leaving prevented damage separated from remaining damage."
+tags: ["PySpark / Databricks", "Refund leakage", "Benchmarking", "GMV", "Holdout", "Counterfactual", "Base-rate effects", "WBR/MBR"]
+draft: false
 ---
 
-The fraud you catch is the easy half to talk about. The number leadership
-actually needed was the other half: how much logistics refund damage (missing
-delivery, item-not-received, parcel-missing) was leaking past every control? By
-definition nothing had flagged it, so there was no figure at all.
+Caught fraud is the easy half. The number leadership actually needed was the
+other half: how much logistics refund damage (missing delivery, item-not-received,
+parcel-missing) was leaking past every control? By definition nothing had flagged
+it, so no figure existed at all.
 
-I built one. The trick is choosing an honest baseline. Trusted high-value
-customers (A/VIP) refund and claim at some natural rate that isn't abuse, so
-treat that as the floor. Then every other value segment's refund/damage rate
-*above* that floor, applied to its GMV, is an estimate of the excess that
-shouldn't be there. Sum the return-damage and delivery-damage across the analysed
-segments and you have Remaining Fraud Damage as a share of GMV.
+I built one, and the whole method rests on choosing an honest baseline. Trusted
+high-value customers refund and claim at some natural rate that isn't abuse, so
+treat that as the floor. Every other value segment's refund/damage rate *above*
+the floor, applied to its GMV, estimates the excess that shouldn't be there. Sum
+return damage and delivery damage and you have Remaining Fraud Damage as a share
+of GMV. The plumbing is ordinary e-commerce data work: GMV denominators before
+and after returns, refund reasons, and risk signals joined to value segments.
 
-The plumbing is real e-commerce data work: manual-refund and Salesforce case
-tables joined to customer value segments, GMV denominators (before and after
-returns), manual-refund reasons, and AbPP risk signals. All of it built in
-PySpark on Databricks over the data lake, across the top six markets, refreshed
-weekly and monthly.
+A leakage number invites the obvious follow-up: are the controls shrinking it?
+That is exactly where this kind of measurement goes wrong. Naive before/after
+flatters every control you will ever ship.
 
-What it changed is the conversation. "Fraud we can't see" became a defensible
-euro estimate, split by segment and market, with a trend line. You can't reduce a
-number you've never put on the table. This put it on the table.
+So I evaluated them causally instead. The honest effect is smaller than the naive
+one. That is not a disappointment; it is the difference between a number that
+survives scrutiny and one that doesn't, and it is the only kind of number I would
+want to hand to someone who is about to move a threshold.
+
+The same instinct ran through the fraud metrics I owned for business reviews,
+where the job was as much explaining *why* a number moved as reporting that it
+did.

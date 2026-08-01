@@ -18,7 +18,9 @@ interface Props {
 const { label, items, caption, context } = Astro.props;
 const gaps = items.filter((i) => !i.covered).length;
 const covered = items.length - gaps;
-const text = `${label}: ${covered} of ${items.length} cases covered; ${gaps} gap let abuse through.${caption ? " " + caption : ""}`;
+/* Gap-count- and domain-agnostic: some cases have one gap, some several, and
+   not every gap is an abuser getting through (self-inflicted damage, leakage). */
+const text = `${label}: ${covered} of ${items.length} covered; ${gaps} not covered.${caption ? " " + caption : ""}`;
 ---
 
 <figure class="cg" data-reveal aria-label={text}>

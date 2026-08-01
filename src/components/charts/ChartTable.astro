@@ -1,0 +1,145 @@
+---
+/**
+ * ChartTable — the table-view twin every chart ships with.
+ *
+ * Two jobs, both accessibility requirements rather than nice-to-haves:
+ *   1. No value is ever gated behind a hover. A tooltip enhances; this table
+ *      is where the number is guaranteed to be readable.
+ *   2. It is the documented relief channel for the three series colors that
+ *      sit below 3:1 on our paper surface (aqua, yellow, magenta). A chart
+ *      using those hues is only legal if the values are readable another
+ *      way — this is that way.
+ *
+ * Collapsed by default so it never competes with the figure, but it is real
+ * markup in the page: keyboard reachable, screen-reader readable, printable.
+ */
+interface Props {
+  /** Column headers, left to right. First column is the row's name. */
+  columns: string[];
+  /** One array per row, already formatted for display. */
+  rows: (string | number)[][];
+  /** Overrides the summary text. Defaults to "Show the data table". */
+  summary?: string;
+  /** Optional caption naming what the table holds. */
+  caption?: string;
+}
+const { columns, rows, summary = "Show the data table", caption } = Astro.props;
+---
+
+{
+  rows.length > 0 && (
+    <details class="ctab">
+      <summary class="mono ctab__summary">
+        <span class="ctab__marker" aria-hidden="true" />
+        {summary}
+      </summary>
+      <div class="ctab__scroll">
+        <table class="ctab__table">
+          {caption && <caption class="ctab__caption">{caption}</caption>}
+          <thead>
+            <tr>
+              {columns.map((c, i) => (
+                <th scope="col" class:list={["mono", { "ctab__num": i > 0 }]}>
+                  {c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr>
+                {r.map((cell, i) =>
+                  i === 0 ? (
+                    <th scope="row" class="ctab__rowhead">
+                      {cell}
+                    </th>
+                  ) : (
+                    <td class="mono ctab__num">{cell}</td>
+                  ),
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  )
+}
+
+<style>
+  .ctab { margin-top: var(--space-2); }
+
+  .ctab__summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--step--2);
+    color: var(--muted);
+    cursor: pointer;
+    list-style: none;
+    padding: var(--space-1) 0;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .ctab__summary::-webkit-details-marker { display: none; }
+  .ctab__summary:hover { color: var(--accent); }
+
+  /* A small caret that rotates open — cheaper than an icon font. */
+  .ctab__marker {
+    width: 0;
+    height: 0;
+    border-left: 4px solid currentColor;
+    border-top: 3.5px solid transparent;
+    border-bottom: 3.5px solid transparent;
+    transition: transform var(--dur-1) var(--ease-out);
+  }
+  .ctab[open] .ctab__marker { transform: rotate(90deg) translateX(-1px); }
+
+  .ctab__scroll {
+    overflow-x: auto;
+    margin-top: var(--space-3);
+    border-top: var(--hair) solid var(--line);
+  }
+
+  .ctab__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--step--2);
+  }
+  .ctab__caption {
+    text-align: left;
+    font-size: var(--step--2);
+    color: var(--muted);
+    padding-block: var(--space-2);
+  }
+  .ctab__table th,
+  .ctab__table td {
+    text-align: left;
+    padding: var(--space-2) var(--space-3) var(--space-2) 0;
+    border-bottom: var(--hair) solid var(--line);
+    vertical-align: baseline;
+  }
+  .ctab__table thead th {
+    color: var(--faint);
+    font-weight: 500;
+    font-size: var(--step--2);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .ctab__rowhead {
+    color: var(--ink-soft);
+    font-weight: 500;
+    font-family: var(--font-body);
+  }
+  /* Numbers align on the decimal: tabular figures, right-set. */
+  .ctab__num {
+    text-align: right;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .ctab__table tbody tr:last-child th,
+  .ctab__table tbody tr:last-child td { border-bottom: 0; }
+</style>

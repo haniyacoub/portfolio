@@ -18,6 +18,10 @@ import RelationsGraph from "./RelationsGraph.astro";
 import AbuseChain from "./AbuseChain.astro";
 import CoverageGap from "./CoverageGap.astro";
 import LineChart from "./LineChart.astro";
+import GateFunnel from "./GateFunnel.astro";
+import ShareBar from "./ShareBar.astro";
+import RankedBars from "./RankedBars.astro";
+import EventTrace from "./EventTrace.astro";
 
 interface Props {
   metric: Metric;
@@ -36,3 +40,7 @@ const { metric } = Astro.props;
 {metric.chart === "abuse-chain" && <AbuseChain {...metric} />}
 {metric.chart === "coverage-gap" && <CoverageGap {...metric} />}
 {metric.chart === "line" && <LineChart {...metric} />}
+{metric.chart === "gate-funnel" && <GateFunnel {...metric} />}
+{metric.chart === "share-bar" && <ShareBar {...metric} />}
+{metric.chart === "ranked-bars" && <RankedBars {...metric} />}
+{metric.chart === "event-trace" && <EventTrace {...metric} />}

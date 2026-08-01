@@ -1,0 +1,190 @@
+---
+/**
+ * RankedBars — magnitude across a handful of named categories, sorted, with
+ * ONE bar carrying the story and the rest deliberately grayed.
+ *
+ * This is the "emphasis" form: the most underused and usually the honest
+ * answer to "make this chart clearer." When the point is *this one is the
+ * outlier*, giving every bar its own hue spends the identity channel on
+ * information the bar lengths already carry, and buries the finding. So one
+ * bar takes the accent and the others take the de-emphasis gray.
+ *
+ * Nominal categories (issuer, BIN, ASN, market) never get a value ramp —
+ * darker-where-bigger would double-encode length as color.
+ */
+import ChartTable from "./ChartTable.astro";
+
+interface Bar {
+  name: string;
+  value: number;
+  /** Overrides the printed value, e.g. "$1.17M" while sizing with 1170000. */
+  display?: string;
+  /** Marks the bar the story is about — takes the accent. */
+  key?: boolean;
+  /** Optional line of evidence, shown on hover + in the table. */
+  note?: string;
+}
+interface Props {
+  label: string;
+  bars: Bar[];
+  /** Unit for the axis / values, e.g. "accounts", "%". */
+  unit?: string;
+  /** Sort descending by value. On by default — ranked is the point. */
+  sort?: boolean;
+  caption?: string;
+  context?: string;
+}
+const {
+  label,
+  bars,
+  unit,
+  sort = true,
+  caption,
+  context,
+} = Astro.props;
+
+const rows = (sort ? [...bars].sort((a, b) => b.value - a.value) : bars).map(
+  (b) => ({
+    ...b,
+    printed: b.display ?? b.value.toLocaleString("en-US"),
+  }),
+);
+const max = Math.max(...rows.map((r) => r.value), 1);
+/* Floor the width so a small-but-real value never vanishes. */
+const width = (v: number) => Math.max((v / max) * 100, 1.5);
+
+const text = `${label}. ${rows
+  .map((r) => `${r.name}: ${r.printed}${unit ? " " + unit : ""}`)
+  .join("; ")}.`;
+---
+
+<figure class="rb" data-reveal aria-label={text}>
+  <div class="rb__head">
+    <span class="label">{label}</span>
+    {unit && <span class="mono rb__unit">{unit}</span>}
+  </div>
+
+  <ul class="rb__list" role="list">
+    {
+      rows.map((r, i) => (
+        <li
+          class:list={["rb__row", { "rb__row--key": r.key }]}
+          style={`--i:${i}; --w:${width(r.value)}%`}
+          data-tip={`<strong>${r.name}</strong><br><em>${r.printed}${
+            unit ? " " + unit : ""
+          }</em>${r.note ? `<br>${r.note}` : ""}`}
+          tabindex="0"
+        >
+          <span class="rb__name">{r.name}</span>
+          <div class="rb__track">
+            <span class="rb__bar" />
+            {/* Every bar is directly labeled: no value is hover-gated. */}
+            <span class="mono rb__val">{r.printed}</span>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  {caption && <figcaption class="rb__caption">{caption}</figcaption>}
+  {context && <p class="rb__context">{context}</p>}
+
+  <ChartTable
+    columns={["Category", unit ? `Value (${unit})` : "Value", "Note"]}
+    rows={rows.map((r) => [r.name, r.printed, r.note ?? "—"])}
+    caption={`${label} — ranked.`}
+  />
+</figure>
+
+<style>
+  .rb { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  .rb__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-bottom: var(--hair) solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+  .rb__unit {
+    font-size: var(--step--2);
+    color: var(--faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .rb__list { display: flex; flex-direction: column; gap: var(--space-3); }
+
+  .rb__row {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-1) 0;
+    border-radius: var(--radius-xs);
+    cursor: default;
+    transition: background var(--dur-1) var(--ease-out);
+  }
+  @media (min-width: 34rem) {
+    .rb__row {
+      grid-template-columns: minmax(6rem, 11rem) 1fr;
+      gap: var(--space-4);
+      align-items: center;
+    }
+  }
+  .rb__row:hover,
+  .rb__row:focus-visible { background: var(--paper-sunk); outline: none; }
+  .rb__row:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+
+  .rb__name {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    line-height: var(--leading-snug);
+  }
+  .rb__row--key .rb__name { color: var(--ink); font-weight: 600; }
+
+  .rb__track {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .rb__bar {
+    height: 1rem;
+    width: var(--w);
+    flex: 0 1 auto;
+    /* Context bars: the de-emphasis gray. Length still carries the value. */
+    background: var(--de-emph);
+    border-radius: 0 4px 4px 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-4) var(--ease-draw);
+    transition-delay: calc(min(var(--i), 10) * 55ms);
+  }
+  /* The one bar that matters. */
+  .rb__row--key .rb__bar { background: var(--series-1); }
+  :global([data-revealed]) .rb__bar { transform: scaleX(1); }
+
+  .rb__val {
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .rb__row--key .rb__val { color: var(--series-1); font-weight: 600; }
+
+  .rb__caption {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    max-width: 56ch;
+    line-height: var(--leading-snug);
+  }
+  .rb__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 52ch;
+    line-height: var(--leading-snug);
+  }
+</style>

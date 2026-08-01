@@ -1,0 +1,203 @@
+---
+/**
+ * ShareBar — part-to-whole as a single horizontal stacked bar.
+ *
+ * The form of choice when the story is "one slice dominates the whole" (one
+ * ring drove 71% of every task ever queued). A pie would make the reader
+ * compare angles; a stacked bar puts every segment on one shared baseline so
+ * the dominance is the picture.
+ *
+ * Color: segments take categorical slots in fixed order — these are distinct
+ * *identities* (which ring, which source), not magnitudes, so no value ramp.
+ * The dominant segment can be marked `key` to pull the accent treatment.
+ *
+ * Separation is done with a 2px surface gap between segments, never a stroke.
+ * Labels ride outside the bar when a segment is too narrow to hold text, which
+ * is measured here rather than clipped with overflow:hidden.
+ */
+import ChartTable from "./ChartTable.astro";
+
+interface Segment {
+  name: string;
+  /** Share of the whole, 0–100. Should sum to ~100 across segments. */
+  value: number;
+  /** Overrides the printed value, e.g. "71%" or "a handful". */
+  display?: string;
+  /** Marks the segment the story is about. */
+  key?: boolean;
+}
+interface Props {
+  label: string;
+  segments: Segment[];
+  /** What the whole bar represents, e.g. "of every task ever queued". */
+  of?: string;
+  caption?: string;
+  context?: string;
+}
+const { label, segments, of, caption, context } = Astro.props;
+
+const SERIES = [
+  "var(--series-1)",
+  "var(--series-2)",
+  "var(--series-3)",
+  "var(--series-4)",
+  "var(--series-5)",
+  "var(--series-6)",
+  "var(--series-7)",
+  "var(--series-8)",
+];
+
+const total = segments.reduce((a, s) => a + s.value, 0) || 100;
+const pct = (v: number) => (v / total) * 100;
+
+/* A label only sits inside its segment when there's comfortable room for it.
+   Below that it moves to the legend + table rather than being clipped. */
+const INSIDE_MIN = 16; // percent of bar width
+
+const segs = segments.map((s, i) => ({
+  ...s,
+  w: pct(s.value),
+  color: SERIES[i % SERIES.length],
+  inside: pct(s.value) >= INSIDE_MIN,
+  printed: s.display ?? `${Math.round(s.value)}%`,
+}));
+
+const text = `${label}. ${segs
+  .map((s) => `${s.name}: ${s.printed}`)
+  .join("; ")}${of ? " " + of : ""}.`;
+---
+
+<figure class="sb" data-reveal aria-label={text}>
+  <div class="sb__head">
+    <span class="label">{label}</span>
+    {of && <span class="mono sb__of">{of}</span>}
+  </div>
+
+  <div class="sb__bar" role="img" aria-label={text}>
+    {
+      segs.map((s, i) => (
+        <span
+          class:list={["sb__seg", { "sb__seg--key": s.key }]}
+          style={`--w:${s.w}%; --c:${s.color}; --i:${i}`}
+          data-tip={`<strong>${s.name}</strong><br><em>${s.printed}</em>${of ? " " + of : ""}`}
+          tabindex="0"
+        >
+          {/* Inside label only when measured to fit; otherwise the legend carries it. */}
+          {s.inside && <span class="mono sb__inlabel">{s.printed}</span>}
+        </span>
+      ))
+    }
+  </div>
+
+  {/* Legend is always present for 2+ segments — identity is never color-alone. */}
+  {
+    segs.length > 1 && (
+      <ul class="sb__legend" role="list">
+        {segs.map((s) => (
+          <li class:list={["sb__key", { "sb__key--on": s.key }]}>
+            <span class="sb__swatch" style={`--c:${s.color}`} aria-hidden="true" />
+            <span class="sb__keyname">{s.name}</span>
+            <span class="mono sb__keyval">{s.printed}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {caption && <figcaption class="sb__caption">{caption}</figcaption>}
+  {context && <p class="sb__context">{context}</p>}
+
+  <ChartTable
+    columns={["Segment", "Share"]}
+    rows={segs.map((s) => [s.name, s.printed])}
+    caption={`${label}${of ? " — " + of : ""}.`}
+  />
+</figure>
+
+<style>
+  .sb { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  .sb__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-bottom: var(--hair) solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+  .sb__of { font-size: var(--step--2); color: var(--faint); }
+
+  /* The 2px gap between segments IS the separator — no strokes on marks. */
+  .sb__bar {
+    display: flex;
+    gap: 2px;
+    width: 100%;
+    height: 2.6rem;
+    background: var(--paper-sunk);
+    border-radius: var(--radius-xs);
+    overflow: hidden;
+  }
+
+  .sb__seg {
+    width: var(--w);
+    background: var(--c);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-inline: var(--space-3);
+    min-width: 3px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-4) var(--ease-draw);
+    transition-delay: calc(var(--i) * 90ms);
+    cursor: default;
+  }
+  :global([data-revealed]) .sb__seg { transform: scaleX(1); }
+  .sb__seg:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
+
+  /* Inside labels sit on a colored fill, so they pick white for contrast. */
+  .sb__inlabel {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sb__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
+  .sb__key {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-size: var(--step--1);
+  }
+  .sb__swatch {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 2px;
+    background: var(--c);
+    flex: none;
+    transform: translateY(1px);
+  }
+  /* Legend text wears text tokens, never the series color. */
+  .sb__keyname { color: var(--ink-soft); }
+  .sb__key--on .sb__keyname { color: var(--ink); font-weight: 600; }
+  .sb__keyval { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .sb__caption {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    max-width: 56ch;
+    line-height: var(--leading-snug);
+  }
+  .sb__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 52ch;
+    line-height: var(--leading-snug);
+  }
+</style>

@@ -7,12 +7,12 @@ track: "Tooling"
 company: "AWS"
 featured: true
 order: 6
-summary: "A home-grown data-access layer that unifies two heterogeneous Redshift clusters behind one API and pays the SAML handshake once, turning a multi-second wait per query into a tenth of a second."
-context: "Fraud investigation lives or dies on iteration speed, and mine was being throttled by infrastructure: two production Redshift clusters with two different auth schemes (Midway/SAML SSO and password), a multi-second federated handshake on every single query, and scripts that each had to know about drivers, connection strings, and which cluster they were hitting."
-contribution: "I built the layer so none of that touches the analyst. One `run(conn_id, sql)` API returns an identical normalized result whether it's talking to the SAML cluster via a persistent Java JDBC bridge or the password cluster directly. A warm-connection daemon over a Unix socket holds the authenticated connection open and amortizes the SAML handshake across an entire investigation. Caller-aware routing picks the right cluster from the script's location, and a DB-API shim let all the legacy pandas code adopt it with zero call-site changes. It also degrades gracefully to in-process execution if the daemon isn't up, so correctness never depends on the optimization."
-outcome: "Per-query latency dropped roughly an order of magnitude, from about 3.9s cold to about 0.4s warm. That is the difference between investigation-as-flow and investigation-as-waiting. Every other project in the workspace runs on this layer, and reassigning a project to a different cluster became a one-line change."
-impact: "Cut per-query latency <strong>~10×</strong> (≈3.9s → ≈0.4s) and unified two heterogeneous Redshift clusters behind one API, making a month of near-daily, query-heavy investigations feasible and reducing a cluster reassignment to a one-line change."
-counterfactual: "Every query keeps paying the multi-second SAML handshake, investigations run at a fraction of the pace, and each script carries its own auth and driver glue. The deep, iterative analyses the rest of this work depends on simply aren't practical."
+summary: "A home-grown data-access layer that puts two heterogeneous Redshift clusters behind one API and pays the SAML handshake once per investigation instead of once per query."
+context: "Fraud investigation lives or dies on iteration speed, and mine was throttled by infrastructure rather than by analysis. Two production Redshift clusters disagreed on how to authenticate — Midway/SAML SSO on one, a password on the other — a multi-second federated handshake fired on every single query, and each script had to know its own drivers, connection strings, and which cluster it was hitting."
+contribution: "I built the layer so the auth split, the driver glue and the per-query handshake never reach the analyst. One run(conn_id, sql) call returns an identical normalized result whether it routes through a persistent Java JDBC bridge holding a SAML-authenticated session open or hits the password cluster directly. A warm-connection daemon over a Unix-domain socket keeps that session alive and amortizes the SAML handshake across an entire investigation. Caller-aware routing picks the cluster from the script's own location. A DB-API shim let the legacy pandas code adopt the layer with zero call-site changes. The layer degrades to in-process execution when the daemon is not up, so correctness never depends on the optimization."
+outcome: "Every other project in the workspace now runs on this layer, and the analysis code above it carries no cluster-specific branches, because the result shape is identical from either cluster."
+impact: "Cut per-query latency <strong>~10×</strong> (≈3.9s → ≈0.4s) and put <strong>two heterogeneous Redshift clusters</strong> behind one API and one result shape, making a month of near-daily, query-heavy investigation feasible and reducing a cluster reassignment to a one-line change."
+counterfactual: "Every query keeps paying the multi-second SAML handshake, investigations run at a fraction of the pace, and each script carries its own auth and driver glue. The deep, iterative analyses the rest of this work depends on simply are not practical."
 indexMetric: 0
 metrics:
   - chart: "before-after"
@@ -20,43 +20,47 @@ metrics:
     before: { label: "Cold (handshake each time)", value: 3.9, unit: "s", display: "~3.9s" }
     after: { label: "Warm daemon", value: 0.4, unit: "s", display: "~0.4s" }
     betterWhen: "lower"
-    context: "A persistent Unix-socket daemon pays the SAML handshake once per investigation."
-  - chart: "delta"
-    label: "Speed-up"
-    value: "~10×"
-    detail: "faster warm vs. cold per query"
-    direction: "up"
-    good: true
-    context: "A purely optional layer. It falls back to in-process execution if the daemon is down."
-  - chart: "stat"
-    label: "Clusters unified"
-    value: "2"
-    context: "SAML SSO + password auth, behind one API and one result shape."
-    emphasis: false
+    context: "Cold is the federated handshake re-run on every query. Warm is the same query with the authenticated session already open."
+  - chart: "gate-funnel"
+    label: "What every analyst query passes through, in order"
+    stages:
+      - name: "One call: run(conn_id, sql)"
+        note: "The only surface an analyst script touches. A DB-API shim let legacy pandas code keep its call sites."
+      - name: "Caller-aware routing"
+        note: "Resolves the target cluster from the script's own location, so reassignment is a one-line change."
+      - name: "Warm-connection daemon"
+        note: "Unix-domain socket holding the authenticated session open — the SAML handshake is paid once per investigation."
+        key: true
+      - name: "SAML JDBC bridge or direct password connect"
+        note: "Two clusters, two auth schemes, one code path."
+      - name: "Normalized result"
+        note: "ok, columns, rows, duration and a truncation flag — identical shape from either cluster."
+    caption: "If the daemon is down, stage three falls back to in-process execution and the rest is unchanged. The optimization is never load-bearing for correctness."
 tags: ["Python", "Redshift", "SAML / JDBC", "Daemon / IPC", "Developer tooling"]
-draft: true
+draft: false
 ---
 
-None of the fraud work in this portfolio happens without this layer, which is why
-I built it first. The bottleneck wasn't analysis. It was a multi-second federated
-handshake firing on every query, across two clusters that didn't agree on how to
-authenticate.
+The bottleneck was never the analysis. It was a federated handshake firing on
+every query, across two clusters that did not agree on how to authenticate. I
+built this layer before the AWS investigations that depend on it, because at a
+multi-second cost per query they were not practical.
 
-So I hid all of it behind one call. `run(conn_id, sql)` returns the same
-normalized result dict (ok, columns, rows, duration, truncation flag) whether it
-routed through a persistent Java JDBC bridge holding a SAML-authenticated
-connection open or hit the password cluster directly. A warm-connection daemon
-over a Unix-domain socket keeps that connection alive and pays the handshake
-**once per investigation** instead of once per query.
+So I put a single call in front of all of it, under one design rule: the
+optimization must never be load-bearing for correctness. That is what made the
+layer safe to put underneath everything else I was working on — adopting it could
+not break a script, because the worst case is the speed I already had.
 
-The design rule I held was that the optimization must never be load-bearing for
-correctness. The daemon is pure performance. If it's down, the layer silently
-falls back to in-process execution and everything still works, just slower. A
-DB-API shim meant the existing pandas/`redshift_connector` code adopted the whole
-thing with zero call-site changes, and caller-aware routing picks the cluster
-from the script's own location.
+The two auth schemes were the real design problem. A password cluster answers a
+driver directly; the SAML cluster needs a Java JDBC bridge, and the handshake is
+the expensive part. Holding that authenticated session open in a daemon behind a
+Unix-domain socket turns a per-query cost into a per-investigation one, and the
+caller never learns which of the two it is talking to.
 
-The payoff is mundane and enormous: about **3.9s cold to about 0.4s warm**. That
-order of magnitude is the line between investigating in flow and waiting on a
-spinner. It's also why a month of near-daily, query-heavy investigations was even
-feasible.
+The other half of the problem was adoption. A faster access layer nobody moves
+onto is worth nothing, and I was not going to rewrite working analysis code to
+justify it, so the layer had to be reachable from the call sites that already
+existed. That constraint is what the DB-API shim buys: the legacy pandas code
+kept its call sites and got the daemon anyway.
+
+The payoff sounds mundane and is enormous. It is the line between investigating
+in flow and waiting on a spinner.

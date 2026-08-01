@@ -102,16 +102,62 @@ Long-form case-study body in Markdown.
 | `abuse-chain`          | AbuseChain           | staged abuse-chain flow to a punchline (`steps[]` of `label`/`value`/`note?`/`punch?`) |
 | `coverage-gap`         | CoverageGap          | coverage strip with one highlighted gap (`items[]` of `name`/`covered`) |
 | `line`                 | LineChart            | decay/survival/trend line with optional `baseline[]` (`points[]`, `xLabel?`, `yLabel?`) |
+| `gate-funnel`          | GateFunnel           | an **ordered** sequence of gates/stages on a one-hue ramp (`stages[]` of `name`/`note?`/`survivors?`/`key?`, `unit?`). Add `survivors` to all stages to make it a funnel |
+| `share-bar`            | ShareBar             | part-to-whole as one stacked bar, for "one slice dominates" (`segments[]` of `name`/`value`/`display?`/`key?`, `of?`) |
+| `ranked-bars`          | RankedBars           | ranked magnitude with ONE emphasized bar and the rest grayed (`bars[]` of `name`/`value`/`display?`/`key?`/`note?`, `unit?`, `sort?`) |
+| `event-trace`          | EventTrace           | forensic events on a real elapsed-time axis, where the **gaps** are the evidence (`events[]` of `at`(minutes)/`time`/`label`/`source?`/`kind?`/`punch?`) |
 
 A leg (`before`, `after`, `caught`, `collateral`) is
 `{ label, value: number, unit?, display? }` — `value` sizes the bar, `display`
 overrides the printed text (e.g. show `~1 week` while sizing with `7`).
 
+### Picking the right one
+
+The data's **job** picks the chart, never variety:
+
+- **Ordered** stages / gates / decisions → `gate-funnel`. `signal-matrix` is
+  only correct for a genuinely *unordered* set. If swapping two items would
+  change the meaning, it's ordered.
+- **Timing gaps are the finding** → `event-trace`, not `abuse-chain`.
+- **One slice dominates a whole** → `share-bar`.
+- **One category is the outlier, the rest are context** → `ranked-bars`
+  (emphasis: one accent bar, the rest gray).
+
+### The chart budget
+
+Each case ships **at least one plotted chart** (anything except `stat`/`delta`)
+and **at most one `stat`**. Three stat tiles in a row is the KPI-dashboard look
+this site deliberately avoids — the figures should be *plotted*, not tiled.
+`indexMetric` should point at a plotted chart so the work-index card shows a
+chart rather than a bare numeral.
+
+### Chart color
+
+Chart color is a **separate system** from the UI accent, defined in
+`tokens.css` as `--series-1..8` (categorical identity), `--ramp-1..5` (ordinal /
+sequential magnitude), `--div-*` (polarity) and `--status-*` (state).
+
+These values are **validated, not chosen by eye** — colorblind separation
+(protanopia/deuteranopia at full severity), lightness band, chroma floor and
+surface contrast were all measured against this site's two chart surfaces. The
+slot *order* is itself the colorblind-safety mechanism, so **do not reorder or
+substitute a hex without re-running the validator**. Series 3, 4 and 5 sit below
+3:1 on paper, which is legal only because every chart using them also ships
+visible direct labels and a `ChartTable` twin — that's the documented relief
+channel, not an oversight.
+
+Components own color. A case-study file never contains a color value.
+
+Every chart also renders a collapsed `ChartTable` — the guaranteed-readable
+version of its values. Tooltips enhance; they never gate a number.
+
 To add a genuinely new chart **shape**: build it in `src/components/charts/`,
 keep it on-brand with the existing ones (data-ink first, direct labels, tabular
 figures, accent on the one value that matters, grayscale-legible, draws in once
-on view), and register one branch in
-`src/components/charts/MetricFigure.astro`.
+on view, 2px surface gaps rather than strokes between marks), give it a
+`ChartTable`, and register one branch in
+`src/components/charts/MetricFigure.astro` plus one in `MetricBoard.astro`'s
+`FULL` set if it needs full width.
 
 ## Structure
 

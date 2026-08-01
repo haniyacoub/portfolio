@@ -33,6 +33,7 @@ metrics:
     context: "Coverage is a property of the pipeline, not of someone's diligence."
     emphasis: false
 tags: ["Analytics engineering", "Code generation", "Model monitoring", "Rulesets"]
+draft: true
 ---
 
 The quiet failure mode of model monitoring is not a wrong number. It is a

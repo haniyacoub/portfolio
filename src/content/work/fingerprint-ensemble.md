@@ -6,6 +6,9 @@ theme: "Model improvement"
 track: "Detection"
 company: "AWS"
 order: 20
+# Retired: merged into detection-signals-priced. Kept on disk per the
+# convention in src/pages/work/[...retired].astro, which forwards this slug.
+draft: true
 summary: "Adding device fingerprint as an ensemble feature to the Fraud Relations model caught 34% more disputed dollars, with the false-positive cost quantified per signal."
 context: "The Fraud Relations model linked abusive accounts through shared identifiers, but device fingerprint was not among them. The question was not whether more signals catch more fraud. They always do. The question was what each signal costs in false positives."
 contribution: "I added device fingerprint as an ensemble feature to the Fraud Relations model and measured both sides of the trade. The result was 34% more disputed dollars caught. Alongside the recall gain, I quantified the false-positive tradeoffs per signal, so the model's owners could see exactly what each linkage signal contributes and what it risks."

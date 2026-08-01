@@ -1,0 +1,263 @@
+---
+/**
+ * GateFunnel — an ORDERED sequence of gates/stages, each narrowing what
+ * survives to the next one.
+ *
+ * Why this exists as a separate shape from SignalMatrix: a matrix of dots
+ * says "these N things are true," which is nominal. An enforcement job's
+ * eight gates, or a compromise case's eight decisions, are *ordered* — gate 6
+ * only sees what gates 1–5 passed. Swapping the order changes the meaning,
+ * which by the color rules makes it ordinal, so it takes a single-hue ramp
+ * (light → dark) and the reader sees the sequence in the color itself.
+ *
+ * The ramp is the validated ordinal ramp from tokens.css: monotone lightness,
+ * adjacent ΔL >= 0.06, light end clears 2:1 on paper. Stage color is
+ * interpolated across the five ramp steps, so any number of stages stays on
+ * the validated ends of the ramp rather than inventing new steps.
+ *
+ * Optional `survivors` turns it into a true funnel: the bar width carries how
+ * much reached that stage. Without it, every stage is full width and the
+ * ramp alone carries the order.
+ */
+import ChartTable from "./ChartTable.astro";
+
+interface Stage {
+  /** The gate's name. */
+  name: string;
+  /** What this gate does / why it's there. Shown on hover + in the table. */
+  note?: string;
+  /** Optional count reaching this stage — turns the strip into a funnel. */
+  survivors?: number;
+  /** Marks the stage that carries the point (gets the accent treatment). */
+  key?: boolean;
+}
+interface Props {
+  label: string;
+  stages: Stage[];
+  /** Noun for what flows through, e.g. "candidate accounts". */
+  unit?: string;
+  caption?: string;
+  context?: string;
+}
+const { label, stages, unit, caption, context } = Astro.props;
+
+/* The validated 5-step ordinal ramp. Never extend past these ends: the light
+   end is already at the 2:1 contrast floor on our paper surface. */
+const RAMP = [
+  "var(--ramp-1)",
+  "var(--ramp-2)",
+  "var(--ramp-3)",
+  "var(--ramp-4)",
+  "var(--ramp-5)",
+];
+/* Spread N stages across the 5 validated steps rather than generating steps. */
+const stepFor = (i: number) =>
+  RAMP[
+    stages.length <= 1
+      ? RAMP.length - 1
+      : Math.round((i / (stages.length - 1)) * (RAMP.length - 1))
+  ];
+
+const hasFunnel = stages.some((s) => typeof s.survivors === "number");
+const maxSurv = hasFunnel
+  ? Math.max(...stages.map((s) => s.survivors ?? 0), 1)
+  : 1;
+
+/* With counts, width is the data: how much survived to this gate.
+
+   Without counts there is no magnitude to encode, so full-width bars would be
+   a row of identical slabs — a lot of ink saying nothing, and it would imply a
+   quantity that was never measured. Instead each stage gets a short fixed
+   marker and the ramp carries the order. Honest, and much quieter. */
+const MARKER_W = 14; // % — a token, deliberately not a data bar
+const widthFor = (s: Stage) =>
+  hasFunnel && typeof s.survivors === "number"
+    ? Math.max((s.survivors / maxSurv) * 100, 3)
+    : MARKER_W;
+
+const fmt = (n: number) => n.toLocaleString("en-US");
+
+const text = `${label}. ${stages.length} ordered stages: ${stages
+  .map(
+    (s, i) =>
+      `${i + 1}. ${s.name}${
+        typeof s.survivors === "number" ? ` (${fmt(s.survivors)})` : ""
+      }`,
+  )
+  .join("; ")}.`;
+
+/* Table twin: the guaranteed-readable version of every value above. */
+const tableCols = hasFunnel
+  ? ["Stage", "#", unit ? `Reaching (${unit})` : "Reaching"]
+  : ["Stage", "#", "What it checks"];
+const tableRows = stages.map((s, i) =>
+  hasFunnel
+    ? [s.name, String(i + 1), typeof s.survivors === "number" ? fmt(s.survivors) : "—"]
+    : [s.name, String(i + 1), s.note ?? "—"],
+);
+---
+
+<figure class="gf" data-reveal aria-label={text}>
+  <div class="gf__head">
+    <span class="label">{label}</span>
+    <span class="mono gf__count">
+      {stages.length} in order
+    </span>
+  </div>
+
+  <ol class="gf__list" role="list">
+    {
+      stages.map((s, i) => (
+        <li
+          class:list={[
+            "gf__stage",
+            { "gf__stage--key": s.key, "gf__stage--token": !hasFunnel },
+          ]}
+          style={`--i:${i}; --w:${widthFor(s)}%; --c:${stepFor(i)}`}
+          data-tip={`<strong>${i + 1}. ${s.name}</strong>${
+            typeof s.survivors === "number"
+              ? `<br><em>${fmt(s.survivors)}${unit ? " " + unit : ""}</em> reach this gate`
+              : ""
+          }${s.note ? `<br>${s.note}` : ""}`}
+          tabindex="0"
+        >
+          <span class="mono gf__n" aria-hidden="true">
+            {String(i + 1).padStart(2, "0")}
+          </span>
+
+          <div class="gf__body">
+            <div class="gf__bar-row">
+              <span class="gf__bar" />
+              {/* Direct label: the relief channel. Never hover-only. */}
+              {typeof s.survivors === "number" && (
+                <span class="mono gf__val">{fmt(s.survivors)}</span>
+              )}
+            </div>
+            <span class="gf__name">{s.name}</span>
+            {s.note && <span class="gf__note">{s.note}</span>}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  {caption && <figcaption class="gf__caption">{caption}</figcaption>}
+  {context && <p class="gf__context">{context}</p>}
+
+  <ChartTable
+    columns={tableCols}
+    rows={tableRows}
+    caption={`${label} — every stage in order.`}
+  />
+</figure>
+
+<style>
+  .gf { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  .gf__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-bottom: var(--hair) solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+  .gf__count { font-size: var(--step--1); color: var(--muted); }
+
+  /* 2px surface gap between stages — white does the separating, not strokes. */
+  .gf__list { display: flex; flex-direction: column; gap: 2px; }
+
+  .gf__stage {
+    display: grid;
+    grid-template-columns: 2.1rem 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    padding-block: var(--space-2);
+    border-radius: var(--radius-xs);
+    /* The hit target is the whole row, comfortably past the 24px minimum. */
+    cursor: default;
+    transition: background var(--dur-1) var(--ease-out);
+  }
+  .gf__stage:hover,
+  .gf__stage:focus-visible { background: var(--paper-sunk); outline: none; }
+  .gf__stage:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+
+  .gf__n {
+    font-size: var(--step--2);
+    color: var(--faint);
+    padding-top: 0.15rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gf__body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+
+  .gf__bar-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  /* Token mode (no counts): a slim rounded chip, not a bar. Nothing about its
+     length is data, so it reads as a marker and the ramp carries the order. */
+  .gf__stage--token .gf__bar {
+    height: 0.42rem;
+    border-radius: 3px;
+    max-width: 5.5rem;
+  }
+
+  .gf__bar {
+    height: 0.7rem;
+    width: var(--w);
+    flex: 0 1 auto;
+    background: var(--c);
+    /* 4px rounded data-end, square where it leaves the baseline. */
+    border-radius: 0 4px 4px 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-4) var(--ease-draw);
+    transition-delay: calc(min(var(--i), 12) * 60ms);
+  }
+  :global([data-revealed]) .gf__bar { transform: scaleX(1); }
+
+  /* The stage that carries the point: a ring, not a different hue —
+     the ramp still has to read as one ordered sequence. */
+  .gf__stage--key .gf__bar {
+    box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent);
+  }
+
+  .gf__val {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gf__name {
+    font-size: var(--step-0);
+    color: var(--ink);
+    line-height: var(--leading-snug);
+  }
+  .gf__stage--key .gf__name { font-weight: 600; }
+  .gf__note {
+    font-size: var(--step--2);
+    color: var(--muted);
+    line-height: 1.4;
+    max-width: 54ch;
+  }
+
+  .gf__caption {
+    font-size: var(--step-0);
+    color: var(--ink-soft);
+    max-width: 56ch;
+    line-height: var(--leading-snug);
+  }
+  .gf__context {
+    font-size: var(--step--1);
+    color: var(--muted);
+    max-width: 52ch;
+    line-height: var(--leading-snug);
+  }
+</style>

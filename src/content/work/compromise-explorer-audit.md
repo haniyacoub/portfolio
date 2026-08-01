@@ -39,6 +39,7 @@ metrics:
     context: "Nearly every critical one: absent or errored evidence read as reassurance. All fail-closed now."
     emphasis: false
 tags: ["Investigation tooling", "Adversarial audit", "Fail-closed design", "Account takeover"]
+draft: true
 ---
 
 The first version of the tool was honest about the data and useless about

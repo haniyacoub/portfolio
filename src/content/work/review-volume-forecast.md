@@ -33,6 +33,8 @@ metrics:
     good: false
     context: "The clearest single proof that inflow does not drive the queue."
 tags: ["Monte Carlo", "Forecasting", "Capacity planning", "Stakeholder delivery"]
+# Merged into forecasting-under-uncertainty; kept on disk so /work/review-volume-forecast redirects.
+draft: true
 ---
 
 Every capacity plan hides a theory. This queue's theory was that review work
