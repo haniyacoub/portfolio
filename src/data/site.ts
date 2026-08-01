@@ -24,9 +24,15 @@ export const site = {
     "I make expensive decisions measurable. Most of them are about fraud.",
 } as const;
 
-// Real routed pages — the site is multi-page, not a single scroll.
+/* Real routed pages — the site is multi-page, not a single scroll.
+   Work comes first: the case studies are the substance of the portfolio, and
+   without this entry there was no path to them from the first screenful at
+   all — a visitor had to scroll past two full screens on faith. */
 export const nav = [
+  { label: "Work", href: "/#work" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
-  { label: "Résumé", href: "/Hani_Yacoub_CV.pdf" },
+  // Opens in a new tab (see Nav.astro): a PDF viewer has none of the site's
+  // chrome, so navigating the current tab into it is a dead end.
+  { label: "Résumé", href: "/Hani_Yacoub_CV.pdf", external: true },
 ] as const;

@@ -1,0 +1,105 @@
+---
+/**
+ * 404 — the page a mistyped or stale URL lands on.
+ *
+ * Without this, GitHub Pages serves its own default: an unstyled page with
+ * GitHub's branding and no way back. That's a bad outcome for a link on a CV
+ * that got truncated in an email client, so this keeps the visitor inside the
+ * site and points at the work rather than apologising.
+ */
+import BaseLayout from "../components/layout/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const works = (await getCollection("work", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+// Offer a real way forward: the three cases the site leads with.
+const suggestions = works.slice(0, 3);
+---
+
+<BaseLayout title="Page not found" description="That page doesn't exist.">
+  <section class="section nf">
+    <div class="wrap">
+      <span class="label" data-reveal>404</span>
+      <h1 class="nf__title" data-reveal data-reveal-delay="60">
+        That page isn't here.
+      </h1>
+      <p class="nf__body" data-reveal data-reveal-delay="120">
+        The link may be out of date — some case studies were merged into fuller
+        ones. Here's where the good stuff is.
+      </p>
+
+      <ul class="nf__list" role="list" data-reveal data-reveal-delay="180">
+        {
+          suggestions.map((w) => (
+            <li class="nf__item">
+              <a class="nf__link" href={`/work/${w.id}`}>
+                <span class="nf__linktitle">{w.data.title}</span>
+                <span class="mono nf__linkmeta">{w.data.company}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="nf__more" data-reveal data-reveal-delay="240">
+        <a class="mono nf__cta" href="/#work">All 18 cases <span aria-hidden="true">→</span></a>
+        <a class="mono nf__cta" href="/">Start from the top <span aria-hidden="true">→</span></a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf { min-height: 60vh; }
+  .nf__title {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    font-weight: 520;
+    letter-spacing: -0.03em;
+    margin-top: var(--space-4);
+  }
+  .nf__body {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    line-height: var(--leading-body);
+    max-width: 46ch;
+    margin-top: var(--space-4);
+  }
+  .nf__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: var(--space-7);
+    border-top: var(--hair) solid var(--line);
+    max-width: 44rem;
+  }
+  .nf__item { border-bottom: var(--hair) solid var(--line); }
+  .nf__link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    text-decoration: none;
+    color: var(--ink-soft);
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .nf__link:hover { color: var(--accent); }
+  .nf__linktitle {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: var(--leading-snug);
+  }
+  .nf__linkmeta { font-size: var(--step--2); color: var(--faint); flex: none; }
+  .nf__more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    margin-top: var(--space-6);
+  }
+  .nf__cta { font-size: var(--step-0); color: var(--accent); text-decoration: none; }
+  .nf__cta:hover { color: var(--accent-deep); }
+</style>

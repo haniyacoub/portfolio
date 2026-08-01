@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../components/layout/BaseLayout.astro";
 import Timeline from "../components/charts/Timeline.astro";
-import { career, markets, stack } from "../data/profile";
+import { career, education, markets, stack } from "../data/profile";
 
 const principles = [
   {
@@ -29,7 +29,17 @@ const builds = [
   { name: "Two products of my own", note: "a published VS Code extension, and a safety check for Shopify imports" },
 ];
 
-const chips = ["Berlin", "Arabic · German · English", "4 sectors", "6+ years"];
+/* The one scan-stop on this page: hard tokens only, no prose.
+   TODO(hani): a work-authorization chip belongs here — EU right-to-work is
+   often the first filter a Berlin recruiter applies, and "German-Jordanian"
+   above doesn't answer it. Left out deliberately rather than guessed at;
+   add e.g. "EU right to work" once you confirm the exact wording you want. */
+const chips = [
+  "Berlin",
+  "Arabic · German · English",
+  "6+ years, 4 sectors",
+  "MSc Business Management",
+];
 ---
 
 <BaseLayout
@@ -89,23 +99,34 @@ const chips = ["Berlin", "Arabic · German · English", "4 sectors", "6+ years"]
       </p>
     </div>
 
+    <!-- "The arc" told a recruiter nothing; headings are what actually get
+         read, so this one says what it is. -->
     <div class="wrap ab__arc" data-ani>
-      <Timeline label="The arc" items={[...career]} />
+      <Timeline label="Where I've worked" items={[...career]} />
     </div>
 
     <div class="wrap ab__grid">
       <div class="ab__col" data-ani>
-        <span class="label">Markets covered</span>
-        <p class="ab__markets mono">{markets.join(" · ")}</p>
-        <p class="ab__note">
-          Zalando Risk &amp; Abuse fraud analytics, top six European markets.
-        </p>
+        <span class="label">Studied</span>
+        <ul class="ab__edu" role="list">
+          {
+            education.map((e) => (
+              <li class="ab__eduitem">
+                <span class="ab__eduwhat">{e.what}</span>
+                <span class="ab__eduwhere">{e.where}</span>
+              </li>
+            ))
+          }
+        </ul>
       </div>
       <div class="ab__col" data-ani style="--d: 90ms">
         <span class="label">Stack</span>
         <ul class="ab__stack" role="list">
           {stack.map((s) => <li class="mono ab__tool">{s}</li>)}
         </ul>
+        <p class="ab__note">
+          Markets covered at Zalando: {markets.join(" · ")}.
+        </p>
       </div>
     </div>
   </section>
@@ -197,6 +218,16 @@ const chips = ["Berlin", "Arabic · German · English", "4 sectors", "6+ years"]
   @media (min-width: 52rem) { .ab__grid { grid-template-columns: 1fr 1.2fr; } }
   .ab__markets { margin-top: var(--space-3); font-size: var(--step-1); }
   .ab__note { margin-top: var(--space-2); color: var(--muted); font-size: var(--step--1); }
+
+  .ab__edu { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-3); }
+  .ab__eduitem { display: flex; flex-direction: column; gap: 0.15em; }
+  .ab__eduwhat { font-size: var(--step-0); color: var(--ink); font-weight: 500; }
+  .ab__eduwhere {
+    font-size: var(--step--1);
+    color: var(--muted);
+    line-height: var(--leading-snug);
+    max-width: 34ch;
+  }
   .ab__stack {
     margin-top: var(--space-3);
     display: flex;

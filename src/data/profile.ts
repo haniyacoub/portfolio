@@ -13,19 +13,49 @@ export const facts = [
   { value: "18", unit: "cases", label: "Platforms, dashboards, models, forecasts", emphasis: false },
 ] as const;
 
-/** Career arc — drives the Timeline. Absolute periods, his real history. */
+/** Career arc — drives the Timeline.
+    CLOSED date ranges on purpose: an open-ended single year ("2021") leaves a
+    recruiter unable to work out tenure, which is one of the few hard tokens
+    they actually scan for. Each entry names the sector and the real job title,
+    because "Statkraft" and "AUTO1" mean nothing to a reader outside Germany. */
 export const career = [
-  { date: "2020", org: "Statkraft", detail: "Energy. Data & risk analysis" },
-  { date: "2021", org: "AUTO1 Group", detail: "Automotive. Risk & abuse analytics" },
   {
-    date: "2024 to 2026",
-    org: "Zalando",
-    detail: "Fashion. Risk & Abuse / Transaction Risk Management",
+    date: "2020–2021",
+    org: "Statkraft",
+    detail: "Energy · Quantitative analyst intern, energy markets",
   },
   {
-    date: "2026",
+    date: "2021–2024",
+    org: "AUTO1 Group",
+    detail: "Automotive · Data analyst, customer acquisition",
+  },
+  {
+    date: "2024–2026",
+    org: "Zalando",
+    detail: "Fashion e-commerce · Senior product analyst, risk & abuse",
+  },
+  {
+    date: "2026–present",
     org: "AWS",
-    detail: "Cloud. Payments & Fraud Prevention (Registration)",
+    detail: "Cloud · Payments & fraud prevention",
+  },
+] as const;
+
+/** Education and ongoing study. The "ongoing" on the last one is the point:
+    it says he is still actively levelling up, which reads better than a date
+    from years ago. */
+export const education = [
+  {
+    what: "MSc Business Management",
+    where: "SRH Berlin University of Applied Sciences",
+  },
+  {
+    what: "Data Engineering with AWS",
+    where: "Udacity nanodegree",
+  },
+  {
+    what: "ML engineering, self-directed",
+    where: "12-month curriculum, ongoing — built from scratch before reaching for libraries",
   },
 ] as const;
 
